@@ -1,7 +1,17 @@
 import requests
+import os
 
-TOKEN = '7805721792:AAGZ4WjU4yhzaC03cIK5c7goxACF_zn0OFk'
-CHAT_ID = '7516642698'
+# load api keys from file
+KEYS_PATH = os.path.expanduser('~/telegram_api_keys/telegram_keys')
+with open(KEYS_PATH, 'r') as keys_file:
+    keys = {}
+    for line in keys_file:
+        line = line.strip()
+        if line and '=' in line:
+            key, value = line.split('=', 1)
+            keys[key.strip()] = value.strip().strip("'").strip('"')
+    TOKEN = keys.get('TOKEN')
+    CHAT_ID = keys.get('CHAT_ID')
 
 def send_telegram_notification(message: str, image_path: str = None):
     """
