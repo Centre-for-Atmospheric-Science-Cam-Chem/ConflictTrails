@@ -78,7 +78,7 @@ def download_day(start_time_str: str,
             
             # save the plot to an image
             num_flights = len(result_df)
-            image_file = os.path.join(output_dir, f"cartopy_map_{timestamp}_{num_flights}flights.png")
+            image_file = os.path.join(output_dir, f"map_{timestamp}_{num_flights}.png")
             plt.savefig(image_file, bbox_inches="tight", facecolor=fig.get_facecolor())
             plt.close(fig)
             if telegram_updates:
