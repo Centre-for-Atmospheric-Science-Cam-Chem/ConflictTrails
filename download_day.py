@@ -18,12 +18,13 @@ import cartopy.feature as cfeature
 start_time_str       = '2022-02-01T00:00:00Z'
 stop_time_str        = '2022-03-01T01:00:00Z'
 # plane_callsign       = "EZY158T"
-query_limit          = 9e4
+query_limit          = 5e4
+make_plot            = False
 
-code_start_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 # Loop through the dates between start and end date
 time_range = pd.date_range(start_time_str, stop_time_str, freq='D')
 for current_day in time_range:
+    loop_start_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Convert the start and stop time to POSIX time
     start_time_posix    = int(current_day.timestamp())
     end_time_posix      = int(datetime.datetime.fromisoformat(stop_time_str).timestamp())
@@ -45,32 +46,37 @@ for current_day in time_range:
     filename = os.path.join(output_dir, f"result_df_{timestamp}.pkl")
     result_df.to_pickle(filename)
     print("Saved result_df to", filename)
-    plt.style.use('dark_background')
-
-    # Plot the data on a map
-    fig = plt.figure(figsize=(12, 6))
-    ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
-    ax.set_extent([-180, 180, -90, 90], crs=ccrs.PlateCarree())
-    ax.set_facecolor("black")
-    ax.add_feature(cfeature.OCEAN, facecolor="black")
-    ax.add_feature(cfeature.LAND, facecolor="dimgray")
-    ax.add_feature(cfeature.COASTLINE, edgecolor="white", linewidth=0.5)
-    ax.add_feature(cfeature.BORDERS, edgecolor="white", linewidth=0.5)
-    ax.title.set_text(timestamp)
-
-    for _, row in result_df.iterrows():
-        track = row["track"]
-        if not track:
-            continue
-        lats = [pt.latitude for pt in track]
-        lons = [pt.longitude for pt in track]
-        ax.plot(lons, lats, color="red", linewidth=1, alpha=0.2, transform=ccrs.Geodetic())
     
-    # save the plot to an image
-    image_file = os.path.join(output_dir, "cartopy_map.png")
-    plt.savefig(image_file, bbox_inches="tight", facecolor=fig.get_facecolor())
-    plt.close(fig)
+    # Plot the data on a map to be sent to the user via text message if true
+    if make_plot:
+        plt.style.use('dark_background')
+        fig = plt.figure(figsize=(12, 6))
+        ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+        ax.set_extent([-180, 180, -90, 90], crs=ccrs.PlateCarree())
+        ax.set_facecolor("black")
+        ax.add_feature(cfeature.OCEAN, facecolor="black")
+        ax.add_feature(cfeature.LAND, facecolor="dimgray")
+        ax.add_feature(cfeature.COASTLINE, edgecolor="white", linewidth=0.5)
+        ax.add_feature(cfeature.BORDERS, edgecolor="white", linewidth=0.5)
+        ax.title.set_text(timestamp)
 
-    # Send a notification that the code has finished running
-    code_stop_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    send_telegram_notification("Code has finished running.\n Start time: " + code_start_time + "\n End time: " + code_stop_time,  image_path=image_file)
+        for _, row in result_df.iterrows():
+            track = row["track"]
+            if not track:
+                continue
+            lats = [pt.latitude for pt in track]
+            lons = [pt.longitude for pt in track]
+            ax.plot(lons, lats, color="red", linewidth=1, alpha=0.2, transform=ccrs.Geodetic())
+        
+        # save the plot to an image
+        image_file = os.path.join(output_dir, "cartopy_map.png")
+        plt.savefig(image_file, bbox_inches="tight", facecolor=fig.get_facecolor())
+        plt.close(fig)
+
+        # Send a notification that the code has finished running
+        loop_stop_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        send_telegram_notification("Download of " + str(round(query_limit)) + " flights from " + str(current_day) + ".\nStart time: " + loop_start_time + "\nEnd time: " + loop_stop_time,  image_path=image_file)
+    elif not make_plot:
+        loop_stop_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        send_telegram_notification("Download of " + str(round(query_limit)) + " flights from " + str(current_day) + ".\nStart time: " + loop_start_time + "\nEnd time: " + loop_stop_time)
+        
