@@ -19,7 +19,6 @@ def send_telegram_notification(message: str, image_path: str = None):
     
     :param message: The text message to send.
     :param image_path: Optional; the file path to the image to attach.
-    :return: The JSON response from Telegram.
     """
     
     # Send the image if provided, with the message as a caption
@@ -29,13 +28,8 @@ def send_telegram_notification(message: str, image_path: str = None):
             files = {'photo': image_file}
             data = {'chat_id': CHAT_ID, 'caption': message}
             response = requests.post(send_photo_url, data=data, files=files)
-            result = response.json()
     # Send the text message if no image provided
     else:
         send_message_url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
         params = {'chat_id': CHAT_ID, 'text': message}
         response = requests.get(send_message_url, params=params)
-        result = response.json()
-
-
-    # return result
