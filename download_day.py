@@ -16,7 +16,8 @@ def download_day(start_time_str: str,
                  stop_time_str: str,
                  query_limit: int,
                  telegram_updates: bool = False,
-                 make_plot: bool = False):
+                 make_plot: bool = False,
+                 output_dir: str = "~/Data"):
     """ 
     Downloads data from the OpenSky database for a given day and saves it to a pickle file.
     
@@ -49,9 +50,11 @@ def download_day(start_time_str: str,
 
         # Save the result to a pickle file
         timestamp = current_day.strftime("%Y-%m-%d")
-        output_dir = os.path.expanduser("~/Data")
+        # Create the output directory if it doesn't exist
+        
+        output_dir = os.path.expanduser(output_dir)
         os.makedirs(output_dir, exist_ok=True)
-        filename = os.path.join(output_dir, f"result_df_{timestamp}.pkl")
+        filename = os.path.join(output_dir, f"result_df_{timestamp}_{int(query_limit)}.pkl")
         result_df.to_pickle(filename)
         print("Saved result_df to", filename)
         
