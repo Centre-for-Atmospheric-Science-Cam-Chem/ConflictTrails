@@ -2,8 +2,8 @@ from download_day import download_day
 from load_saved_fd4 import load_saved_fd4
 
 # User Inputs:
-start_time_str       = '2022-02-11T00:00:00Z'
-stop_time_str        = '2022-03-11T00:00:01Z'
+start_time_str       = '2024-02-01T00:00:00Z'
+stop_time_str        = '2024-02-02T00:00:01Z'
 # plane_callsign       = "EZY158T"
 query_limit          = 5e4
 send_notification    = True
