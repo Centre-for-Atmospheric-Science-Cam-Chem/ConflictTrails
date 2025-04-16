@@ -39,7 +39,7 @@ def download_day(start_time_str: str,
         end_time_posix      = int(datetime.datetime.fromisoformat(stop_time_str).timestamp())
 
         # Define the SQL query to get the data from the OpenSky database
-        sql_query  =    """SELECT icao24, estdepartureairport, estarrivalairport, callsign, track FROM flights_data4 
+        sql_query  =    """SELECT icao24, estdepartureairport, estarrivalairport, callsign FROM flights_data4 
                             WHERE day = """ + str(start_time_posix) + """
                             LIMIT """ + str(round(query_limit)) 
                             
