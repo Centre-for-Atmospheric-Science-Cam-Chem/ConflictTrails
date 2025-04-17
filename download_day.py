@@ -4,7 +4,7 @@ import time
 from pyopensky.trino import Trino
 import pandas as pd
 import os
-from functions.telegram_notifier import send_telegram_notification
+from telegram_notifier import send_telegram_notification
 import matplotlib
 # forces matplotlib to use non-gui backends, freeing up resources and preventing errors
 matplotlib.use('Agg')
