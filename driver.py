@@ -1,5 +1,5 @@
-from download_day import download_day
-from load_saved_fd4 import load_saved_fd4
+from functions.download_day import download_day
+from functions.load_saved_fd4 import load_saved_fd4
 
 # User Inputs:
 start_time_str       = '2024-02-01T00:00:00Z'

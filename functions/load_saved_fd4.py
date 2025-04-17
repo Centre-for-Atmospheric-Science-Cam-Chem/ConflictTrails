@@ -22,5 +22,5 @@ def load_saved_fd4(timestamp: str,
     timestamp = timestamp_dt.strftime("%Y-%m-%d")
     filepath = os.path.join(output_dir, f"result_df_{timestamp}_{int(query_limit)}.pkl")
     loaded_data = pd.read_pickle(filepath)
-    print("Loaded data from ", filepath)
+    # print("Loaded data from ", filepath)
     return loaded_data

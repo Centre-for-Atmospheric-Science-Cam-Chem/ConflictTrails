@@ -4,7 +4,7 @@ import time
 from pyopensky.trino import Trino
 import pandas as pd
 import os
-from telegram_notifier import send_telegram_notification
+from functions.telegram_notifier import send_telegram_notification
 import matplotlib
 # forces matplotlib to use non-gui backends, freeing up resources and preventing errors
 matplotlib.use('Agg')
@@ -23,13 +23,16 @@ def download_day(start_time_str: str,
     
     Parameters:
     :param start_time_str (str): The start time in ISO format (YYYY-MM-DDTHH:MM:SSZ).
-    :stop_time_str (str): The end time in ISO format (YYYY-MM-DDTHH:MM:SSZ).
-    :query_limit (int): The maximum number of records to download. recommend less than 3e4
-    :make_plot (bool): If True, generates a plot of the data.
+    :param stop_time_str (str): The end time in ISO format (YYYY-MM-DDTHH:MM:SSZ).
+    :param query_limit (int): The maximum number of records to download. recommend keeping small if downloading the aircraft track.
+    :param make_plot (bool): If True, generates a plot of the data.
     
     may be issues when server is busy, so generally recommended to run this code at night
     or keep queries low
     """
+    # Warn user of potential memory issues
+    print("Using download_day in a Jupyter notebook is not recommended, especially for requesting flight track information. Unresolved memory issues may occur.")
+    print("Instead, try using the download_day function in a normal .py script.")
     # Loop through the dates between start and end date
     time_range = pd.date_range(start_time_str, stop_time_str, freq='D')
     for current_day in time_range:
@@ -39,7 +42,7 @@ def download_day(start_time_str: str,
         end_time_posix      = int(datetime.datetime.fromisoformat(stop_time_str).timestamp())
 
         # Define the SQL query to get the data from the OpenSky database
-        sql_query  =    """SELECT icao24, estdepartureairport, estarrivalairport, callsign FROM flights_data4 
+        sql_query  =    """SELECT icao24, estdepartureairport, estarrivalairport FROM flights_data4 
                             WHERE day = """ + str(start_time_posix) + """
                             LIMIT """ + str(round(query_limit)) 
                             
@@ -98,5 +101,3 @@ def download_day(start_time_str: str,
         # if user wants a plot but not telegram updates
         elif make_plot and not telegram_updates:
             loop_stop_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            
-        
