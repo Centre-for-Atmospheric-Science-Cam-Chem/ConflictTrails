@@ -2,6 +2,12 @@ import requests
 from lxml import html
 
 def parse_aircraft_page(typecode):
+    
+    """
+    Parse the aircraft performance page for a given typecode.
+    :param typecode (str): The ICAO typecode of the aircraft.
+    :return: A dictionary containing the parsed data.
+    """
         
     url = f"https://contentzone.eurocontrol.int/aircraftperformance/details.aspx?ICAO={typecode}"
     response = requests.get(url)

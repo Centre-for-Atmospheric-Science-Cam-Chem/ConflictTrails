@@ -4,7 +4,7 @@ import pandas as pd
 import os
 
 def get_perf_model_typecodes(start_typecode: str = "A10",
-                             output_dir: str = "/scratch/omg28/netscratch"):
+                             output_dir: str = "~/ConflictTrails"):
     """
     Fetches the available typecodes from the Eurocontrol Aircraft Performance database.
     Returns a DataFrame containing the typecodes.
@@ -29,10 +29,6 @@ def get_perf_model_typecodes(start_typecode: str = "A10",
     os.makedirs(output_dir, exist_ok=True)
     filename = os.path.join(output_dir, f"performance_models_typecodes.csv")
     typecodes_available.to_csv(filename, index=False)
-    print("Saved result_df to", filename)
+    print("Saved typecodes_available to", filename)
     
     return typecodes_available
-    
-
-available_codes = get_perf_model_typecodes()
-print(available_codes)

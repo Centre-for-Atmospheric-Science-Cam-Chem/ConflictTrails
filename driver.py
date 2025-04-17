@@ -19,5 +19,6 @@ download_day(start_time_str, stop_time_str, query_limit, send_notification, make
 loaded_day = load_saved_fd4(stop_time_str, output_dir, query_limit)
 '''
 
-get_perf_model_typecodes()
-# aircraft_performance_database_1 = scrape_aircraft_list(available_performance_typecodes['typecode'])
+available_codes = get_perf_model_typecodes()
+aircraft_performance_data_table = scrape_aircraft_list(available_codes)
+aircraft_performance_data_table.to_pickle("aircraft_performance_data_table.pkl")
