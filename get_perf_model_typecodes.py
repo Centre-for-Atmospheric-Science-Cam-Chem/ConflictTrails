@@ -4,7 +4,7 @@ import pandas as pd
 import os
 
 def get_perf_model_typecodes(start_typecode: str = "A10",
-                             output_dir: str = "~/ConflictTrails"):
+                             output_dir: str = "/scratch/omg28/Data/aircraftdb/"):
     """
     Fetches the available typecodes from the Eurocontrol Aircraft Performance database.
     Returns a DataFrame containing the typecodes.
@@ -27,8 +27,9 @@ def get_perf_model_typecodes(start_typecode: str = "A10",
     # save the result to a pickle file
     output_dir = os.path.expanduser(output_dir)
     os.makedirs(output_dir, exist_ok=True)
-    filename = os.path.join(output_dir, f"performance_models_typecodes.csv")
-    typecodes_available.to_csv(filename, index=False)
-    print("Saved typecodes_available to", filename)
-    
+    filename_csv = os.path.join(output_dir, f"performance_models_typecodes.csv")
+    filename_pkl = os.path.join(output_dir, f"performance_models_typecodes.pkl")
+    typecodes_available.to_csv(filename_csv, index=False)
+    typecodes_available.to_pickle(filename_pkl)
+    print("Saved typecodes_available to", filename_csv)
     return typecodes_available
