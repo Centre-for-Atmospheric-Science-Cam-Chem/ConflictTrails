@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-def process_airport_csv(input_csv: str = "/scratch/omg28/Data/airportdb/airports.csv", output_dir: str = "~/ConflictTrails"):
+def process_airport_list(input_csv: str = "/scratch/omg28/Data/airportdb/airports.csv", output_dir: str = "/scratch/omg28/Data/airportdb/"):
     """
     Processes the airport CSV file to extract relevant columns and save it as a new CSV and pickle file.
     
