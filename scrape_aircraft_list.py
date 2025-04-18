@@ -21,7 +21,7 @@ def scrape_aircraft_list(typecodes,
         row = parse_aircraft_page(typecode)
         if row:
             records.append(row)
-        # sleep for a random time between 1 and 1.1 seconds to avoid overloading the server
+        # sleep for a random time between 0.11 and 1.1 seconds to avoid overloading the server
         sleep(0.1 +  1 * np.random.rand())
     
     records = pd.DataFrame(records)

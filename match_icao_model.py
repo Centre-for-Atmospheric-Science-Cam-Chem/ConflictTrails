@@ -33,7 +33,7 @@ def match_icao_model(start_time_str: str,
     # drop all rows where typecode is "
     aircraft_df = aircraft_df[aircraft_df['typecode'] != "''"]
     
-    print(aircraft_df.head())
+    
     print("There are " + str(len(aircraft_df['typecode'].unique())) + " unique typecodes in the aircraft database.")
     
     # load the flight database
@@ -64,7 +64,7 @@ def match_icao_model(start_time_str: str,
     # save the result to a pickle file
     output_dir = os.path.expanduser(output_dir)
     os.makedirs(output_dir, exist_ok=True)
-    filename = os.path.join(output_dir, f"{start_time_ts}_to_{stop_time_ts}_{int(query_limit)}.pkl")
+    filename = os.path.join(output_dir, f"{start_time_ts}_to_{stop_time_ts}_{int(query_limit)}_typecode_no_missing.pkl")
     flight_df.to_pickle(filename)
     print("Saved result_df to", filename)
     
