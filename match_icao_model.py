@@ -52,7 +52,7 @@ def match_icao_model(start_time_str: str,
     flight_df = flight_df[flight_df['estdepartureairport'].notna() & flight_df['estarrivalairport'].notna()]
     
     # inner join the two dataframes on the icao24 column. this eliminates all rows where typecode cannot be matched to an icao24 code.
-    flight_df = flight_df.merge(aircraft_df, on='icao24', how='inner')
+    flight_df = pd.merge(flight_df, aircraft_df, on='icao24', how='inner')
 
     # Convert the timestamp to a datetime object
     start_time_dt = pd.to_datetime(start_time_str)
@@ -64,7 +64,7 @@ def match_icao_model(start_time_str: str,
     # save the result to a pickle file
     output_dir = os.path.expanduser(output_dir)
     os.makedirs(output_dir, exist_ok=True)
-    filename = os.path.join(output_dir, f"{start_time_ts}_to_{stop_time_ts}_{int(query_limit)}_typecode_no_missing.pkl")
+    filename = os.path.join(output_dir, f"{start_time_ts}_to_{stop_time_ts}_{int(query_limit)}_typecodes_added.pkl")
     flight_df.to_pickle(filename)
     print("Saved result_df to", filename)
     
