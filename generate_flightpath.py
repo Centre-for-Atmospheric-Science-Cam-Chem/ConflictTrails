@@ -77,16 +77,13 @@ def generate_flightpath(typecode,
         'h_descent_5_0_end': 0
     }
 
-
-    
-    
     # convert gc_dist to m
     gc_dist = gc_dist * 1e3 # km to m
     
     # Constants
     min_cruise_duration = 600 # s, 10 minutes
     s_tolerance = 1000 # m, tolerance for distance when creating flight paths
-    alt_decrement = 1000 # try 0.95 of original cruising altitude for cruise altitude
+    alt_decrement = 1000 # ft, since FLs are in kft. try 0.95 of original cruising altitude for cruise altitude for geometric progression
     min_cruise_altitude = 0 # m, minimum cruise altitude
     passenger_load_factor = 0.835 # iata 2024 average seat load factor
     passenger_freight_factor = 0.851 # ICAO 2024 average freight load factor
@@ -165,8 +162,8 @@ def generate_flightpath(typecode,
         flight_path['descent']['h_descent_24_15_end'] = alt_end
         flight_path['descent']['h_descent_15_10_start'] = alt_end # m
         flight_path['descent']['h_descent_15_10_end'] = alt_end # m
-        flight_path['descent']['h_descent_10_5_start'] = alt_start # m
-        flight_path['descent']['h_descent_10_5_end'] = alt_start # m
+        flight_path['descent']['h_descent_10_5_start'] = alt_end # m
+        flight_path['descent']['h_descent_10_5_end'] = alt_end # m
 
 
     elif alt_cruise > ft_to_m(5000): # if cruise altitude is greater than 5000 ft
@@ -512,20 +509,77 @@ def generate_flightpath(typecode,
     t_total = t_tol + t_cruise # s
     
     
-    # if the default cruise profile results in a distance too short, increase the cruise time
-    if s_total < gc_dist: 
+    # if the 10 minute cruise profile results in a distance longer than the requested great circle distance, throw an error
+    if s_cruise > gc_dist:
+        raise ValueError(f"Requested mission distance of {gc_dist} m is shorter than a 10 minute cruise, which will go {s_cruise} m. Please request a total distance longer than {s_cruise} m.")
+    elif s_total < gc_dist: 
         s_cruise = gc_dist - s_tol # m
         t_cruise = s_cruise / gs_cruise
         s_total = s_tol + s_cruise # m
         t_total = t_tol + t_cruise
     # otherwise, if the default cruise profile results in a distance too long, decrease the cruise altitude
     else:
+        
         counter = 0
         while s_total - gc_dist > s_tolerance and counter < 100: # not wrapping in absolute value to terminate loop if we get to an undershoot, will get skipped if we are already under the tolerance
-            print(s_total-gc_dist)
-            s_total = 0
-            t_total = 0
-            alt_cruise -= ft_to_m(alt_decrement)  # decrease the cruise alitude by 1kft. may be faster/more accurate if use amount of overshoot as a scaling factor
+            print("distance difference: " + str(s_total-gc_dist))
+                
+             # initialize to zero values:
+            flight_path['climb'] = {
+                's_climb_0_5': 0,
+                't_climb_0_5': 0,
+                'h_climb_0_5_start': 0,
+                'h_climb_0_5_end': 0,
+                's_climb_5_10': 0,
+                't_climb_5_10': 0,
+                'h_climb_5_10_start': 0,
+                'h_climb_5_10_end': 0,
+                's_climb_10_15': 0,
+                't_climb_10_15': 0,
+                'h_climb_10_15_start': 0,
+                'h_climb_10_15_end': 0,
+                's_climb_15_24': 0,
+                't_climb_15_24': 0,
+                'h_climb_15_24_start': 0,
+                'h_climb_15_24_end': 0,
+                's_climb_ceil': 0,
+                't_climb_ceil': 0,
+                'h_climb_ceil_start': 0,
+                'h_climb_ceil_end': 0
+            }
+            
+            flight_path['cruise'] = {
+                's_cruise': 0,
+                't_cruise': 0,
+                'h_cruise_start': 0,
+                'h_cruise_end': 0
+            }
+
+            flight_path['descent'] = {
+                's_descent_ceil': 0,
+                't_descent_ceil': 0,
+                'h_descent_ceil_start': 0,
+                'h_descent_ceil_end': 0,
+                's_descent_24_15': 0,
+                't_descent_24_15': 0,
+                'h_descent_24_15_start': 0,
+                'h_descent_24_15_end': 0,
+                's_descent_15_10': 0,
+                't_descent_15_10': 0,
+                'h_descent_15_10_start': 0,
+                'h_descent_15_10_end': 0,
+                's_descent_10_5': 0,
+                't_descent_10_5': 0,
+                'h_descent_10_5_start': 0,
+                'h_descent_10_5_end': 0,
+                's_descent_5_0': 0,
+                't_descent_5_0': 0,
+                'h_descent_5_0_start': 0,
+                'h_descent_5_0_end': 0
+            }
+            
+            # alt_cruise *= ft_to_m(alt_decrement)  # decrease the cruise alitude by 1kft. may be faster/more accurate if use amount of overshoot as a scaling factor
+            alt_cruise -= ft_to_m(alt_decrement)
             # build new flight at given altitude
             if alt_cruise <= ft_to_m(5000): # if cruise altitude is between 0 and 5000 ft
                 alt_start = ft_to_m(0) # m
@@ -545,7 +599,7 @@ def generate_flightpath(typecode,
                 flight_path['climb']['s_climb_0_5'] = s_climb_0_5 # m
                 flight_path['climb']['h_climb_0_5_start'] = alt_start # m
                 flight_path['climb']['h_climb_0_5_end'] = alt_end # m
-          
+
                 
                 # Build Descent cruise-0 feet
                 if aircraft_data['approach_IAS'] == 'no data':
@@ -562,7 +616,7 @@ def generate_flightpath(typecode,
                 flight_path['descent']['s_descent_5_0'] = s_descent_5_0 # m
                 flight_path['descent']['h_descent_5_0_start'] = alt_end # m
                 flight_path['descent']['h_descent_5_0_end'] = alt_start # m
-             
+
                 
                 # assign remaining climb and descent altitudes to the cruise altitude:
                 flight_path['climb']['h_climb_5_10_start'] = alt_end # m
@@ -579,8 +633,9 @@ def generate_flightpath(typecode,
                 flight_path['descent']['h_descent_24_15_end'] = alt_end
                 flight_path['descent']['h_descent_15_10_start'] = alt_end # m
                 flight_path['descent']['h_descent_15_10_end'] = alt_end # m
-                flight_path['descent']['h_descent_10_5_start'] = alt_start # m
-                flight_path['descent']['h_descent_10_5_end'] = alt_start # m
+                flight_path['descent']['h_descent_10_5_start'] = alt_end # m
+                flight_path['descent']['h_descent_10_5_end'] = alt_end # m
+
 
             elif alt_cruise > ft_to_m(5000): # if cruise altitude is greater than 5000 ft
                 alt_start = 0 # m
@@ -601,7 +656,7 @@ def generate_flightpath(typecode,
                 flight_path['climb']['s_climb_0_5'] = s_climb_0_5 # m
                 flight_path['climb']['h_climb_0_5_start'] = alt_start # m
                 flight_path['climb']['h_climb_0_5_end'] = alt_end # m
-             
+
                         
                 # Build Descent 5000-0 ft ft
                 if aircraft_data['approach_IAS'] == 'no data':
@@ -618,7 +673,7 @@ def generate_flightpath(typecode,
                 flight_path['descent']['s_descent_5_0'] = s_descent_5_0 # m
                 flight_path['descent']['h_descent_5_0_start'] = alt_end # m
                 flight_path['descent']['h_descent_5_0_end'] = alt_start
-              
+
                 
                 if alt_cruise <= ft_to_m(10000): # if cruise altitude is between 5000 and 10000 ft
                     alt_start = ft_to_m(5000) # m
@@ -638,7 +693,7 @@ def generate_flightpath(typecode,
                     flight_path['climb']['s_climb_5_10'] = s_climb_5_10 # m
                     flight_path['climb']['h_climb_5_10_start'] = alt_start # m
                     flight_path['climb']['h_climb_5_10_end'] = alt_end # m
-           
+
                     
                     # Build Descent ceiling-5000 ft
                     if aircraft_data['approach_IAS'] == 'no data':
@@ -655,7 +710,7 @@ def generate_flightpath(typecode,
                     flight_path['descent']['s_descent_10_5'] = s_descent_10_5 # m
                     flight_path['descent']['h_descent_10_5_start'] = alt_end # m
                     flight_path['descent']['h_descent_10_5_end'] = alt_start # m
-                
+
                 
                     # assign remaining climb and descent altitudes to the cruise altitude:
                     flight_path['climb']['h_climb_10_15_start'] = alt_end # m
@@ -690,7 +745,7 @@ def generate_flightpath(typecode,
                     flight_path['climb']['s_climb_5_10'] = s_climb_5_10 # m
                     flight_path['climb']['h_climb_5_10_start'] = alt_start # m
                     flight_path['climb']['h_climb_5_10_end'] = alt_end # m
-                
+
                     
                     # Build Descent 10000-5000 ft
                     if aircraft_data['approach_IAS'] == 'no data':
@@ -707,7 +762,7 @@ def generate_flightpath(typecode,
                     flight_path['descent']['s_descent_10_5'] = s_descent_10_5 # m
                     flight_path['descent']['h_descent_10_5_start'] = alt_end # m
                     flight_path['descent']['h_descent_10_5_end'] = alt_start # m
-             
+
                     
                     if alt_cruise <= ft_to_m(15000): # if ceiling is between 10000 and 15000 ft
                         alt_start = ft_to_m(10000) # m
@@ -728,7 +783,7 @@ def generate_flightpath(typecode,
                         flight_path['climb']['s_climb_10_15'] = s_climb_10_15 # m
                         flight_path['climb']['h_climb_10_15_start'] = alt_start # m
                         flight_path['climb']['h_climb_10_15_end'] = alt_end # m
-                      
+
                         
                         # Build Descent ceiling-10000 ft
                         if aircraft_data['descent_to_fl_100_IAS'] == 'no data':
@@ -745,7 +800,7 @@ def generate_flightpath(typecode,
                         flight_path['descent']['s_descent_15_10'] = s_descent_15_10 # m
                         flight_path['descent']['h_descent_15_10_start'] = alt_end # m
                         flight_path['descent']['h_descent_15_10_end'] = alt_start # m
-                       
+
                         
                         # assign remaining climb and descent altitudes to the cruise altitude:
                         flight_path['climb']['h_climb_15_24_start'] = alt_end # m   
@@ -777,7 +832,7 @@ def generate_flightpath(typecode,
                         flight_path['climb']['s_climb_10_15'] = s_climb_10_15 # m
                         flight_path['climb']['h_climb_10_15_start'] = alt_start # m
                         flight_path['climb']['h_climb_10_15_end'] = alt_end # m
-                        
+
                         
                         # Build Descent 15000-10000 ft
                         if aircraft_data['descent_to_fl_100_IAS'] == 'no data':
@@ -794,7 +849,7 @@ def generate_flightpath(typecode,
                         flight_path['descent']['s_descent_15_10'] = s_descent_15_10 # m
                         flight_path['descent']['h_descent_15_10_start'] = alt_end # m
                         flight_path['descent']['h_descent_15_10_end'] = alt_start # m
-                        
+
                         
                         if alt_cruise <= ft_to_m(24000): # if ceiling is between 15000 and 24000 ft
                             alt_start = ft_to_m(15000) # m
@@ -814,7 +869,7 @@ def generate_flightpath(typecode,
                             flight_path['climb']['s_climb_15_24'] = s_climb_15_24 # m
                             flight_path['climb']['h_climb_15_24_start'] = alt_start # m
                             flight_path['climb']['h_climb_15_24_end'] = alt_end # m
-                            
+
                                 
                             # Build Descent ceiling-15000 ft
                             if aircraft_data['descent_to_fl_100_IAS'] == 'no data':
@@ -831,7 +886,7 @@ def generate_flightpath(typecode,
                             flight_path['descent']['s_descent_24_15'] = s_descent_24_15 # m
                             flight_path['descent']['h_descent_24_15_start'] = alt_end # m
                             flight_path['descent']['h_descent_24_15_end'] = alt_start # m
-                            
+
                             
                             # assign remaining climb and descent altitudes to the cruise altitude:
                             flight_path['climb']['h_climb_ceil_start'] = alt_end # m
@@ -841,73 +896,73 @@ def generate_flightpath(typecode,
                             
                         else: # if ceiling is greater than 24000 ft
                             alt_start = ft_to_m(15000) # m
-                    alt_end   = ft_to_m(24000)
-                    
-                    # Build Climb 15000-24000 ft
-                    if aircraft_data['climb_to_fl_240_IAS'] == 'no data':
-                        v_climb_15_24 = icet(kts_to_ms(aircraft_data['climb_to_fl_150_IAS']), (alt_start + alt_end) /2)[0]
-                        w_climb_15_24 = w_climb_10_15
-                    else:
-                        v_climb_15_24 = icet(kts_to_ms(aircraft_data['climb_to_fl_240_IAS']), (alt_start + alt_end) /2)[0]
-                        w_climb_15_24 = ftmin_to_ms(aircraft_data['climb_to_fl_240_ROC'])
-                    gs_climb_15_24 = (v_climb_15_24**2 - w_climb_15_24**2) ** 0.5
-                    t_climb_15_24 = (alt_end - alt_start) / w_climb_15_24 # s
-                    s_climb_15_24 = gs_climb_15_24 * t_climb_15_24
-                    flight_path['climb']['t_climb_15_24'] = t_climb_15_24 # s
-                    flight_path['climb']['s_climb_15_24'] = s_climb_15_24 # m
-                    flight_path['climb']['h_climb_15_24_start'] = alt_start # m
-                    flight_path['climb']['h_climb_15_24_end'] = alt_end # m
+                            alt_end   = ft_to_m(24000)
+                            
+                            # Build Climb 15000-24000 ft
+                            if aircraft_data['climb_to_fl_240_IAS'] == 'no data':
+                                v_climb_15_24 = icet(kts_to_ms(aircraft_data['climb_to_fl_150_IAS']), (alt_start + alt_end) /2)[0]
+                                w_climb_15_24 = w_climb_10_15
+                            else:
+                                v_climb_15_24 = icet(kts_to_ms(aircraft_data['climb_to_fl_240_IAS']), (alt_start + alt_end) /2)[0]
+                                w_climb_15_24 = ftmin_to_ms(aircraft_data['climb_to_fl_240_ROC'])
+                            gs_climb_15_24 = (v_climb_15_24**2 - w_climb_15_24**2) ** 0.5
+                            t_climb_15_24 = (alt_end - alt_start) / w_climb_15_24 # s
+                            s_climb_15_24 = gs_climb_15_24 * t_climb_15_24
+                            flight_path['climb']['t_climb_15_24'] = t_climb_15_24 # s
+                            flight_path['climb']['s_climb_15_24'] = s_climb_15_24 # m
+                            flight_path['climb']['h_climb_15_24_start'] = alt_start # m
+                            flight_path['climb']['h_climb_15_24_end'] = alt_end # m
 
-                    
-                    # Build Climb 24000-ceiling feet
-                    if aircraft_data['mach_climb_MACH'] == 'no data':
-                        v_climb_ceil = icet(kts_to_ms(aircraft_data['climb_to_fl_240_IAS']), (alt_end + alt_cruise) /2)[0]
-                        w_climb_ceil = w_climb_15_24
-                    else:
-                        v_climb_ceil = aircraft_data['mach_climb_MACH'] * Atmosphere((alt_end + alt_cruise)/2).speed_of_sound # m/s, TAS
-                        w_climb_ceil = ftmin_to_ms(aircraft_data['mach_climb_ROC'])
-                    gs_climb_ceil = (v_climb_ceil**2 - w_climb_ceil**2) ** 0.5 # ground speed and thus distance covered
-                    
-                    t_climb_ceil = (alt_end - alt_start) / w_climb_ceil # s
-                    s_climb_ceil = gs_climb_ceil * t_climb_ceil
-                    flight_path['climb']['t_climb_ceil'] = t_climb_ceil # s
-                    flight_path['climb']['s_climb_ceil'] = s_climb_ceil # m
-                    flight_path['climb']['h_climb_ceil_start'] = alt_end # m
-                    flight_path['climb']['h_climb_ceil_end'] = alt_cruise # m
+                            
+                            # Build Climb 24000-ceiling feet
+                            if aircraft_data['mach_climb_MACH'] == 'no data':
+                                v_climb_ceil = icet(kts_to_ms(aircraft_data['climb_to_fl_240_IAS']), (alt_end + alt_cruise) /2)[0]
+                                w_climb_ceil = w_climb_15_24
+                            else:
+                                v_climb_ceil = aircraft_data['mach_climb_MACH'] * Atmosphere((alt_end + alt_cruise)/2).speed_of_sound # m/s, TAS
+                                w_climb_ceil = ftmin_to_ms(aircraft_data['mach_climb_ROC'])
+                            gs_climb_ceil = (v_climb_ceil**2 - w_climb_ceil**2) ** 0.5 # ground speed and thus distance covered
+                            
+                            t_climb_ceil = (alt_end - alt_start) / w_climb_ceil # s
+                            s_climb_ceil = gs_climb_ceil * t_climb_ceil
+                            flight_path['climb']['t_climb_ceil'] = t_climb_ceil # s
+                            flight_path['climb']['s_climb_ceil'] = s_climb_ceil # m
+                            flight_path['climb']['h_climb_ceil_start'] = alt_end # m
+                            flight_path['climb']['h_climb_ceil_end'] = alt_cruise # m
 
-                    
-                    # Build Descent 24000-15000 ft
-                    if aircraft_data['descent_to_fl_100_IAS'] == 'no data':
-                        v_descent_24_15 = icet(kts_to_ms(aircraft_data['approach_IAS']), (alt_start + alt_end)/2)[0]
-                        w_descent_24_15 = w_descent_15_10
-                    else:
-                        v_descent_24_15 = icet(kts_to_ms(aircraft_data['descent_to_fl_100_IAS']), (alt_start + alt_end)/2)[0]
-                        w_descent_24_15 = ftmin_to_ms(aircraft_data['descent_to_fl_100_ROD'])
-                    gs_descent_24_15 = (v_descent_24_15**2 - w_descent_24_15**2) ** 0.5
-                    
-                    t_descent_24_15 = (alt_end - alt_start) / w_descent_24_15
-                    s_descent_24_15 = gs_descent_24_15 * t_descent_24_15
-                    flight_path['descent']['t_descent_24_15'] = t_descent_24_15 # s
-                    flight_path['descent']['s_descent_24_15'] = s_descent_24_15 # m
-                    flight_path['descent']['h_descent_24_15_start'] = alt_end # m
-                    flight_path['descent']['h_descent_24_15_end'] = alt_start # m
+                            
+                            # Build Descent 24000-15000 ft
+                            if aircraft_data['descent_to_fl_100_IAS'] == 'no data':
+                                v_descent_24_15 = icet(kts_to_ms(aircraft_data['approach_IAS']), (alt_start + alt_end)/2)[0]
+                                w_descent_24_15 = w_descent_15_10
+                            else:
+                                v_descent_24_15 = icet(kts_to_ms(aircraft_data['descent_to_fl_100_IAS']), (alt_start + alt_end)/2)[0]
+                                w_descent_24_15 = ftmin_to_ms(aircraft_data['descent_to_fl_100_ROD'])
+                            gs_descent_24_15 = (v_descent_24_15**2 - w_descent_24_15**2) ** 0.5
+                            
+                            t_descent_24_15 = (alt_end - alt_start) / w_descent_24_15
+                            s_descent_24_15 = gs_descent_24_15 * t_descent_24_15
+                            flight_path['descent']['t_descent_24_15'] = t_descent_24_15 # s
+                            flight_path['descent']['s_descent_24_15'] = s_descent_24_15 # m
+                            flight_path['descent']['h_descent_24_15_start'] = alt_end # m
+                            flight_path['descent']['h_descent_24_15_end'] = alt_start # m
 
-                    
-                    # Build Descent ceiling-24000 ft
-                    if aircraft_data['initial_descent_to_fl_240_MACH'] == 'no data':
-                        v_descent_ceil = icet(kts_to_ms(aircraft_data['descent_to_fl_100_IAS']), (alt_end + alt_cruise)/2)[0]
-                        w_descent_ceil = w_descent_24_15
-                    else:
-                        v_descent_ceil = aircraft_data['initial_descent_to_fl_240_MACH'] * Atmosphere((alt_end + alt_cruise)/2).speed_of_sound
-                        w_descent_ceil = ftmin_to_ms(aircraft_data['initial_descent_to_fl_240_ROD'])
-                    gs_descent_ceil = (v_descent_ceil**2 - w_descent_ceil**2) ** 0.5 # ground speed and thus distance covered
-                    
-                    t_descent_ceil = (alt_end - alt_start) / w_descent_ceil # s
-                    s_descent_ceil = gs_descent_ceil * t_descent_ceil
-                    flight_path['descent']['t_descent_ceil'] = t_descent_ceil # s
-                    flight_path['descent']['s_descent_ceil'] = s_descent_ceil # m
-                    flight_path['descent']['h_descent_ceil_start'] = alt_cruise # m
-                    flight_path['descent']['h_descent_ceil_end'] = alt_end # m
+                            
+                            # Build Descent ceiling-24000 ft
+                            if aircraft_data['initial_descent_to_fl_240_MACH'] == 'no data':
+                                v_descent_ceil = icet(kts_to_ms(aircraft_data['descent_to_fl_100_IAS']), (alt_end + alt_cruise)/2)[0]
+                                w_descent_ceil = w_descent_24_15
+                            else:
+                                v_descent_ceil = aircraft_data['initial_descent_to_fl_240_MACH'] * Atmosphere((alt_end + alt_cruise)/2).speed_of_sound
+                                w_descent_ceil = ftmin_to_ms(aircraft_data['initial_descent_to_fl_240_ROD'])
+                            gs_descent_ceil = (v_descent_ceil**2 - w_descent_ceil**2) ** 0.5 # ground speed and thus distance covered
+                            
+                            t_descent_ceil = (alt_end - alt_start) / w_descent_ceil # s
+                            s_descent_ceil = gs_descent_ceil * t_descent_ceil
+                            flight_path['descent']['t_descent_ceil'] = t_descent_ceil # s
+                            flight_path['descent']['s_descent_ceil'] = s_descent_ceil # m
+                            flight_path['descent']['h_descent_ceil_start'] = alt_cruise # m
+                            flight_path['descent']['h_descent_ceil_end'] = alt_end # m
                     
                     
             # Build cruise phase
@@ -915,6 +970,7 @@ def generate_flightpath(typecode,
             w_cruise = 0 # assumes no climbing 
             gs_cruise = (v_cruise**2 - w_cruise**2) ** 0.5 # ground speed and thus distance covered
             s_cruise = v_cruise * t_cruise # m
+            print("s_cruise: " + str(s_cruise) + ", h_cruise: " + str(alt_cruise))
             t_cruise = min_cruise_duration # s, cruise time
             s_tol = sum(flight_path['climb'].values()) + sum(flight_path['descent'].values()) # m
             t_tol = sum(flight_path['climb'].values()) + sum(flight_path['descent'].values())
@@ -932,4 +988,6 @@ def generate_flightpath(typecode,
     for key in flight_path:
         for sub_key in flight_path[key]:
             flight_path[key][sub_key] = float(flight_path[key][sub_key])
+            
+    # return the results
     return flight_path
