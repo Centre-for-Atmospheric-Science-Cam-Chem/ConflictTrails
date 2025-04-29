@@ -78,7 +78,7 @@ def generate_flightpath(typecode,
 
     # convert gc_dist to m
     gc_dist = gc_dist * 1e3 # km to m
-    
+        
     # Constants
     min_cruise_duration = 600 # s, 10 minutes
     s_tolerance = 1000 # m, tolerance for distance when creating flight paths
@@ -451,7 +451,7 @@ def generate_flightpath(typecode,
                         w_climb_ceil = ftmin_to_ms(aircraft_data['mach_climb_ROC'])
                     gs_climb_ceil = (v_climb_ceil**2 - w_climb_ceil**2) ** 0.5 # ground speed and thus distance covered
                     
-                    t_climb_ceil = (alt_end - alt_start) / w_climb_ceil # s
+                    t_climb_ceil = (alt_cruise - alt_end) / w_climb_ceil # s
                     s_climb_ceil = gs_climb_ceil * t_climb_ceil
                     flight_path['climb']['t_climb_ceil'] = t_climb_ceil # s
                     flight_path['climb']['s_climb_ceil'] = s_climb_ceil # m
@@ -485,7 +485,7 @@ def generate_flightpath(typecode,
                         w_descent_ceil = ftmin_to_ms(aircraft_data['initial_descent_to_fl_240_ROD'])
                     gs_descent_ceil = (v_descent_ceil**2 - w_descent_ceil**2) ** 0.5 # ground speed and thus distance covered
                     
-                    t_descent_ceil = (alt_end - alt_start) / w_descent_ceil # s
+                    t_descent_ceil = (alt_cruise - alt_end) / w_descent_ceil # s
                     s_descent_ceil = gs_descent_ceil * t_descent_ceil
                     flight_path['descent']['t_descent_ceil'] = t_descent_ceil # s
                     flight_path['descent']['s_descent_ceil'] = s_descent_ceil # m
@@ -505,27 +505,32 @@ def generate_flightpath(typecode,
             v_cruise = aircraft_data['cruise_MACH'] * Atmosphere(ft_to_m(24000)).speed_of_sound # m/s, TAS
         else:
             v_cruise = kts_to_ms(aircraft_data['cruise_TAS'])
+    print(v_cruise)
     w_cruise = 0 # assumes no climbing 
     gs_cruise = (v_cruise**2 - w_cruise**2) ** 0.5 # ground speed and thus distance covered
-    s_cruise = v_cruise * t_cruise # m
-    t_cruise = min_cruise_duration # s, cruise time
-    s_tol = sum(flight_path['climb'].values()) + sum(flight_path['descent'].values()) # m
-    t_tol = sum(flight_path['climb'].values()) + sum(flight_path['descent'].values())
-    s_total = t_tol + s_cruise # m
+    s_cruise = gs_cruise * t_cruise # m
+    
+    s_tol = (sum(value for key, value in flight_path['climb'].items() if key.startswith('s_')) +
+             sum(value for key, value in flight_path['descent'].items() if key.startswith('s_')))
+    t_tol = (sum(value for key, value in flight_path['climb'].items() if key.startswith('t_')) +
+             sum(value for key, value in flight_path['descent'].items() if key.startswith('t_')))
+    s_total = s_tol + s_cruise # m
+    print(f"t_tol: {t_tol}, s_tol: {s_tol}, s_cruise: {s_cruise}")
     t_total = t_tol + t_cruise # s
     
     
     # if the 10 minute cruise profile results in a distance longer than the requested great circle distance, throw an error
     if s_cruise > gc_dist:
         raise ValueError(f"Requested mission distance of {gc_dist} m is shorter than a 10 minute cruise, which will go {s_cruise} m. Please request a total distance longer than {s_cruise} m.")
-    elif s_total < gc_dist: 
+    # if the default cruise profile results in a distance shorter than the requested great circle distance, decrease the cruise altitude
+    elif s_total < gc_dist:
+        print(12) 
         s_cruise = gc_dist - s_tol # m
         t_cruise = s_cruise / gs_cruise
         s_total = s_tol + s_cruise # m
         t_total = t_tol + t_cruise
     # otherwise, if the default cruise profile results in a distance too long, decrease the cruise altitude
     else:
-        
         counter = 0
         while s_total - gc_dist > s_tolerance and counter < 100: # not wrapping in absolute value to terminate loop if we get to an undershoot, will get skipped if we are already under the tolerance
             # initialize to zero values:
@@ -583,6 +588,7 @@ def generate_flightpath(typecode,
             }
             
             # alt_cruise *= ft_to_m(alt_decrement)  # decrease the cruise alitude by 1kft. may be faster/more accurate if use amount of overshoot as a scaling factor
+            # alt_cruise *= 0.99
             alt_cruise -= ft_to_m(alt_decrement)
             # build new flight at given altitude
             if alt_cruise <= ft_to_m(5000): # if cruise altitude is between 0 and 5000 ft
@@ -927,7 +933,7 @@ def generate_flightpath(typecode,
                                 w_climb_ceil = ftmin_to_ms(aircraft_data['mach_climb_ROC'])
                             gs_climb_ceil = (v_climb_ceil**2 - w_climb_ceil**2) ** 0.5 # ground speed and thus distance covered
                             
-                            t_climb_ceil = (alt_end - alt_start) / w_climb_ceil # s
+                            t_climb_ceil = (alt_cruise - alt_end) / w_climb_ceil # s
                             s_climb_ceil = gs_climb_ceil * t_climb_ceil
                             flight_path['climb']['t_climb_ceil'] = t_climb_ceil # s
                             flight_path['climb']['s_climb_ceil'] = s_climb_ceil # m
@@ -961,7 +967,7 @@ def generate_flightpath(typecode,
                                 w_descent_ceil = ftmin_to_ms(aircraft_data['initial_descent_to_fl_240_ROD'])
                             gs_descent_ceil = (v_descent_ceil**2 - w_descent_ceil**2) ** 0.5 # ground speed and thus distance covered
                             
-                            t_descent_ceil = (alt_end - alt_start) / w_descent_ceil # s
+                            t_descent_ceil = (alt_cruise - alt_end) / w_descent_ceil # s
                             s_descent_ceil = gs_descent_ceil * t_descent_ceil
                             flight_path['descent']['t_descent_ceil'] = t_descent_ceil # s
                             flight_path['descent']['s_descent_ceil'] = s_descent_ceil # m
@@ -986,11 +992,17 @@ def generate_flightpath(typecode,
             gs_cruise = (v_cruise**2 - w_cruise**2) ** 0.5 # ground speed and thus distance covered
             s_cruise = v_cruise * t_cruise # m
             t_cruise = min_cruise_duration # s, cruise time
-            s_tol = sum(flight_path['climb'].values()) + sum(flight_path['descent'].values()) # m
-            t_tol = sum(flight_path['climb'].values()) + sum(flight_path['descent'].values())
+            
+            # calculate the TOL distance and time:
+            s_tol = (sum(value for key, value in flight_path['climb'].items() if key.startswith('s_')) +
+                     sum(value for key, value in flight_path['descent'].items() if key.startswith('s_')))
+            t_tol = (sum(value for key, value in flight_path['climb'].items() if key.startswith('t_')) +
+                     sum(value for key, value in flight_path['descent'].items() if key.startswith('t_')))
             s_total = s_tol + s_cruise # m
             t_total = t_tol + t_cruise # s
             counter +=1
+            print("difference "+ str(s_total - gc_dist) + " altitude " + str(alt_cruise))
+            print(f"t_tol: {t_tol}, s_tol: {s_tol}, s_cruise: {s_cruise}")
             
             
     flight_path['cruise'] = {'s_cruise': s_cruise,

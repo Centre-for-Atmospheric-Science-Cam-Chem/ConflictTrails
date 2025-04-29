@@ -11,6 +11,8 @@ def plot_flightpaths(flightpath_list):
     
     plt.figure(figsize=(10, 6))
     
+    flightpath_list = flightpath_list if isinstance(flightpath_list, list) else [flightpath_list]
+    
     for flightpath in flightpath_list:
         distances_list = [0]
         altitudes_list = [0]
