@@ -495,10 +495,17 @@ def generate_flightpath(typecode,
 
                     
     # Build cruise phase
-    if aircraft_data['cruise_MACH'] == 'no data':
-        v_cruise = kts_to_ms(aircraft_data['cruise_TAS']) # m/s, TAS
-    else:
-        v_cruise = aircraft_data['cruise_MACH'] * Atmosphere(alt_cruise).speed_of_sound # m/s, TAS
+    # only use mach cruise above 24kft, otherwise use TAS
+    if alt_cruise > ft_to_m(24000): # if cruise altitude is greater than 24000 ft, prefer mach
+        if aircraft_data['cruise_MACH'] == 'no data':
+            v_cruise = kts_to_ms(aircraft_data['cruise_TAS']) # m/s, TAS
+        else:
+            v_cruise = aircraft_data['cruise_MACH'] * Atmosphere(alt_cruise).speed_of_sound # m/s, TAS
+    else: # if cruise altitude is less than 24000 ft, prefer TAS
+        if aircraft_data['cruise_TAS'] == 'no data':
+            v_cruise = aircraft_data['cruise_MACH'] * Atmosphere(ft_to_m(24000)).speed_of_sound # m/s, TAS
+        else:
+            v_cruise = kts_to_ms(aircraft_data['cruise_TAS'])
     w_cruise = 0 # assumes no climbing 
     gs_cruise = (v_cruise**2 - w_cruise**2) ** 0.5 # ground speed and thus distance covered
     s_cruise = v_cruise * t_cruise # m
@@ -966,7 +973,18 @@ def generate_flightpath(typecode,
                     
                     
             # Build cruise phase
-            v_cruise = aircraft_data['cruise_MACH'] * Atmosphere(alt_cruise).speed_of_sound # m/s, TAS
+            # only use mach cruise above 24kft, otherwise use TAS
+            if alt_cruise > ft_to_m(24000): # if cruise altitude is greater than 24000 ft, prefer mach
+                if aircraft_data['cruise_MACH'] == 'no data':
+                    v_cruise = kts_to_ms(aircraft_data['cruise_TAS']) # m/s, TAS
+                else:
+                    v_cruise = aircraft_data['cruise_MACH'] * Atmosphere(alt_cruise).speed_of_sound # m/s, TAS
+            else: # if cruise altitude is less than 24000 ft, prefer TAS
+                if aircraft_data['cruise_TAS'] == 'no data':
+                    v_cruise = aircraft_data['cruise_MACH'] * Atmosphere(ft_to_m(24000)).speed_of_sound # m/s, TAS
+                else:
+                    v_cruise = kts_to_ms(aircraft_data['cruise_TAS'])
+                    
             w_cruise = 0 # assumes no climbing 
             gs_cruise = (v_cruise**2 - w_cruise**2) ** 0.5 # ground speed and thus distance covered
             s_cruise = v_cruise * t_cruise # m
