@@ -6,7 +6,6 @@ from icet import icet
 from ambiance import Atmosphere
 import re
 
-
 def generate_flightpath(typecode,
                         gc_dist: float = 200, # km: converted to km in function
                         performance_data: pd.DataFrame = pd.DataFrame()):
@@ -529,9 +528,7 @@ def generate_flightpath(typecode,
         
         counter = 0
         while s_total - gc_dist > s_tolerance and counter < 100: # not wrapping in absolute value to terminate loop if we get to an undershoot, will get skipped if we are already under the tolerance
-            print("distance difference: " + str(s_total-gc_dist))
-                
-             # initialize to zero values:
+            # initialize to zero values:
             flight_path['climb'] = {
                 's_climb_0_5': 0,
                 't_climb_0_5': 0,
@@ -988,7 +985,6 @@ def generate_flightpath(typecode,
             w_cruise = 0 # assumes no climbing 
             gs_cruise = (v_cruise**2 - w_cruise**2) ** 0.5 # ground speed and thus distance covered
             s_cruise = v_cruise * t_cruise # m
-            print("s_cruise: " + str(s_cruise) + ", h_cruise: " + str(alt_cruise))
             t_cruise = min_cruise_duration # s, cruise time
             s_tol = sum(flight_path['climb'].values()) + sum(flight_path['descent'].values()) # m
             t_tol = sum(flight_path['climb'].values()) + sum(flight_path['descent'].values())
