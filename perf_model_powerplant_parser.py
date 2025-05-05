@@ -13,6 +13,8 @@ def perf_model_powerplant_parser(df):
     This function applies several regex patterns (with special-case logic)
     to accommodate a wide range of text formats.
     """
+    # Configure logging.
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     
     # Map textual numbers to digits.
     text_to_digit = {
@@ -23,15 +25,17 @@ def perf_model_powerplant_parser(df):
     # --- Define regex patterns (tried in order) ---
     patterns = []
     
-    # Pattern 9: Handles cases like "2x (78kN) PowerJet SaM 146"
+    # Pattern 9:
+    # Handles cases like "2x (78kN) PowerJet SaM 146"
     patterns.append(re.compile(
         r'(?P<number>\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*[x×]\s*\(\s*'
         r'(?P<thrust>\d+(?:[.,]\d+)?\.?)\s*(?P<unit>kN|kW|hp|SHP)\s*\)\s+'
-        r'(?P<manufacturer>PowerJet\s+SaM)\s*(?P<engine_code>\S+)',
+        r'(?P<manufacturer>PowerJet\s+SaM)\s+(?P<engine_code>\S+)',
         re.IGNORECASE
     ))
     
-    # Pattern 7: Handles cases like "4 x 185 kN P&W F117-PW-100 (PW2040) turbofans."
+    # Pattern 7:
+    # Handles cases like "4 x 185 kN P&W F117-PW-100 (PW2040) turbofans."
     patterns.append(re.compile(
         r'(?P<number>\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*[x×]\s*'
         r'(?P<thrust>\d+(?:[.,]\d+)?\.?)\s*(?P<unit>kN|kW|hp|SHP)\s+'
@@ -39,7 +43,17 @@ def perf_model_powerplant_parser(df):
         re.IGNORECASE
     ))
     
-    # Pattern 1: Standard inline thrust value.
+    # Pattern A (new):
+    # Handles cases where no manufacturer is specified; e.g. "2 x 262kN CF6-80C2"
+    patterns.append(re.compile(
+        r'^(?P<number>\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*[x×]\s*'
+        r'(?P<thrust>\d+(?:[.,]\d+)?\.?)\s*(?P<unit>kN|kW|hp|SHP)\s+'
+        r'(?P<engine_code>[A-Z0-9\-\s/]+)$',
+        re.IGNORECASE
+    ))
+    
+    # Pattern 1:
+    # Standard inline thrust value with manufacturer.
     patterns.append(re.compile(
         r'(?P<number>\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*[x×]\s*'
         r'(?P<thrust>\d+(?:[.,]\d+)?\.?)\s*(?P<unit>kN|kW|hp|SHP)\s+'
@@ -48,7 +62,8 @@ def perf_model_powerplant_parser(df):
         re.IGNORECASE
     ))
     
-    # Pattern 8: For entries with no explicit multiplier.
+    # Pattern 8:
+    # For entries that do not contain an explicit multiplier.
     # Example: "61.3 kN rated GE CF34 - 8C1 turbofans." → default number = 2.
     patterns.append(re.compile(
         r'(?P<thrust>\d+(?:[.,]\d+)?\.?)\s*(?P<unit>kN|kW|hp|SHP).*?'
@@ -58,7 +73,8 @@ def perf_model_powerplant_parser(df):
         re.IGNORECASE
     ))
     
-    # Pattern 2: Textual multiplier.
+    # Pattern 2:
+    # When the text includes a multiplier as a word.
     # Example: "two Pratt & Whitney JT8D-5"
     patterns.append(re.compile(
         r'(?P<number>\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*[x×]?\s*'
@@ -67,7 +83,8 @@ def perf_model_powerplant_parser(df):
         re.IGNORECASE
     ))
     
-    # Pattern 3: Standard with thrust.
+    # Pattern 3:
+    # Another standard pattern with thrust.
     patterns.append(re.compile(
         r'(?P<number>\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*[x×]\s*'
         r'(?P<thrust>\d+(?:[.,]\d+)?\.?)\s*(?P<unit>kN|kW|hp|SHP)\s+'
@@ -76,7 +93,8 @@ def perf_model_powerplant_parser(df):
         re.IGNORECASE
     ))
     
-    # Pattern 4: For entries like "2x GF34-8E" (mistyped) or similar.
+    # Pattern 4:
+    # For entries like "2x GF34-8E" (mistyped) or similar.
     patterns.append(re.compile(
         r'(?P<number>\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*[x×]\s*'
         r'(?P<thrust>\d+(?:[.,]\d+)?\.?)?\s*(?P<unit>kN|kW|hp|SHP)?\s*'
@@ -84,7 +102,8 @@ def perf_model_powerplant_parser(df):
         re.IGNORECASE
     ))
     
-    # Pattern 5: For entries with manufacturer and code only.
+    # Pattern 5:
+    # For entries with manufacturer and code only.
     patterns.append(re.compile(
         r'(?P<manufacturer>General\s+Electric|GE)\s+'
         r'(?P<engine_code>[A-Z0-9\-\s/]+)',
@@ -93,7 +112,7 @@ def perf_model_powerplant_parser(df):
     
     def extract_engine_info(spec):
         """
-        Try each regex pattern (in order) on the spec text.
+        Try each regex pattern (in order) on the given spec text.
         Return a dictionary of extracted fields if a pattern matches; else, return None.
         """
         spec = spec.strip()
@@ -106,19 +125,19 @@ def perf_model_powerplant_parser(df):
                     num_str = num_str.lower()
                     number = int(num_str) if num_str.isdigit() else text_to_digit.get(num_str, None)
                 else:
-                    number = 2  # Default if not provided.
+                    number = 2  # default if not provided
                 
                 thrust_val = groups.get('thrust', '') or ''
                 unit = groups.get('unit', '') or ''
                 manufacturer = groups.get('manufacturer', None)
                 engine_code = groups.get('engine_code', '').strip()
                 
-                # Clean up: remove a trailing dot in thrust_val.
+                # Remove trailing dot from thrust, if any.
                 if thrust_val.endswith('.'):
                     thrust_val = thrust_val[:-1]
                 engine_code = " ".join(engine_code.split())
                 
-                # Special case: correct mistyped engine code "GF34-8E" → "CF34-8E".
+                # Special case: correct mistyped engine code "GF34-8E" → "CF34-8E"
                 if re.fullmatch(r'GF34-8E', engine_code, re.IGNORECASE):
                     engine_code = "CF34-8E"
                     manufacturer = "General Electric"
@@ -145,33 +164,34 @@ def perf_model_powerplant_parser(df):
     
     def process_powerplant_text(text):
         """
-        Preprocess the 'powerplant' text and then extract engine info.
+        Preprocess the 'powerplant' text and then try to extract engine info.
         Special handling:
-          - If text equals "no data" (case-insensitive), return None.
+          - If the text is "no data" (case-insensitive), return None.
           - If the text contains "Garrett AiResearch TPE 331", return None.
-          - If the text starts with variant markers like "GR1:", split on "International:" and use the first part.
-            Also remove any "(with afterburner …)" substring, then remove the variant prefix.
-          - If no explicit multiplier is found and the text contains a plural (like "turbofans"), default the number to 2.
+          - If the text starts with variant markers like "GR1:", split on "International:"
+            and remove any "(with afterburner ...)" substrings, then remove the prefix.
+          - If no explicit multiplier is found but the text mentions a plural form (e.g. "turbofans"),
+            default the number to 2.
         """
         text = text.strip()
         if text.lower() == "no data":
             return None
         if "Garrett AiResearch TPE 331" in text:
             return None
-        # Handle the GR1: variant.
+        # Special handling for GR1: variants.
         if text.startswith("GR1:"):
-            # Use only the first portion before "International:".
+            # Keep only the part before "International:" (if present).
             text = text.split("International:")[0].strip()
-            # Remove any "(with afterburner ...)" substring.
+            # Remove any substring like "(with afterburner ...)"
             text = re.sub(r'\(with afterburner.*?\)', '', text, flags=re.IGNORECASE).strip()
             # Remove the "GR1:" prefix.
             text = re.sub(r'^GR1:\s*', '', text, flags=re.IGNORECASE)
         
-        # If no explicit multiplier is present but "turbofans" is mentioned, prepend "2 x ".
+        # If no explicit multiplier is present but text contains "turbofans", prepend "2 x ".
         if not re.search(r'\d+\s*[x×]', text) and re.search(r'\bturbofans?\b', text, re.IGNORECASE):
             text = "2 x " + text
         
-        # Split on " or " and use the first configuration that matches.
+        # Split on " or " and take the first configuration that produces a match.
         specs = re.split(r'\s+or\s+', text, flags=re.IGNORECASE)
         for spec in specs:
             info = extract_engine_info(spec)
@@ -179,7 +199,7 @@ def perf_model_powerplant_parser(df):
                 return info
         return None
 
-    # Process the 'powerplant' column row by row.
+    # Process each row of the input DataFrame.
     num_engines_list = []
     thrust_list = []
     engine_code_list = []
