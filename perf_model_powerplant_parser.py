@@ -241,6 +241,14 @@ def perf_model_powerplant_parser(df, coerce_manufacturer=False, allowed_manufact
                 if re.fullmatch(r'GF34-8E', engine_code, re.IGNORECASE):
                     engine_code = "CF34-8E"
                     manufacturer = "General Electric"
+                # Special case: correct "Trent 7000 to Trent7000".
+                if re.fullmatch(r'Trent 7000', engine_code, re.IGNORECASE):
+                    engine_code = "Trent7000"
+                    manufacturer = "General Electric"
+                # Special case: correct "BR715-C1-30 to BR700-715C1-30"
+                if re.fullmatch(r'BR715-C1-30', engine_code, re.IGNORECASE):
+                    engine_code = "BR700-715C1-30"
+                    manufacturer = "Rolls-Royce Deutschland"
                 # If manufacturer is still missing (as might occur in Pattern 10), derive it from engine_code.
                 if not manufacturer:
                     tokens = engine_code.split()
@@ -308,6 +316,9 @@ def perf_model_powerplant_parser(df, coerce_manufacturer=False, allowed_manufact
             text = re.sub(r'^GR1:\s*', '', text, flags=re.IGNORECASE)
         if not re.search(r'\d+\s*[x×]', text) and re.search(r'\bturbofans?\b', text, re.IGNORECASE):
             text = "2 x " + text
+        # Special handling: If 'C5M:' is present, only parse the C5M part
+        if 'C5M:' in text:
+            text = text.split('C5M:')[1].strip()
         specs = re.split(r'\s+or\s+', text, flags=re.IGNORECASE)
         best_score = -1
         best_info = None
@@ -409,6 +420,52 @@ def perf_model_powerplant_parser(df, coerce_manufacturer=False, allowed_manufact
                     'engine_code': '912 ULS',
                     'regex_path': 'HARDCODED-ROTAX-912-ULS'
                 }
+            # Special handling for "52: 8 x 47.63 kN P&W J 57-P-19"
+            if s.startswith("52: 8 x 47.63 kN P&W J 57-P-19"):
+                return {
+                    'number_of_engines': 4,
+                    'thrust': '192 kN',
+                    'manufacturer': 'Rolls-Royce',
+                    'engine_code': 'RB211',
+                    'regex_path': 'HARDCODED-B52-RB211'
+                }
+            # Special handling for "4x 66500 lbs GEnx-2B67"
+            if s.startswith("4x 66500 lbs GEnx-2B67"):
+                return {
+                    'number_of_engines': 4,
+                    'thrust': '301.00 kN',
+                    'manufacturer': 'General Electric',
+                    'engine_code': 'GEnx-2B67',
+                    'regex_path': 'HARDCODED-GEnx-2B67'
+                }
+            # Special handling for "2 x Pratt & Whitney Pure Power PW1500G"
+            if s.startswith("2 x Pratt & Whitney Pure Power PW1500G"):
+                return {
+                    'number_of_engines': 2,
+                    'thrust': '105 kN',
+                    'manufacturer': 'Prett & Whitney',
+                    'engine_code': 'PW1521G',
+                    'regex_path': 'HARDCODED-PW1500G'
+                }
+            # Special handling for "2 x Pratt & Whitney Pure Power PW1500G"
+            if s.startswith("2 x Pratt & Whitney PurePower PW1500G"):
+                return {
+                    'number_of_engines': 2,
+                    'thrust': '105 kN',
+                    'manufacturer': 'Prett & Whitney',
+                    'engine_code': 'PW1525G',
+                    'regex_path': 'HARDCODED-PW1500G'
+                }
+            # Special handling for "2x Williams / Rolls-Royce FJ44-2A"
+            if s.startswith("2x Williams / Rolls-Royce FJ44-2A"):
+                return {
+                    'number_of_engines': 2,
+                    'thrust': '10 kN',
+                    'manufacturer': 'Rolls-Royce',
+                    'engine_code': 'FJ44-2A',
+                    'regex_path': 'HARDCODED-FJ44-2A'
+                }
+
             # --- END HARDCODED ---
             # Try to extract thrust in kN or convert from lbs/lbf for any other case
             thrust = extract_thrust_kn(s)
