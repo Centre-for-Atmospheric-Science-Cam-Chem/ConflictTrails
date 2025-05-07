@@ -1,8 +1,9 @@
 import pandas as pd
 import re
 import logging
+from difflib import get_close_matches
 
-def perf_model_powerplant_parser(df):
+def perf_model_powerplant_parser(df, coerce_manufacturer=False, allowed_manufacturers=None):
     """
     Given a DataFrame with engine data in the 'powerplant' column,
     return a modified DataFrame with added columns:
@@ -196,69 +197,21 @@ def perf_model_powerplant_parser(df):
         )),
     ]
     
-    def extract_engine_info(spec):
-        """
-        Try each regex pattern (in order) on the spec text.
-        Returns a dictionary of extracted fields—including 'regex_path' set to the pattern label—
-        if a pattern matches; otherwise, returns None.
-        """
-        spec = spec.strip()
-        for label, pat in patterns:
-            m = pat.search(spec)
-            if m:
-                groups = m.groupdict()
-                regex_used = label  # use the explicit label
-                num_str = groups.get('number', None)
-                if num_str:
-                    num_str = num_str.lower()
-                    number = int(num_str) if num_str.isdigit() else text_to_digit.get(num_str, None)
-                else:
-                    number = 2  # default if not provided
-                
-                thrust_val = groups.get('thrust', '') or ''
-                unit = groups.get('unit', '') or ''
-                manufacturer = groups.get('manufacturer', None)
-                engine_code = groups.get('engine_code', '').strip()
-                
-                # Remove trailing dot in thrust.
-                if thrust_val.endswith('.'):
-                    thrust_val = thrust_val[:-1]
-                engine_code = " ".join(engine_code.split())
-                
-                # Special case: correct "GF34-8E" to "CF34-8E".
-                if re.fullmatch(r'GF34-8E', engine_code, re.IGNORECASE):
-                    engine_code = "CF34-8E"
-                    manufacturer = "General Electric"
-                
-                # If manufacturer is still missing (as might occur in Pattern 10), derive it from engine_code.
-                if not manufacturer:
-                    tokens = engine_code.split()
-                    if tokens:
-                        first_token = tokens[0]
-                        if first_token.lower() == "garrett":
-                            manufacturer = "Garrett"
-                            engine_code = " ".join(tokens[1:])
-                        elif first_token.upper().startswith("CF6") or first_token.upper().startswith("CFM"):
-                            manufacturer = "General Electric"
-                # Normalize manufacturer names.
-                if manufacturer:
-                    if re.search(r'P\s*&\s*W', manufacturer, re.IGNORECASE):
-                        manufacturer = "Pratt & Whitney"
-                    elif re.search(r'\bR[-–]?R\b', manufacturer, re.IGNORECASE):
-                        manufacturer = "Rolls Royce"
-                    elif re.fullmatch(r'GE', manufacturer, re.IGNORECASE):
-                        manufacturer = "General Electric"
-                    elif re.search(r'PowerJet\s+SaM', manufacturer, re.IGNORECASE):
-                        manufacturer = "PowerJet S.A."
-                return {
-                    'number_of_engines': number,
-                    'thrust': thrust_val + ((' ' + unit) if thrust_val and unit else ''),
-                    'manufacturer': manufacturer,
-                    'engine_code': engine_code,
-                    'regex_path': regex_used
-                }
-        logging.warning("No match for spec: '%s'", spec)
-        return None
+    def normalize_manufacturer(name, allowed_list):
+        if not isinstance(name, str) or not allowed_list:
+            return name
+        # Try exact, then substring, then fuzzy match
+        name_lower = name.lower()
+        for allowed in allowed_list:
+            if name_lower == allowed.lower():
+                return allowed
+        for allowed in allowed_list:
+            if allowed.lower() in name_lower or name_lower in allowed.lower():
+                return allowed
+        matches = get_close_matches(name, allowed_list, n=1, cutoff=0.4)
+        if matches:
+            return matches[0]
+        return name
     
     def extract_engine_info_all(spec):
         """
@@ -303,11 +256,13 @@ def perf_model_powerplant_parser(df):
                     if re.search(r'P\s*&\s*W', manufacturer, re.IGNORECASE):
                         manufacturer = "Pratt & Whitney"
                     elif re.search(r'\bR[-–]?R\b', manufacturer, re.IGNORECASE):
-                        manufacturer = "Rolls Royce"
+                        manufacturer = "Rolls-Royce plc"
                     elif re.fullmatch(r'GE', manufacturer, re.IGNORECASE):
                         manufacturer = "General Electric"
                     elif re.search(r'PowerJet\s+SaM', manufacturer, re.IGNORECASE):
                         manufacturer = "PowerJet S.A."
+                    elif coerce_manufacturer:
+                        manufacturer = normalize_manufacturer(manufacturer, allowed_manufacturers)
                 info = {
                     'number_of_engines': number,
                     'thrust': thrust_val + ((' ' + unit) if thrust_val and unit else ''),
@@ -466,6 +421,8 @@ def perf_model_powerplant_parser(df):
                     best_score = score
                     best_info = info
         return best_info
+
+    
 
     # Process each row in the DataFrame.
     num_engines_list = []
