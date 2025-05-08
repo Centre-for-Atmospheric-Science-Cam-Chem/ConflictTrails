@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from difflib import SequenceMatcher, get_close_matches
 
-def match_engine_to_emissions_db(performance_models_debug, engine_models, code_weight=0.6, thrust_weight=0.4, thrust_kn_tolerance=15.0):
+def match_engine_to_emissions_db(performance_models, engine_models, code_weight=0.6, thrust_weight=0.4, thrust_kn_tolerance=15.0):
     # this function skips engine models that have 'SHP' or 'HP' in the thrust column, corresponding to turboshaft (geared)
     # or turboprop (ungeared engines)
     def parse_thrust_kn(thrust_str):
@@ -25,7 +25,7 @@ def match_engine_to_emissions_db(performance_models_debug, engine_models, code_w
     engine_models['Rated Thrust (kN)'] = pd.to_numeric(engine_models['Rated Thrust (kN)'], errors='coerce')
 
     matched_ids = []
-    for idx, row in performance_models_debug.iterrows():
+    for idx, row in performance_models.iterrows():
         thrust = row.get('thrust', '')
         engine_code = str(row.get('engine_code', '')).strip()
         manufacturer = str(row.get('manufacturer', '')).strip()
@@ -88,15 +88,20 @@ def match_engine_to_emissions_db(performance_models_debug, engine_models, code_w
             if not selected_id:
                 selected_id = filtered[0][2]
         matched_ids.append(selected_id)
-    result = performance_models_debug.copy()
+    result = performance_models.copy()
     result['matched_engine_id'] = matched_ids
     # Add matched engine thrust column
     matched_thrusts = []
+    matched_uids = []
     for mid in matched_ids:
         if mid is not None and mid in engine_models['Engine Identification'].values:
             thrust_val = engine_models.loc[engine_models['Engine Identification'] == mid, 'Rated Thrust (kN)'].values
+            uid_val = engine_models.loc[engine_models['Engine Identification'] == mid, 'UID No'].values
             matched_thrusts.append(thrust_val[0] if len(thrust_val) > 0 else None)
+            matched_uids.append(uid_val[0] if len(uid_val) > 0 else None)
         else:
             matched_thrusts.append(None)
+            matched_uids.append(None)
     result['matched_engine_thrust_kn'] = matched_thrusts
+    result['matched_engine_uid_no'] = matched_uids
     return result
