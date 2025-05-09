@@ -1080,59 +1080,59 @@ def generate_flightpath(typecode,
     SN_ei_app   = aircraft_data['SN App']
     SN_ei_idle  = aircraft_data['SN Idle']
     
-    Fuel_flow_to = aircraft_data['Fuel Flow T/O (kg/sec)']
-    Fuel_flow_co = aircraft_data['Fuel Flow C/O (kg/sec)']
-    Fuel_flow_app = aircraft_data['Fuel Flow App (kg/sec)']
-    Fuel_flow_idle = aircraft_data['Fuel Flow Idle (kg/sec)']
-    Fuel_flow_cruise = 0.33 * Fuel_flow_to # kg/sec, cruise fuel flow is ~1/3 of T/O fuel flow
+    fuel_flow_to = aircraft_data['Fuel Flow T/O (kg/sec)']
+    fuel_flow_co = aircraft_data['Fuel Flow C/O (kg/sec)']
+    fuel_flow_app = aircraft_data['Fuel Flow App (kg/sec)']
+    fuel_flow_idle = aircraft_data['Fuel Flow Idle (kg/sec)']
+    fuel_flow_cruise = 0.33 * fuel_flow_to # kg/sec, cruise fuel flow is ~1/3 of T/O fuel flow
 
     # Climb emissions
-    flight_path['climb']['HC_climb_0_5'] = HC_ei_to * Fuel_flow_to * flight_path['climb']['t_climb_0_5']
-    flight_path['climb']['CO_climb_0_5'] = CO_ei_to * Fuel_flow_to * flight_path['climb']['t_climb_0_5']
-    flight_path['climb']['NOx_climb_0_5'] = NOx_ei_to * Fuel_flow_to * flight_path['climb']['t_climb_0_5']
+    flight_path['climb']['HC_climb_0_5'] = HC_ei_to * fuel_flow_to * flight_path['climb']['t_climb_0_5']
+    flight_path['climb']['CO_climb_0_5'] = CO_ei_to * fuel_flow_to * flight_path['climb']['t_climb_0_5']
+    flight_path['climb']['NOx_climb_0_5'] = NOx_ei_to * fuel_flow_to * flight_path['climb']['t_climb_0_5']
     flight_path['climb']['SN_climb_0_5'] = SN_ei_to
-    flight_path['climb']['HC_climb_5_10'] = HC_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_5_10']
-    flight_path['climb']['CO_climb_5_10'] = CO_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_5_10']
-    flight_path['climb']['NOx_climb_5_10'] = NOx_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_5_10']
+    flight_path['climb']['HC_climb_5_10'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_5_10']
+    flight_path['climb']['CO_climb_5_10'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_5_10']
+    flight_path['climb']['NOx_climb_5_10'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_5_10']
     flight_path['climb']['SN_climb_5_10'] = SN_ei_co
-    flight_path['climb']['HC_climb_10_15'] = HC_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_10_15']
-    flight_path['climb']['CO_climb_10_15'] = CO_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_10_15']
-    flight_path['climb']['NOx_climb_10_15'] = NOx_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_10_15']
+    flight_path['climb']['HC_climb_10_15'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_10_15']
+    flight_path['climb']['CO_climb_10_15'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_10_15']
+    flight_path['climb']['NOx_climb_10_15'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_10_15']
     flight_path['climb']['SN_climb_10_15'] = SN_ei_co
-    flight_path['climb']['HC_climb_15_24'] = HC_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_15_24']
-    flight_path['climb']['CO_climb_15_24'] = CO_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_15_24']
-    flight_path['climb']['NOx_climb_15_24'] = NOx_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_15_24']
+    flight_path['climb']['HC_climb_15_24'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_15_24']
+    flight_path['climb']['CO_climb_15_24'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_15_24']
+    flight_path['climb']['NOx_climb_15_24'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_15_24']
     flight_path['climb']['SN_climb_15_24'] = SN_ei_co
-    flight_path['climb']['HC_climb_ceil'] = HC_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_ceil']
-    flight_path['climb']['CO_climb_ceil'] = CO_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_ceil']
-    flight_path['climb']['NOx_climb_ceil'] = NOx_ei_co * Fuel_flow_co * flight_path['climb']['t_climb_ceil']
+    flight_path['climb']['HC_climb_ceil'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_ceil']
+    flight_path['climb']['CO_climb_ceil'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_ceil']
+    flight_path['climb']['NOx_climb_ceil'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_ceil']
     flight_path['climb']['SN_climb_ceil'] = SN_ei_co
     
     # Cruise emissions
-    flight_path['cruise']['HC_cruise'] = HC_ei_co * Fuel_flow_cruise * flight_path['cruise']['t_cruise']
-    flight_path['cruise']['CO_cruise'] = CO_ei_co * Fuel_flow_cruise * flight_path['cruise']['t_cruise']
-    flight_path['cruise']['NOx_cruise'] = NOx_ei_co * Fuel_flow_cruise * flight_path['cruise']['t_cruise']
+    flight_path['cruise']['HC_cruise'] = HC_ei_co * fuel_flow_cruise * flight_path['cruise']['t_cruise']
+    flight_path['cruise']['CO_cruise'] = CO_ei_co * fuel_flow_cruise * flight_path['cruise']['t_cruise']
+    flight_path['cruise']['NOx_cruise'] = NOx_ei_co * fuel_flow_cruise * flight_path['cruise']['t_cruise']
     flight_path['cruise']['SN_Cruise'] = SN_ei_co
     # Descent emissions
-    flight_path['descent']['HC_descent_ceil'] = HC_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_ceil']
-    flight_path['descent']['CO_descent_ceil'] = CO_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_ceil']
-    flight_path['descent']['NOx_descent_ceil'] = NOx_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_ceil']
+    flight_path['descent']['HC_descent_ceil'] = HC_ei_app * fuel_flow_app * flight_path['descent']['t_descent_ceil']
+    flight_path['descent']['CO_descent_ceil'] = CO_ei_app * fuel_flow_app * flight_path['descent']['t_descent_ceil']
+    flight_path['descent']['NOx_descent_ceil'] = NOx_ei_app * fuel_flow_app * flight_path['descent']['t_descent_ceil']
     flight_path['descent']['SN_descent_ceil'] = SN_ei_app
-    flight_path['descent']['HC_descent_24_15'] = HC_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_24_15']
-    flight_path['descent']['CO_descent_24_15'] = CO_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_24_15']
-    flight_path['descent']['NOx_descent_24_15'] = NOx_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_24_15']
+    flight_path['descent']['HC_descent_24_15'] = HC_ei_app * fuel_flow_app * flight_path['descent']['t_descent_24_15']
+    flight_path['descent']['CO_descent_24_15'] = CO_ei_app * fuel_flow_app * flight_path['descent']['t_descent_24_15']
+    flight_path['descent']['NOx_descent_24_15'] = NOx_ei_app * fuel_flow_app * flight_path['descent']['t_descent_24_15']
     flight_path['descent']['SN_descent_24_15'] = SN_ei_app
-    flight_path['descent']['HC_descent_15_10'] = HC_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_15_10']
-    flight_path['descent']['CO_descent_15_10'] = CO_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_15_10']
-    flight_path['descent']['NOx_descent_15_10'] = NOx_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_15_10']
+    flight_path['descent']['HC_descent_15_10'] = HC_ei_app * fuel_flow_app * flight_path['descent']['t_descent_15_10']
+    flight_path['descent']['CO_descent_15_10'] = CO_ei_app * fuel_flow_app * flight_path['descent']['t_descent_15_10']
+    flight_path['descent']['NOx_descent_15_10'] = NOx_ei_app * fuel_flow_app * flight_path['descent']['t_descent_15_10']
     flight_path['descent']['SN_descent_15_10'] = SN_ei_app
-    flight_path['descent']['HC_descent_10_5'] = HC_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_10_5']
-    flight_path['descent']['CO_descent_10_5'] = CO_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_10_5']
-    flight_path['descent']['NOx_descent_10_5'] = NOx_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_10_5']
+    flight_path['descent']['HC_descent_10_5'] = HC_ei_app * fuel_flow_app * flight_path['descent']['t_descent_10_5']
+    flight_path['descent']['CO_descent_10_5'] = CO_ei_app * fuel_flow_app * flight_path['descent']['t_descent_10_5']
+    flight_path['descent']['NOx_descent_10_5'] = NOx_ei_app * fuel_flow_app * flight_path['descent']['t_descent_10_5']
     flight_path['descent']['SN_descent_10_5'] = SN_ei_app
-    flight_path['descent']['HC_descent_5_0'] = HC_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_5_0']
-    flight_path['descent']['CO_descent_5_0'] = CO_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_5_0']
-    flight_path['descent']['NOx_descent_5_0'] = NOx_ei_app * Fuel_flow_app * flight_path['descent']['t_descent_5_0']
+    flight_path['descent']['HC_descent_5_0'] = HC_ei_app * fuel_flow_app * flight_path['descent']['t_descent_5_0']
+    flight_path['descent']['CO_descent_5_0'] = CO_ei_app * fuel_flow_app * flight_path['descent']['t_descent_5_0']
+    flight_path['descent']['NOx_descent_5_0'] = NOx_ei_app * fuel_flow_app * flight_path['descent']['t_descent_5_0']
     flight_path['descent']['SN_descent_5_0'] = SN_ei_app
      
     # Convert everything to a basic python float
