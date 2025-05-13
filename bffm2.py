@@ -1,6 +1,6 @@
 from ambiance import Atmosphere
 import numpy as np
-def bffm2(aircraft_data, altitude):
+def bffm2(fuel_flow_icao, HC_ei_vec, CO_ei_vec, NOx_ei_vec, fuel_flow_evaluate):# aircraft_data, altitude):
     '''
     BFFM2 - Boeing Fuel Flow Model 2 is the second version of the Boeing Fuel Flow Model, which is a fuel flow model used to estimate the fuel consumption of commercial aircraft during flight. It is based on a combination of empirical data and theoretical models, and it takes into account various factors such as aircraft weight, altitude, speed, and engine performance.
     The BFFM2 model is used by airlines and aviation authorities to estimate fuel consumption and emissions for different flight profiles, and it is often used in conjunction with other models to provide a comprehensive analysis of aircraft performance.
@@ -9,104 +9,90 @@ def bffm2(aircraft_data, altitude):
     '''
     
     # convert to vector
-    fuel_flow_vec = np.array([aircraft_data['Fuel Flow T/O (kg/sec)'], aircraft_data['Fuel Flow C/O (kg/sec)'], aircraft_data['Fuel Flow App (kg/sec)'], aircraft_data['Fuel Flow Idle (kg/sec)']])
-    HC_ei_vec = np.array([aircraft_data['HC EI T/O (g/kg)'], aircraft_data['HC EI C/O (g/kg)'], aircraft_data['HC EI App (g/kg)'], aircraft_data['HC EI Idle (g/kg)']])
-    CO_ei_vec = np.array([aircraft_data['CO EI T/O (g/kg)'], aircraft_data['CO EI C/O (g/kg)'], aircraft_data['CO EI App (g/kg)'], aircraft_data['CO EI Idle (g/kg)']])
-    NOx_ei_vec = np.array([aircraft_data['NOx EI T/O (g/kg)'], aircraft_data['NOx EI C/O (g/kg)'], aircraft_data['NOx EI App (g/kg)'], aircraft_data['NOx EI Idle (g/kg)']])
+    
+    # fuel_flow_icao = np.array([aircraft_data['Fuel Flow T/O (kg/sec)'], aircraft_data['Fuel Flow C/O (kg/sec)'], aircraft_data['Fuel Flow App (kg/sec)'], aircraft_data['Fuel Flow Idle (kg/sec)']])
+    # HC_ei_vec = np.array([aircraft_data['HC EI T/O (g/kg)'], aircraft_data['HC EI C/O (g/kg)'], aircraft_data['HC EI App (g/kg)'], aircraft_data['HC EI Idle (g/kg)']])
+    # CO_ei_vec = np.array([aircraft_data['CO EI T/O (g/kg)'], aircraft_data['CO EI C/O (g/kg)'], aircraft_data['CO EI App (g/kg)'], aircraft_data['CO EI Idle (g/kg)']])
+    # NOx_ei_vec = np.array([aircraft_data['NOx EI T/O (g/kg)'], aircraft_data['NOx EI C/O (g/kg)'], aircraft_data['NOx EI App (g/kg)'], aircraft_data['NOx EI Idle (g/kg)']])
+    
     # Convert from kg/s to lbs/hr:
-    Fuel_flow_vec = Fuel_flow_vec * 7936.64
+    fuel_flow_icao = fuel_flow_icao * 7936.64
     # 1. Installation Correction Factor (ICF) for the engine
+    #                   T/O   C/O    App    Idle                
     icf_vec = np.array([1.01, 1.013, 1.020, 1.100])
-    Fuel_flow_vec = Fuel_flow_vec * icf_vec
+    fuel_flow_icao = fuel_flow_icao * icf_vec
+    
+    # transform all to log10 space:
+    fuel_flow_icao = np.log10(fuel_flow_icao)
+    HC_ei_vec = np.log10(HC_ei_vec)
+    CO_ei_vec = np.log10(CO_ei_vec)
+    NOx_ei_vec = np.log10(NOx_ei_vec)
+    fuel_flow_evaluate = np.log10(fuel_flow_evaluate)
+
     # 2. Use linear log-log fit on the emission index vs fuel flow rate
-    log_fuel_flow_vec = np.log10(Fuel_flow_vec)
-    log_HC_ei_vec = np.log10(HC_ei_vec)
-    log_CO_ei_vec = np.log10(CO_ei_vec)
-    log_NOx_ei_vec = np.log10(NOx_ei_vec)
-    # Helper to compute average of T/O and C/O in log-log space
-    log_HC_ei_avg_to_co = np.mean([log_HC_ei_vec[0], log_HC_ei_vec[1]])
-    log_CO_ei_avg_to_co = np.mean([np.log10(CO_ei_vec[0]), np.log10(CO_ei_vec[1])])
-    log_fuel_flow_co = log_fuel_flow_vec[1]
-    log_fuel_flow_app = log_fuel_flow_vec[2]
-    log_fuel_flow_idle = log_fuel_flow_vec[3]
+    def piecewise_fit(x, EI_vec, fuel_flow_icao_local):
+        # Line between Idle and Approach:
+        m_3_2 = (EI_vec[3] - EI_vec[2]) / (fuel_flow_icao_local[3] - fuel_flow_icao_local[2])
+        b_3_2 = EI_vec[3] - m_3_2 * fuel_flow_icao_local[3]
 
-    # For HC
-    def log_HC_ei_piecewise(log_fuel_flow):
-        # Line between Idle and App
-        m1 = (log_HC_ei_vec[2] - log_HC_ei_vec[3]) / (log_fuel_flow_vec[2] - log_fuel_flow_vec[3])
-        b1 = log_HC_ei_vec[3] - m1 * log_fuel_flow_vec[3]
-        # Line between App and avg(T/O, C/O)
-        m2 = (log_HC_ei_avg_to_co - log_HC_ei_vec[2]) / (log_fuel_flow_co - log_fuel_flow_vec[2])
-        b2 = log_HC_ei_vec[2] - m2 * log_fuel_flow_vec[2]
-
-        # Find intersection of first line and constant
-        intersect_x = (log_HC_ei_avg_to_co - b1) / m1 if m1 != 0 else float('inf')
-        # If intersection is within [App, C/O], use piecewise; else, use two segments
-        if log_fuel_flow_app <= intersect_x <= log_fuel_flow_co:
-            if log_fuel_flow <= intersect_x:
-                return m1 * log_fuel_flow + b1
+        # Line at the average of T/0 and C/O:
+        m_0_1 = 0
+        b_0_1 = (EI_vec[0] + EI_vec[1])/2
+        
+        # find line between intersection and constant
+        intersect_x = (b_0_1 - b_3_2) / m_3_2 if m_3_2 != 0 else float('inf')           
+        # If intersection is within [App, C/O]
+        if fuel_flow_icao_local[2] <= intersect_x <= fuel_flow_icao_local[1]:
+            if x >= intersect_x:
+                return b_0_1
             else:
-                return log_HC_ei_avg_to_co
-        else:
-            if log_fuel_flow <= log_fuel_flow_app:
-                return m1 * log_fuel_flow + b1
-            elif log_fuel_flow_app < log_fuel_flow <= log_fuel_flow_co:
-                return m2 * log_fuel_flow + b2
-            else:
-                return log_HC_ei_avg_to_co
-
-    # For CO
-    log_CO_ei_app = np.log10(CO_ei_vec[2])
-    log_CO_ei_idle = np.log10(CO_ei_vec[3])
-    def log_CO_ei_piecewise(log_fuel_flow):
-        # Line between Idle and App
-        m1 = (log_CO_ei_app - log_CO_ei_idle) / (log_fuel_flow_app - log_fuel_flow_idle)
-        b1 = log_CO_ei_idle - m1 * log_fuel_flow_idle
-        # Line between App and avg(T/O, C/O)
-        m2 = (log_CO_ei_avg_to_co - log_CO_ei_app) / (log_fuel_flow_co - log_fuel_flow_app)
-        b2 = log_CO_ei_app - m2 * log_fuel_flow_app
-        # Find intersection of first line and constant
-        intersect_x = (log_CO_ei_avg_to_co - b1) / m1 if m1 != 0 else float('inf')
-        # If intersection is within [App, C/O], use piecewise; else, use two segments
-        if log_fuel_flow_app <= intersect_x <= log_fuel_flow_co:
-            if log_fuel_flow <= intersect_x:
-                return m1 * log_fuel_flow + b1
-            else:
-                return log_CO_ei_avg_to_co
-        else:
-            if log_fuel_flow <= log_fuel_flow_app:
-                return m1 * log_fuel_flow + b1
-            elif log_fuel_flow_app < log_fuel_flow <= log_fuel_flow_co:
-                return m2 * log_fuel_flow + b2
-            else:
-                return log_CO_ei_avg_to_co
-    
+                return m_3_2 * x + b_3_2
+        else: # if the intersection is outside of app, CO
+            # find line between approach and average of climbout and takeoff:
+            m_2_1 = (EI_vec[2] - b_0_1) / (fuel_flow_icao_local[2] - fuel_flow_icao_local[1])
+            b_2_1 = EI_vec[2] - m_2_1 * fuel_flow_icao_local[2]
+            if x >= fuel_flow_icao_local[1]: # if x is greater than climbout
+                return b_0_1
+            elif x <= fuel_flow_icao_local[2]: # if x is less than approach
+                return m_3_2 * x + b_3_2
+            else: # if x is between approach and climbout
+                return m_2_1 * x + b_2_1
     # For NOx: Fit a piecewise continuous line through all four points
-
     # Create a piecewise linear point-to-point interpolator in log-log space
-    def log_NOx_ei_piecewise(log_fuel_flow):
-        return np.interp(log_fuel_flow, log_fuel_flow_vec, log_NOx_ei_vec)
     
-    import matplotlib.pyplot as plt
 
-    # Prepare log-log data for plotting
-    x_vals = np.linspace(log_fuel_flow_vec[3], log_fuel_flow_vec[1], 200)
-    hc_fit = [log_HC_ei_piecewise(x) for x in x_vals]
-    co_fit = [log_CO_ei_piecewise(x) for x in x_vals]
+    # Calculate the interpolated emission indices for the given fuel flow rate:
+    ###
+    # log_fuel_flow_evaluate = np.log10(fuel_flow_evaluate)
+    ###
+   
 
-    plt.figure(figsize=(8, 6))
-    # Plot actual points
-    plt.scatter(log_fuel_flow_vec, log_HC_ei_vec, color='blue', label='HC EI data')
-    plt.scatter(log_fuel_flow_vec, np.log10(CO_ei_vec), color='red', label='CO EI data')
-    # Plot fits
-    plt.plot(x_vals, hc_fit, color='blue', linestyle='--', label='HC EI fit')
-    plt.plot(x_vals, co_fit, color='red', linestyle='--', label='CO EI fit')
-
-    plt.xlabel('log10(Fuel Flow) [log10(lbs/hr)]')
-    plt.ylabel('log10(Emission Index) [log10(g/kg)]')
-    plt.title('Log-Log Fits for HC and CO Emission Indices')
-    plt.legend()
-    plt.grid(True, which='both', ls=':')
-    plt.show()
-    # Step 1. 
-
+    # 2a. calculate the temp and pressure correction factors:
+    P_amb = None #FIX ME
+    T_amb = None #FIX ME
+    Mach  = None #FIX ME
+    
+    del_amb = P_amb/14.696
+    theta_amb = (T_amb + 273.15)/288.15
+    # 2b. fuel flow values are further modified by the ambient values:
+    W_ff = (W_f/del_amb) * (theta_amb**3.8) * np.exp(0.2*Mach**2)
+    # 2c. calculate the humidity correction factor, using modified EUCONTROL correction (0.37802)
+    phi = None #FIX ME
+    beta = 7.90298*(1-373.16/(T_amb + 273.16)) + 3.00571 + (5.02808) * np.log(373.16/(T_amb + 273.16)) + 1.3816*10**(-7) * (1-10**(11.344*(1-(T_amb + 273.16)/373.16))) + 8.1328 * 10**(-3) * (10**(3.49149*(1-373.16/(T_amb+273.16)))-1)
+    P_v = (0.014504)*10**beta
+    omega = (0.62198*phi*P_v)/(P_amb-0.37802*phi*P_v)
+    H = -19*(omega-0.0063)
+    
+    # 3. Compute the EI:
+    rEI_HC = piecewise_fit(W_ff, HC_ei_vec, fuel_flow_icao)
+    rEI_CO = piecewise_fit(W_ff, CO_ei_vec, fuel_flow_icao)
+    rEI_NOx = np.interp(W_ff, np.flip(fuel_flow_icao), np.flip(NOx_ei_vec))
+    
+    EI_HC_corr = rEI_HC * theta_amb**3.3 / (del_amb**1.02)
+    EI_CO_corr = rEI_CO * theta_amb**3.3 / (del_amb**1.02)
+    EI_NOx_corr = rEI_NOx * (del_amb**1.02 * theta_amb**3.3)**0.5 * np.exp(H)
+    # 4. Convert to total emissions:
+    # FIX ME
+    
+    
+    return EI_HC_corr, EI_CO_corr, EI_NOx_corr
