@@ -5,7 +5,7 @@ from ftmin_to_ms import ftmin_to_ms
 from icet import icet
 from ambiance import Atmosphere
 import re
-
+from bffm2 import bffm2
 def generate_flightpath(typecode,
                         gc_dist: float = 200, # km: converted to km in function
                         performance_and_emissions_model: pd.DataFrame = pd.DataFrame()):
@@ -1060,6 +1060,7 @@ def generate_flightpath(typecode,
     ########################################################################
     # add emissions database to the flight path:
     ########################################################################
+    
     HC_ei_to    = aircraft_data['HC EI T/O (g/kg)']
     HC_ei_co    = aircraft_data['HC EI C/O (g/kg)']
     HC_ei_app   = aircraft_data['HC EI App (g/kg)']
@@ -1087,26 +1088,32 @@ def generate_flightpath(typecode,
     fuel_flow_cruise = 0.33 * fuel_flow_to # kg/sec, cruise fuel flow is ~1/3 of T/O fuel flow
 
     # Climb emissions
+    
     flight_path['climb']['HC_climb_0_5'] = HC_ei_to * fuel_flow_to * flight_path['climb']['t_climb_0_5']
     flight_path['climb']['CO_climb_0_5'] = CO_ei_to * fuel_flow_to * flight_path['climb']['t_climb_0_5']
     flight_path['climb']['NOx_climb_0_5'] = NOx_ei_to * fuel_flow_to * flight_path['climb']['t_climb_0_5']
     flight_path['climb']['SN_climb_0_5'] = SN_ei_to
+    
     flight_path['climb']['HC_climb_5_10'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_5_10']
     flight_path['climb']['CO_climb_5_10'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_5_10']
     flight_path['climb']['NOx_climb_5_10'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_5_10']
     flight_path['climb']['SN_climb_5_10'] = SN_ei_co
+    
     flight_path['climb']['HC_climb_10_15'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_10_15']
     flight_path['climb']['CO_climb_10_15'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_10_15']
     flight_path['climb']['NOx_climb_10_15'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_10_15']
     flight_path['climb']['SN_climb_10_15'] = SN_ei_co
+    
     flight_path['climb']['HC_climb_15_24'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_15_24']
     flight_path['climb']['CO_climb_15_24'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_15_24']
     flight_path['climb']['NOx_climb_15_24'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_15_24']
     flight_path['climb']['SN_climb_15_24'] = SN_ei_co
+    
     flight_path['climb']['HC_climb_ceil'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_ceil']
     flight_path['climb']['CO_climb_ceil'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_ceil']
     flight_path['climb']['NOx_climb_ceil'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_ceil']
     flight_path['climb']['SN_climb_ceil'] = SN_ei_co
+    
     
     # Cruise emissions
     flight_path['cruise']['HC_cruise'] = HC_ei_co * fuel_flow_cruise * flight_path['cruise']['t_cruise']
