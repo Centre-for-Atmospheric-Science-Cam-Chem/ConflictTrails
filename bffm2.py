@@ -3,10 +3,14 @@ import numpy as np
 from pa_to_psi import pa_to_psi
 def bffm2(aircraft_data, altitude, mach, W_f):
     '''
-    BFFM2 - Boeing Fuel Flow Model 2 is the second version of the Boeing Fuel Flow Model, which is a fuel flow model used to estimate the fuel consumption of commercial aircraft during flight. It is based on a combination of empirical data and theoretical models, and it takes into account various factors such as aircraft weight, altitude, speed, and engine performance.
-    The BFFM2 model is used by airlines and aviation authorities to estimate fuel consumption and emissions for different flight profiles, and it is often used in conjunction with other models to provide a comprehensive analysis of aircraft performance.
-    The BFFM2 model is a widely used tool in the aviation industry for fuel consumption and emissions estimation, and it is considered to be one of the most accurate models available for this purpose.
-    The BFFM2 model is a proprietary model developed by Boeing, and it is based on extensive data collected from commercial aircraft operations. The model uses a combination of empirical data and theoretical models to estimate fuel consumption and emissions for different flight profiles, and it takes into account various factors such as aircraft weight, altitude, speed, and engine performance.
+    This function calculates the emission indices for HC, CO, and NOx at a given altitude and Mach number.
+    It uses the ICAO fuel flow and emission index data from the aircraft_data DataFrame.
+    The function takes the following parameters:
+    - aircraft_data: a DataFrame containing the ICAO fuel flow and emission index data for the aircraft
+    - altitude: the altitude in feet
+    - mach: the Mach number
+    - W_f: the fuel flow in kg/s
+    The function returns a numpy array containing the emission indices for HC, CO, and NOx.
     '''
     # get the necessary data from the aircraft_data dictionary
     fuel_flow_icao = np.array([aircraft_data.iloc[0]['Fuel Flow T/O (kg/sec)'],
@@ -32,6 +36,23 @@ def bffm2(aircraft_data, altitude, mach, W_f):
                            aircraft_data.iloc[0]['NOx EI App (g/kg)'],
                            aircraft_data.iloc[0]['NOx EI Idle (g/kg)']])
     print(NOx_ei_vec)
+    
+    # fix zero values in the EI vectors
+    for vec in [HC_ei_vec, CO_ei_vec, NOx_ei_vec]:
+        # If all values are zero, set all to 1e-4
+        if np.all(vec == 0):
+            vec[:] = 1e-4
+        else:
+            # For each zero, set to 1e-4 if at 85% or 100% power (indices 0,1)
+            for idx in [0, 1]:
+                if vec[idx] == 0:
+                    vec[idx] = 1e-4
+            # For 7% power (index 3), if nonzero, and 30% (index 2) is zero, set 30% to 1e-3
+            if vec[3] != 0 and vec[2] == 0:
+                vec[2] = 1e-3
+            # For any remaining zeros, set to 1e-4
+            vec[vec == 0] = 1e-4
+
 
     atmosphere = Atmosphere(altitude)
     P_amb = pa_to_psi(atmosphere.pressure)
