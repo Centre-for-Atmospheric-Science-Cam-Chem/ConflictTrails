@@ -16,26 +16,22 @@ def bffm2(aircraft_data, altitude, mach, W_f):
     fuel_flow_icao = np.array([aircraft_data.iloc[0]['Fuel Flow T/O (kg/sec)'],
                                aircraft_data.iloc[0]['Fuel Flow C/O (kg/sec)'],
                                aircraft_data.iloc[0]['Fuel Flow App (kg/sec)'],
-                               aircraft_data.iloc[0]['Fuel Flow Idle (kg/sec)']])
-    print(fuel_flow_icao)                       
-
+                               aircraft_data.iloc[0]['Fuel Flow Idle (kg/sec)']])                       
+    print(fuel_flow_icao)
     HC_ei_vec = np.array([aircraft_data.iloc[0]['HC EI T/O (g/kg)'],
                           aircraft_data.iloc[0]['HC EI C/O (g/kg)'],
                           aircraft_data.iloc[0]['HC EI App (g/kg)'],
                           aircraft_data.iloc[0]['HC EI Idle (g/kg)']])
-    print(HC_ei_vec)
 
     CO_ei_vec = np.array([aircraft_data.iloc[0]['CO EI T/O (g/kg)'],
                           aircraft_data.iloc[0]['CO EI C/O (g/kg)'],
                           aircraft_data.iloc[0]['CO EI App (g/kg)'],
                           aircraft_data.iloc[0]['CO EI Idle (g/kg)']])
-    print(CO_ei_vec)
 
     NOx_ei_vec = np.array([aircraft_data.iloc[0]['NOx EI T/O (g/kg)'],
                            aircraft_data.iloc[0]['NOx EI C/O (g/kg)'],
                            aircraft_data.iloc[0]['NOx EI App (g/kg)'],
                            aircraft_data.iloc[0]['NOx EI Idle (g/kg)']])
-    print(NOx_ei_vec)
     
     # fix zero values in the EI vectors
     for vec in [HC_ei_vec, CO_ei_vec, NOx_ei_vec]:

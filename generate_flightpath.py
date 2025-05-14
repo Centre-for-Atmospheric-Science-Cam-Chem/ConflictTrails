@@ -5,7 +5,7 @@ from ftmin_to_ms import ftmin_to_ms
 from icet import icet
 from ambiance import Atmosphere
 import re
-
+from bffm2 import bffm2
 def generate_flightpath(typecode,
                         gc_dist: float = 200, # km: converted to km in function
                         performance_and_emissions_model: pd.DataFrame = pd.DataFrame()):
@@ -28,22 +28,27 @@ def generate_flightpath(typecode,
         # path 
         's_climb_0_5': 0,
         't_climb_0_5': 0,
+        'M_climb_0_5': 0,
         'h_climb_0_5_start': 0,
         'h_climb_0_5_end': 0,
         's_climb_5_10': 0,
         't_climb_5_10': 0,
+        'M_climb_5_10': 0,
         'h_climb_5_10_start': 0,
         'h_climb_5_10_end': 0,
         's_climb_10_15': 0,
         't_climb_10_15': 0,
+        'M_climb_10_15': 0,
         'h_climb_10_15_start': 0,
         'h_climb_10_15_end': 0,
         's_climb_15_24': 0,
         't_climb_15_24': 0,
+        'M_climb_15_24': 0,
         'h_climb_15_24_start': 0,
         'h_climb_15_24_end': 0,
         's_climb_ceil': 0,
         't_climb_ceil': 0,
+        'M_climb_ceil': 0,
         'h_climb_ceil_start': 0,
         'h_climb_ceil_end': 0,
         # emissions 
@@ -74,6 +79,7 @@ def generate_flightpath(typecode,
         # path
         's_cruise': 0,
         't_cruise': 0,
+        'M_cruise': 0,
         'h_cruise_start': 0,
         'h_cruise_end': 0,
         # emissions
@@ -87,22 +93,27 @@ def generate_flightpath(typecode,
         # path
         's_descent_ceil': 0,
         't_descent_ceil': 0,
+        'M_descent_ceil': 0,
         'h_descent_ceil_start': 0,
         'h_descent_ceil_end': 0,
         's_descent_24_15': 0,
         't_descent_24_15': 0,
+        'M_descent_24_15': 0,
         'h_descent_24_15_start': 0,
         'h_descent_24_15_end': 0,
         's_descent_15_10': 0,
         't_descent_15_10': 0,
+        'M_descent_15_10': 0,
         'h_descent_15_10_start': 0,
         'h_descent_15_10_end': 0,
         's_descent_10_5': 0,
         't_descent_10_5': 0,
+        'M_descent_10_5': 0,
         'h_descent_10_5_start': 0,
         'h_descent_10_5_end': 0,
         's_descent_5_0': 0,
         't_descent_5_0': 0,
+        'M_descent_5_0': 0,
         'h_descent_5_0_start': 0,
         'h_descent_5_0_end': 0,
         # emissions
@@ -140,7 +151,7 @@ def generate_flightpath(typecode,
     passenger_freight_factor = 0.851 # ICAO 2024 average freight load factor
     
     # Get aircraft performance data for the given typecode
-    aircraft_data = performance_and_emissions_model[performance_and_emissions_model['typecode'] == typecode]
+    aircraft_data_df = performance_and_emissions_model[performance_and_emissions_model['typecode'] == typecode]
     
     # use regex to convert all string numbers to floats
     pattern = re.compile(r'^-?\d+(\.\d+)?$')
@@ -148,8 +159,8 @@ def generate_flightpath(typecode,
         if isinstance(val, str) and pattern.fullmatch(val):
             return float(val) if '.' in val else int(val)
         return val
-    aircraft_data = aircraft_data.map(to_number).squeeze()
-    
+    aircraft_data = aircraft_data_df.map(to_number).squeeze()
+
     # start at the cruise ceiling
     alt_max = ft_to_m(aircraft_data['cruise_Ceiling']*1e2) # m
     
@@ -175,6 +186,8 @@ def generate_flightpath(typecode,
         
         t_climb_0_5 = (alt_end - alt_start) / w_climb_0_5 # s
         s_climb_0_5 = gs_climb_0_5 * t_climb_0_5
+        M_climb_0_5 = v_climb_0_5 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+        flight_path['climb']['M_climb_0_5'] = M_climb_0_5 # m/s
         flight_path['climb']['t_climb_0_5'] = t_climb_0_5 # s
         flight_path['climb']['s_climb_0_5'] = s_climb_0_5 # m
         flight_path['climb']['h_climb_0_5_start'] = alt_start # m
@@ -192,6 +205,8 @@ def generate_flightpath(typecode,
         
         t_descent_5_0 = (alt_end - alt_start) / w_descent_5_0
         s_descent_5_0 = gs_descent_5_0 * t_descent_5_0
+        M_descent_5_0 = v_descent_5_0 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+        flight_path['descent']['M_descent_5_0'] = M_descent_5_0 # m/s
         flight_path['descent']['t_descent_5_0'] = t_descent_5_0 # s
         flight_path['descent']['s_descent_5_0'] = s_descent_5_0 # m
         flight_path['descent']['h_descent_5_0_start'] = alt_end # m
@@ -232,6 +247,8 @@ def generate_flightpath(typecode,
         
         t_climb_0_5 = (alt_end - alt_start) / w_climb_0_5
         s_climb_0_5 = gs_climb_0_5 * t_climb_0_5
+        M_climb_0_5 = v_climb_0_5 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+        flight_path['climb']['M_climb_0_5'] = M_climb_0_5 # m/s
         flight_path['climb']['t_climb_0_5'] = t_climb_0_5 # s
         flight_path['climb']['s_climb_0_5'] = s_climb_0_5 # m
         flight_path['climb']['h_climb_0_5_start'] = alt_start # m
@@ -249,6 +266,8 @@ def generate_flightpath(typecode,
         
         t_descent_5_0 = (alt_end - alt_start) / w_descent_5_0
         s_descent_5_0 = gs_descent_5_0 * t_descent_5_0
+        M_descent_5_0 = v_descent_5_0 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+        flight_path['descent']['M_descent_5_0'] = M_descent_5_0 # m/s
         flight_path['descent']['t_descent_5_0'] = t_descent_5_0 # s
         flight_path['descent']['s_descent_5_0'] = s_descent_5_0 # m
         flight_path['descent']['h_descent_5_0_start'] = alt_end # m
@@ -269,6 +288,8 @@ def generate_flightpath(typecode,
             
             t_climb_5_10 = (alt_end - alt_start) / w_climb_5_10 # s
             s_climb_5_10 = gs_climb_5_10 * t_climb_5_10
+            M_climb_5_10 = v_climb_5_10 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+            flight_path['climb']['M_climb_5_10'] = M_climb_5_10 # m/s
             flight_path['climb']['t_climb_5_10'] = t_climb_5_10 # s
             flight_path['climb']['s_climb_5_10'] = s_climb_5_10 # m
             flight_path['climb']['h_climb_5_10_start'] = alt_start # m
@@ -286,13 +307,14 @@ def generate_flightpath(typecode,
             
             t_descent_10_5 = (alt_end - alt_start) / w_descent_10_5 # s
             s_descent_10_5 = gs_descent_10_5 * t_descent_10_5
+            M_descent_10_5 = v_descent_10_5 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+            flight_path['descent']['M_descent_10_5'] = M_descent_10_5 # m/s
             flight_path['descent']['t_descent_10_5'] = t_descent_10_5 # s
             flight_path['descent']['s_descent_10_5'] = s_descent_10_5 # m
             flight_path['descent']['h_descent_10_5_start'] = alt_end # m
             flight_path['descent']['h_descent_10_5_end'] = alt_start # m
 
-        
-            # assign remaining climb and descent altitudes to the cruise altitude:
+        # assign remaining climb and descent altitudes to the cruise altitude:
             flight_path['climb']['h_climb_10_15_start'] = alt_end # m
             flight_path['climb']['h_climb_10_15_end'] = alt_end # m.
             flight_path['climb']['h_climb_15_24_start'] = alt_end # m
@@ -321,6 +343,8 @@ def generate_flightpath(typecode,
             
             t_climb_5_10 = (alt_end - alt_start) / w_climb_5_10 # s
             s_climb_5_10 = gs_climb_5_10 * t_climb_5_10
+            M_climb_5_10 = v_climb_5_10 / Atmosphere((alt_start+alt_end)/2).speed_of_sound
+            flight_path['climb']['M_climb_5_10'] = M_climb_5_10 # m/s
             flight_path['climb']['t_climb_5_10'] = t_climb_5_10 # s
             flight_path['climb']['s_climb_5_10'] = s_climb_5_10 # m
             flight_path['climb']['h_climb_5_10_start'] = alt_start # m
@@ -338,6 +362,8 @@ def generate_flightpath(typecode,
             
             t_descent_10_5 = (alt_end - alt_start) / w_descent_10_5
             s_descent_10_5 = gs_descent_10_5 * t_descent_10_5
+            M_descent_10_5 = v_descent_10_5 / Atmosphere((alt_start+alt_end)/2).speed_of_sound
+            flight_path['descent']['M_descent_10_5'] = M_descent_10_5 # m/s
             flight_path['descent']['t_descent_10_5'] = t_descent_10_5 # s
             flight_path['descent']['s_descent_10_5'] = s_descent_10_5 # m
             flight_path['descent']['h_descent_10_5_start'] = alt_end # m
@@ -359,6 +385,8 @@ def generate_flightpath(typecode,
                 
                 t_climb_10_15 = (alt_end - alt_start) / w_climb_10_15 # s
                 s_climb_10_15 = gs_climb_10_15 * t_climb_10_15
+                M_climb_10_15 = v_climb_10_15 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                flight_path['climb']['M_climb_10_15'] = M_climb_10_15 # m/s
                 flight_path['climb']['t_climb_10_15'] = t_climb_10_15 # s
                 flight_path['climb']['s_climb_10_15'] = s_climb_10_15 # m
                 flight_path['climb']['h_climb_10_15_start'] = alt_start # m
@@ -376,14 +404,15 @@ def generate_flightpath(typecode,
                 
                 t_descent_15_10 = (alt_end - alt_start) / w_descent_15_10 # s
                 s_descent_15_10 = gs_descent_15_10 * t_descent_15_10
+                M_descent_15_10 = v_descent_15_10 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                flight_path['descent']['M_descent_15_10'] = M_descent_15_10 # m/s
                 flight_path['descent']['t_descent_15_10'] = t_descent_15_10 # s
                 flight_path['descent']['s_descent_15_10'] = s_descent_15_10 # m
                 flight_path['descent']['h_descent_15_10_start'] = alt_end # m
                 flight_path['descent']['h_descent_15_10_end'] = alt_start # m
 
-                
                 # assign remaining climb and descent altitudes to the cruise altitude:
-                flight_path['climb']['h_climb_15_24_start'] = alt_end # m   
+                flight_path['climb']['h_climb_15_24_start'] = alt_end # m
                 flight_path['climb']['h_climb_15_24_end'] = alt_end # m
                 flight_path['climb']['h_climb_ceil_start'] = alt_end # m
                 flight_path['climb']['h_climb_ceil_end'] = alt_end # m
@@ -408,6 +437,8 @@ def generate_flightpath(typecode,
                 
                 t_climb_10_15 = (alt_end - alt_start) / w_climb_10_15 # s
                 s_climb_10_15 = gs_climb_10_15 * t_climb_10_15
+                M_climb_10_15 = v_climb_10_15 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                flight_path['climb']['M_climb_10_15'] = M_climb_10_15 # m/s
                 flight_path['climb']['t_climb_10_15'] = t_climb_10_15 # s
                 flight_path['climb']['s_climb_10_15'] = s_climb_10_15 # m
                 flight_path['climb']['h_climb_10_15_start'] = alt_start # m
@@ -425,6 +456,8 @@ def generate_flightpath(typecode,
                 
                 t_descent_15_10 = (alt_end - alt_start) / w_descent_15_10 # s
                 s_descent_15_10 = gs_descent_15_10 * t_descent_15_10
+                M_descent_15_10 = v_descent_15_10 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                flight_path['descent']['M_descent_15_10'] = M_descent_15_10 # m/s
                 flight_path['descent']['t_descent_15_10'] = t_descent_15_10 # s
                 flight_path['descent']['s_descent_15_10'] = s_descent_15_10 # m
                 flight_path['descent']['h_descent_15_10_start'] = alt_end # m
@@ -445,6 +478,8 @@ def generate_flightpath(typecode,
                     
                     t_climb_15_24 = (alt_end - alt_start) / w_climb_15_24 # s
                     s_climb_15_24 = gs_climb_15_24 * t_climb_15_24
+                    M_climb_15_24 = v_climb_15_24 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                    flight_path['climb']['M_climb_15_24'] = M_climb_15_24 # m/s
                     flight_path['climb']['t_climb_15_24'] = t_climb_15_24 # s
                     flight_path['climb']['s_climb_15_24'] = s_climb_15_24 # m
                     flight_path['climb']['h_climb_15_24_start'] = alt_start # m
@@ -462,6 +497,8 @@ def generate_flightpath(typecode,
                     
                     t_descent_24_15 = (alt_end - alt_start) / w_descent_24_15
                     s_descent_24_15 = gs_descent_24_15 * t_descent_24_15
+                    M_descent_24_15 = v_descent_24_15 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                    flight_path['descent']['M_descent_24_15'] = M_descent_24_15 # m/s
                     flight_path['descent']['t_descent_24_15'] = t_descent_24_15 # s
                     flight_path['descent']['s_descent_24_15'] = s_descent_24_15 # m
                     flight_path['descent']['h_descent_24_15_start'] = alt_end # m
@@ -488,6 +525,8 @@ def generate_flightpath(typecode,
                     gs_climb_15_24 = (v_climb_15_24**2 - w_climb_15_24**2) ** 0.5
                     t_climb_15_24 = (alt_end - alt_start) / w_climb_15_24 # s
                     s_climb_15_24 = gs_climb_15_24 * t_climb_15_24
+                    M_climb_15_24 = v_climb_15_24 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                    flight_path['climb']['M_climb_15_24'] = M_climb_15_24 # m/s
                     flight_path['climb']['t_climb_15_24'] = t_climb_15_24 # s
                     flight_path['climb']['s_climb_15_24'] = s_climb_15_24 # m
                     flight_path['climb']['h_climb_15_24_start'] = alt_start # m
@@ -505,6 +544,8 @@ def generate_flightpath(typecode,
                     
                     t_climb_ceil = (alt_cruise - alt_end) / w_climb_ceil # s
                     s_climb_ceil = gs_climb_ceil * t_climb_ceil
+                    M_climb_ceil = v_climb_ceil / Atmosphere((alt_end + alt_cruise)/2).speed_of_sound # m/s
+                    flight_path['climb']['M_climb_ceil'] = M_climb_ceil # m/s
                     flight_path['climb']['t_climb_ceil'] = t_climb_ceil # s
                     flight_path['climb']['s_climb_ceil'] = s_climb_ceil # m
                     flight_path['climb']['h_climb_ceil_start'] = alt_end # m
@@ -522,6 +563,8 @@ def generate_flightpath(typecode,
                     
                     t_descent_24_15 = (alt_end - alt_start) / w_descent_24_15
                     s_descent_24_15 = gs_descent_24_15 * t_descent_24_15
+                    M_descent_24_15 = v_descent_24_15 / Atmosphere((alt_start + alt_end)/2).speed_of_sound # m/s
+                    flight_path['descent']['M_descent_24_15'] = M_descent_24_15 # m/s
                     flight_path['descent']['t_descent_24_15'] = t_descent_24_15 # s
                     flight_path['descent']['s_descent_24_15'] = s_descent_24_15 # m
                     flight_path['descent']['h_descent_24_15_start'] = alt_end # m
@@ -539,6 +582,8 @@ def generate_flightpath(typecode,
                     
                     t_descent_ceil = (alt_cruise - alt_end) / w_descent_ceil # s
                     s_descent_ceil = gs_descent_ceil * t_descent_ceil
+                    M_descent_ceil = v_descent_ceil / Atmosphere((alt_end + alt_cruise)/2).speed_of_sound # m/s
+                    flight_path['descent']['M_descent_ceil'] = M_descent_ceil # m/s
                     flight_path['descent']['t_descent_ceil'] = t_descent_ceil # s
                     flight_path['descent']['s_descent_ceil'] = s_descent_ceil # m
                     flight_path['descent']['h_descent_ceil_start'] = alt_cruise # m
@@ -586,22 +631,27 @@ def generate_flightpath(typecode,
             flight_path['climb'] = {
                 's_climb_0_5': 0,
                 't_climb_0_5': 0,
+                'M_climb_0_5': 0,
                 'h_climb_0_5_start': 0,
                 'h_climb_0_5_end': 0,
                 's_climb_5_10': 0,
                 't_climb_5_10': 0,
+                'M_climb_5_10': 0,
                 'h_climb_5_10_start': 0,
                 'h_climb_5_10_end': 0,
                 's_climb_10_15': 0,
                 't_climb_10_15': 0,
+                'M_climb_10_15': 0,
                 'h_climb_10_15_start': 0,
                 'h_climb_10_15_end': 0,
                 's_climb_15_24': 0,
                 't_climb_15_24': 0,
+                'M_climb_15_24': 0,
                 'h_climb_15_24_start': 0,
                 'h_climb_15_24_end': 0,
                 's_climb_ceil': 0,
                 't_climb_ceil': 0,
+                'M_climb_ceil': 0,
                 'h_climb_ceil_start': 0,
                 'h_climb_ceil_end': 0
             }
@@ -609,6 +659,7 @@ def generate_flightpath(typecode,
             flight_path['cruise'] = {
                 's_cruise': 0,
                 't_cruise': 0,
+                'M_cruise': 0,
                 'h_cruise_start': 0,
                 'h_cruise_end': 0
             }
@@ -616,22 +667,27 @@ def generate_flightpath(typecode,
             flight_path['descent'] = {
                 's_descent_ceil': 0,
                 't_descent_ceil': 0,
+                'M_descent_ceil': 0,
                 'h_descent_ceil_start': 0,
                 'h_descent_ceil_end': 0,
                 's_descent_24_15': 0,
                 't_descent_24_15': 0,
+                'M_descent_24_15': 0,
                 'h_descent_24_15_start': 0,
                 'h_descent_24_15_end': 0,
                 's_descent_15_10': 0,
                 't_descent_15_10': 0,
+                'M_descent_15_10': 0,
                 'h_descent_15_10_start': 0,
                 'h_descent_15_10_end': 0,
                 's_descent_10_5': 0,
                 't_descent_10_5': 0,
+                'M_descent_10_5': 0,
                 'h_descent_10_5_start': 0,
                 'h_descent_10_5_end': 0,
                 's_descent_5_0': 0,
                 't_descent_5_0': 0,
+                'M_descent_5_0': 0,
                 'h_descent_5_0_start': 0,
                 'h_descent_5_0_end': 0
             }
@@ -640,6 +696,7 @@ def generate_flightpath(typecode,
             alt_cruise *= 0.99
             # alt_cruise -= ft_to_m(alt_decrement)
             # build new flight at given altitude
+            # Build climb and descent phases 
             if alt_cruise <= ft_to_m(5000): # if cruise altitude is between 0 and 5000 ft
                 alt_start = ft_to_m(0) # m
                 alt_end = alt_cruise # m
@@ -654,6 +711,8 @@ def generate_flightpath(typecode,
                 
                 t_climb_0_5 = (alt_end - alt_start) / w_climb_0_5 # s
                 s_climb_0_5 = gs_climb_0_5 * t_climb_0_5
+                M_climb_0_5 = v_climb_0_5 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                flight_path['climb']['M_climb_0_5'] = M_climb_0_5 # m/s
                 flight_path['climb']['t_climb_0_5'] = t_climb_0_5 # s
                 flight_path['climb']['s_climb_0_5'] = s_climb_0_5 # m
                 flight_path['climb']['h_climb_0_5_start'] = alt_start # m
@@ -671,6 +730,8 @@ def generate_flightpath(typecode,
                 
                 t_descent_5_0 = (alt_end - alt_start) / w_descent_5_0
                 s_descent_5_0 = gs_descent_5_0 * t_descent_5_0
+                M_descent_5_0 = v_descent_5_0 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                flight_path['descent']['M_descent_5_0'] = M_descent_5_0 # m/s
                 flight_path['descent']['t_descent_5_0'] = t_descent_5_0 # s
                 flight_path['descent']['s_descent_5_0'] = s_descent_5_0 # m
                 flight_path['descent']['h_descent_5_0_start'] = alt_end # m
@@ -711,6 +772,8 @@ def generate_flightpath(typecode,
                 
                 t_climb_0_5 = (alt_end - alt_start) / w_climb_0_5
                 s_climb_0_5 = gs_climb_0_5 * t_climb_0_5
+                M_climb_0_5 = v_climb_0_5 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                flight_path['climb']['M_climb_0_5'] = M_climb_0_5 # m/s
                 flight_path['climb']['t_climb_0_5'] = t_climb_0_5 # s
                 flight_path['climb']['s_climb_0_5'] = s_climb_0_5 # m
                 flight_path['climb']['h_climb_0_5_start'] = alt_start # m
@@ -728,6 +791,8 @@ def generate_flightpath(typecode,
                 
                 t_descent_5_0 = (alt_end - alt_start) / w_descent_5_0
                 s_descent_5_0 = gs_descent_5_0 * t_descent_5_0
+                M_descent_5_0 = v_descent_5_0 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                flight_path['descent']['M_descent_5_0'] = M_descent_5_0 # m/s
                 flight_path['descent']['t_descent_5_0'] = t_descent_5_0 # s
                 flight_path['descent']['s_descent_5_0'] = s_descent_5_0 # m
                 flight_path['descent']['h_descent_5_0_start'] = alt_end # m
@@ -748,6 +813,8 @@ def generate_flightpath(typecode,
                     
                     t_climb_5_10 = (alt_end - alt_start) / w_climb_5_10 # s
                     s_climb_5_10 = gs_climb_5_10 * t_climb_5_10
+                    M_climb_5_10 = v_climb_5_10 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                    flight_path['climb']['M_climb_5_10'] = M_climb_5_10 # m/s
                     flight_path['climb']['t_climb_5_10'] = t_climb_5_10 # s
                     flight_path['climb']['s_climb_5_10'] = s_climb_5_10 # m
                     flight_path['climb']['h_climb_5_10_start'] = alt_start # m
@@ -765,13 +832,14 @@ def generate_flightpath(typecode,
                     
                     t_descent_10_5 = (alt_end - alt_start) / w_descent_10_5 # s
                     s_descent_10_5 = gs_descent_10_5 * t_descent_10_5
+                    M_descent_10_5 = v_descent_10_5 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                    flight_path['descent']['M_descent_10_5'] = M_descent_10_5 # m/s
                     flight_path['descent']['t_descent_10_5'] = t_descent_10_5 # s
                     flight_path['descent']['s_descent_10_5'] = s_descent_10_5 # m
                     flight_path['descent']['h_descent_10_5_start'] = alt_end # m
                     flight_path['descent']['h_descent_10_5_end'] = alt_start # m
 
-                
-                    # assign remaining climb and descent altitudes to the cruise altitude:
+                # assign remaining climb and descent altitudes to the cruise altitude:
                     flight_path['climb']['h_climb_10_15_start'] = alt_end # m
                     flight_path['climb']['h_climb_10_15_end'] = alt_end # m.
                     flight_path['climb']['h_climb_15_24_start'] = alt_end # m
@@ -800,6 +868,8 @@ def generate_flightpath(typecode,
                     
                     t_climb_5_10 = (alt_end - alt_start) / w_climb_5_10 # s
                     s_climb_5_10 = gs_climb_5_10 * t_climb_5_10
+                    M_climb_5_10 = v_climb_5_10 / Atmosphere((alt_start+alt_end)/2).speed_of_sound
+                    flight_path['climb']['M_climb_5_10'] = M_climb_5_10 # m/s
                     flight_path['climb']['t_climb_5_10'] = t_climb_5_10 # s
                     flight_path['climb']['s_climb_5_10'] = s_climb_5_10 # m
                     flight_path['climb']['h_climb_5_10_start'] = alt_start # m
@@ -817,6 +887,8 @@ def generate_flightpath(typecode,
                     
                     t_descent_10_5 = (alt_end - alt_start) / w_descent_10_5
                     s_descent_10_5 = gs_descent_10_5 * t_descent_10_5
+                    M_descent_10_5 = v_descent_10_5 / Atmosphere((alt_start+alt_end)/2).speed_of_sound
+                    flight_path['descent']['M_descent_10_5'] = M_descent_10_5 # m/s
                     flight_path['descent']['t_descent_10_5'] = t_descent_10_5 # s
                     flight_path['descent']['s_descent_10_5'] = s_descent_10_5 # m
                     flight_path['descent']['h_descent_10_5_start'] = alt_end # m
@@ -838,6 +910,8 @@ def generate_flightpath(typecode,
                         
                         t_climb_10_15 = (alt_end - alt_start) / w_climb_10_15 # s
                         s_climb_10_15 = gs_climb_10_15 * t_climb_10_15
+                        M_climb_10_15 = v_climb_10_15 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                        flight_path['climb']['M_climb_10_15'] = M_climb_10_15 # m/s
                         flight_path['climb']['t_climb_10_15'] = t_climb_10_15 # s
                         flight_path['climb']['s_climb_10_15'] = s_climb_10_15 # m
                         flight_path['climb']['h_climb_10_15_start'] = alt_start # m
@@ -855,14 +929,15 @@ def generate_flightpath(typecode,
                         
                         t_descent_15_10 = (alt_end - alt_start) / w_descent_15_10 # s
                         s_descent_15_10 = gs_descent_15_10 * t_descent_15_10
+                        M_descent_15_10 = v_descent_15_10 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                        flight_path['descent']['M_descent_15_10'] = M_descent_15_10 # m/s
                         flight_path['descent']['t_descent_15_10'] = t_descent_15_10 # s
                         flight_path['descent']['s_descent_15_10'] = s_descent_15_10 # m
                         flight_path['descent']['h_descent_15_10_start'] = alt_end # m
                         flight_path['descent']['h_descent_15_10_end'] = alt_start # m
 
-                        
                         # assign remaining climb and descent altitudes to the cruise altitude:
-                        flight_path['climb']['h_climb_15_24_start'] = alt_end # m   
+                        flight_path['climb']['h_climb_15_24_start'] = alt_end # m
                         flight_path['climb']['h_climb_15_24_end'] = alt_end # m
                         flight_path['climb']['h_climb_ceil_start'] = alt_end # m
                         flight_path['climb']['h_climb_ceil_end'] = alt_end # m
@@ -887,6 +962,8 @@ def generate_flightpath(typecode,
                         
                         t_climb_10_15 = (alt_end - alt_start) / w_climb_10_15 # s
                         s_climb_10_15 = gs_climb_10_15 * t_climb_10_15
+                        M_climb_10_15 = v_climb_10_15 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                        flight_path['climb']['M_climb_10_15'] = M_climb_10_15 # m/s
                         flight_path['climb']['t_climb_10_15'] = t_climb_10_15 # s
                         flight_path['climb']['s_climb_10_15'] = s_climb_10_15 # m
                         flight_path['climb']['h_climb_10_15_start'] = alt_start # m
@@ -904,6 +981,8 @@ def generate_flightpath(typecode,
                         
                         t_descent_15_10 = (alt_end - alt_start) / w_descent_15_10 # s
                         s_descent_15_10 = gs_descent_15_10 * t_descent_15_10
+                        M_descent_15_10 = v_descent_15_10 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                        flight_path['descent']['M_descent_15_10'] = M_descent_15_10 # m/s
                         flight_path['descent']['t_descent_15_10'] = t_descent_15_10 # s
                         flight_path['descent']['s_descent_15_10'] = s_descent_15_10 # m
                         flight_path['descent']['h_descent_15_10_start'] = alt_end # m
@@ -924,6 +1003,8 @@ def generate_flightpath(typecode,
                             
                             t_climb_15_24 = (alt_end - alt_start) / w_climb_15_24 # s
                             s_climb_15_24 = gs_climb_15_24 * t_climb_15_24
+                            M_climb_15_24 = v_climb_15_24 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                            flight_path['climb']['M_climb_15_24'] = M_climb_15_24 # m/s
                             flight_path['climb']['t_climb_15_24'] = t_climb_15_24 # s
                             flight_path['climb']['s_climb_15_24'] = s_climb_15_24 # m
                             flight_path['climb']['h_climb_15_24_start'] = alt_start # m
@@ -941,6 +1022,8 @@ def generate_flightpath(typecode,
                             
                             t_descent_24_15 = (alt_end - alt_start) / w_descent_24_15
                             s_descent_24_15 = gs_descent_24_15 * t_descent_24_15
+                            M_descent_24_15 = v_descent_24_15 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                            flight_path['descent']['M_descent_24_15'] = M_descent_24_15 # m/s
                             flight_path['descent']['t_descent_24_15'] = t_descent_24_15 # s
                             flight_path['descent']['s_descent_24_15'] = s_descent_24_15 # m
                             flight_path['descent']['h_descent_24_15_start'] = alt_end # m
@@ -967,6 +1050,8 @@ def generate_flightpath(typecode,
                             gs_climb_15_24 = (v_climb_15_24**2 - w_climb_15_24**2) ** 0.5
                             t_climb_15_24 = (alt_end - alt_start) / w_climb_15_24 # s
                             s_climb_15_24 = gs_climb_15_24 * t_climb_15_24
+                            M_climb_15_24 = v_climb_15_24 / Atmosphere((alt_start+alt_end)/2).speed_of_sound # m/s
+                            flight_path['climb']['M_climb_15_24'] = M_climb_15_24 # m/s
                             flight_path['climb']['t_climb_15_24'] = t_climb_15_24 # s
                             flight_path['climb']['s_climb_15_24'] = s_climb_15_24 # m
                             flight_path['climb']['h_climb_15_24_start'] = alt_start # m
@@ -984,6 +1069,8 @@ def generate_flightpath(typecode,
                             
                             t_climb_ceil = (alt_cruise - alt_end) / w_climb_ceil # s
                             s_climb_ceil = gs_climb_ceil * t_climb_ceil
+                            M_climb_ceil = v_climb_ceil / Atmosphere((alt_end + alt_cruise)/2).speed_of_sound # m/s
+                            flight_path['climb']['M_climb_ceil'] = M_climb_ceil # m/s
                             flight_path['climb']['t_climb_ceil'] = t_climb_ceil # s
                             flight_path['climb']['s_climb_ceil'] = s_climb_ceil # m
                             flight_path['climb']['h_climb_ceil_start'] = alt_end # m
@@ -1001,6 +1088,8 @@ def generate_flightpath(typecode,
                             
                             t_descent_24_15 = (alt_end - alt_start) / w_descent_24_15
                             s_descent_24_15 = gs_descent_24_15 * t_descent_24_15
+                            M_descent_24_15 = v_descent_24_15 / Atmosphere((alt_start + alt_end)/2).speed_of_sound # m/s
+                            flight_path['descent']['M_descent_24_15'] = M_descent_24_15 # m/s
                             flight_path['descent']['t_descent_24_15'] = t_descent_24_15 # s
                             flight_path['descent']['s_descent_24_15'] = s_descent_24_15 # m
                             flight_path['descent']['h_descent_24_15_start'] = alt_end # m
@@ -1018,6 +1107,8 @@ def generate_flightpath(typecode,
                             
                             t_descent_ceil = (alt_cruise - alt_end) / w_descent_ceil # s
                             s_descent_ceil = gs_descent_ceil * t_descent_ceil
+                            M_descent_ceil = v_descent_ceil / Atmosphere((alt_end + alt_cruise)/2).speed_of_sound # m/s
+                            flight_path['descent']['M_descent_ceil'] = M_descent_ceil # m/s
                             flight_path['descent']['t_descent_ceil'] = t_descent_ceil # s
                             flight_path['descent']['s_descent_ceil'] = s_descent_ceil # m
                             flight_path['descent']['h_descent_ceil_start'] = alt_cruise # m
@@ -1054,92 +1145,121 @@ def generate_flightpath(typecode,
             
     flight_path['cruise'] = {'s_cruise': s_cruise,
                              't_cruise': t_cruise,
+                             'M_cruise': v_cruise / Atmosphere(alt_cruise).speed_of_sound,
                              'h_cruise_start': alt_cruise,
                              'h_cruise_end': alt_cruise}
     
     ########################################################################
     # add emissions database to the flight path:
     ########################################################################
-    HC_ei_to    = aircraft_data['HC EI T/O (g/kg)']
-    HC_ei_co    = aircraft_data['HC EI C/O (g/kg)']
-    HC_ei_app   = aircraft_data['HC EI App (g/kg)']
-    HC_ei_idle  = aircraft_data['HC EI Idle (g/kg)']    
+
+    fuel_flow_to = aircraft_data['Fuel Flow T/O (kg/sec)'] # kg/s to lb/hr
+    fuel_flow_co = aircraft_data['Fuel Flow C/O (kg/sec)'] # kg/s to lb/hr
+    fuel_flow_app = aircraft_data['Fuel Flow App (kg/sec)'] # kg/s to lb/hr
+    fuel_flow_idle = aircraft_data['Fuel Flow Idle (kg/sec)'] # kg/s to lb/hr
+    fuel_flow_cruise = 0.5 * fuel_flow_to # kg/sec, cruise fuel flow is ~1/2 of T/O fuel flow
     
-    CO_ei_to    = aircraft_data['CO EI T/O (g/kg)']
-    CO_ei_co    = aircraft_data['CO EI C/O (g/kg)']
-    CO_ei_app   = aircraft_data['CO EI App (g/kg)']
-    CO_ei_idle  = aircraft_data['CO EI Idle (g/kg)']
-    
-    NOx_ei_to   = aircraft_data['NOx EI T/O (g/kg)']
-    NOx_ei_co   = aircraft_data['NOx EI C/O (g/kg)']
-    NOx_ei_app  = aircraft_data['NOx EI App (g/kg)']
-    NOx_ei_idle = aircraft_data['NOx EI Idle (g/kg)']
-    
-    SN_ei_to    = aircraft_data['SN T/O']
-    SN_ei_co    = aircraft_data['SN C/O']
-    SN_ei_app   = aircraft_data['SN App']
-    SN_ei_idle  = aircraft_data['SN Idle']
-    
-    fuel_flow_to = aircraft_data['Fuel Flow T/O (kg/sec)']
-    fuel_flow_co = aircraft_data['Fuel Flow C/O (kg/sec)']
-    fuel_flow_app = aircraft_data['Fuel Flow App (kg/sec)']
-    fuel_flow_idle = aircraft_data['Fuel Flow Idle (kg/sec)']
-    fuel_flow_cruise = 0.33 * fuel_flow_to # kg/sec, cruise fuel flow is ~1/3 of T/O fuel flow
+    # TO
+    [HC_ei_0_5, CO_ei_0_5, NOx_ei_0_5] = bffm2(aircraft_data_df,
+                                              (flight_path['climb']['h_climb_0_5_start'] + flight_path['climb']['h_climb_0_5_end']) / 2,
+                                              flight_path['climb']['M_climb_0_5'],
+                                              fuel_flow_to * 7936.64)
+    # C/O
+    [HC_ei_5_10, CO_ei_5_10, NOx_ei_5_10] = bffm2(aircraft_data_df,
+                                              (flight_path['climb']['h_climb_5_10_start'] + flight_path['climb']['h_climb_5_10_end']) / 2,
+                                              flight_path['climb']['M_climb_5_10'],
+                                              fuel_flow_co * 7936.64)
+    [HC_ei_10_15, CO_ei_10_15, NOx_ei_10_15] = bffm2(aircraft_data_df,
+                                              (flight_path['climb']['h_climb_10_15_start'] + flight_path['climb']['h_climb_10_15_end']) / 2,
+                                              flight_path['climb']['M_climb_10_15'],
+                                              fuel_flow_co * 7936.64)
+    [HC_ei_15_24, CO_ei_15_24, NOx_ei_15_24] = bffm2(aircraft_data_df,
+                                              (flight_path['climb']['h_climb_15_24_start'] + flight_path['climb']['h_climb_15_24_end']) / 2,
+                                              flight_path['climb']['M_climb_15_24'],
+                                              fuel_flow_co * 7936.64)
+    [HC_ei_ceil, CO_ei_ceil, NOx_ei_ceil] = bffm2(aircraft_data_df,
+                                              (flight_path['climb']['h_climb_ceil_start'] + flight_path['climb']['h_climb_ceil_end']) / 2,
+                                              flight_path['climb']['M_climb_ceil'],
+                                              fuel_flow_co * 7936.64)
+    #Cruise
+    [HC_ei_cruise, CO_ei_cruise, NOx_ei_cruise] = bffm2(aircraft_data_df,
+                                              (flight_path['cruise']['h_cruise_start'] + flight_path['cruise']['h_cruise_end']) / 2,
+                                              flight_path['cruise']['M_cruise'],
+                                              fuel_flow_cruise * 7936.64)
+    # Descent
+    [HC_ei_ceild, CO_ei_ceild, NOx_ei_ceild] = bffm2(aircraft_data_df,
+                                              (flight_path['descent']['h_descent_ceil_start'] + flight_path['descent']['h_descent_ceil_end']) / 2,
+                                              flight_path['descent']['M_descent_ceil'],
+                                              fuel_flow_app * 7936.64)
+    [HC_ei_24_15, CO_ei_24_15, NOx_ei_24_15] = bffm2(aircraft_data_df,
+                                              (flight_path['descent']['h_descent_24_15_start'] + flight_path['descent']['h_descent_24_15_end']) / 2,
+                                              flight_path['descent']['M_descent_24_15'],
+                                              fuel_flow_app * 7936.64)
+    [HC_ei_15_10, CO_ei_15_10, NOx_ei_15_10] = bffm2(aircraft_data_df,
+                                              (flight_path['descent']['h_descent_15_10_start'] + flight_path['descent']['h_descent_15_10_end']) / 2,
+                                              flight_path['descent']['M_descent_15_10'],
+                                              fuel_flow_app * 7936.64)
+    [HC_ei_10_5, CO_ei_10_5, NOx_ei_10_5] = bffm2(aircraft_data_df,
+                                              (flight_path['descent']['h_descent_10_5_start'] + flight_path['descent']['h_descent_10_5_end']) / 2,
+                                              flight_path['descent']['M_descent_10_5'],
+                                              fuel_flow_app * 7936.64)
+    [HC_ei_5_0, CO_ei_5_0, NOx_ei_5_0] = bffm2(aircraft_data_df,
+                                              (flight_path['descent']['h_descent_5_0_start'] + flight_path['descent']['h_descent_5_0_end']) / 2,
+                                              flight_path['descent']['M_descent_5_0'],
+                                              fuel_flow_app * 7936.64)
+
 
     # Climb emissions
-    flight_path['climb']['HC_climb_0_5'] = HC_ei_to * fuel_flow_to * flight_path['climb']['t_climb_0_5']
-    flight_path['climb']['CO_climb_0_5'] = CO_ei_to * fuel_flow_to * flight_path['climb']['t_climb_0_5']
-    flight_path['climb']['NOx_climb_0_5'] = NOx_ei_to * fuel_flow_to * flight_path['climb']['t_climb_0_5']
-    flight_path['climb']['SN_climb_0_5'] = SN_ei_to
-    flight_path['climb']['HC_climb_5_10'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_5_10']
-    flight_path['climb']['CO_climb_5_10'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_5_10']
-    flight_path['climb']['NOx_climb_5_10'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_5_10']
-    flight_path['climb']['SN_climb_5_10'] = SN_ei_co
-    flight_path['climb']['HC_climb_10_15'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_10_15']
-    flight_path['climb']['CO_climb_10_15'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_10_15']
-    flight_path['climb']['NOx_climb_10_15'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_10_15']
-    flight_path['climb']['SN_climb_10_15'] = SN_ei_co
-    flight_path['climb']['HC_climb_15_24'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_15_24']
-    flight_path['climb']['CO_climb_15_24'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_15_24']
-    flight_path['climb']['NOx_climb_15_24'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_15_24']
-    flight_path['climb']['SN_climb_15_24'] = SN_ei_co
-    flight_path['climb']['HC_climb_ceil'] = HC_ei_co * fuel_flow_co * flight_path['climb']['t_climb_ceil']
-    flight_path['climb']['CO_climb_ceil'] = CO_ei_co * fuel_flow_co * flight_path['climb']['t_climb_ceil']
-    flight_path['climb']['NOx_climb_ceil'] = NOx_ei_co * fuel_flow_co * flight_path['climb']['t_climb_ceil']
-    flight_path['climb']['SN_climb_ceil'] = SN_ei_co
+    flight_path['climb']['HC_climb_0_5'] = HC_ei_0_5 * fuel_flow_to * flight_path['climb']['t_climb_0_5']
+    flight_path['climb']['CO_climb_0_5'] = CO_ei_0_5 * fuel_flow_to * flight_path['climb']['t_climb_0_5']
+    flight_path['climb']['NOx_climb_0_5'] = NOx_ei_0_5 * fuel_flow_to * flight_path['climb']['t_climb_0_5']
     
+    flight_path['climb']['HC_climb_5_10'] = HC_ei_5_10 * fuel_flow_co * flight_path['climb']['t_climb_5_10']
+    flight_path['climb']['CO_climb_5_10'] = CO_ei_5_10 * fuel_flow_co * flight_path['climb']['t_climb_5_10']
+    flight_path['climb']['NOx_climb_5_10'] = NOx_ei_5_10 * fuel_flow_co * flight_path['climb']['t_climb_5_10']
+    
+    flight_path['climb']['HC_climb_10_15'] = HC_ei_10_15 * fuel_flow_co * flight_path['climb']['t_climb_10_15']
+    flight_path['climb']['CO_climb_10_15'] = CO_ei_10_15 * fuel_flow_co * flight_path['climb']['t_climb_10_15']
+    flight_path['climb']['NOx_climb_10_15'] = NOx_ei_10_15 * fuel_flow_co * flight_path['climb']['t_climb_10_15']
+
+    flight_path['climb']['HC_climb_15_24'] = HC_ei_15_24 * fuel_flow_co * flight_path['climb']['t_climb_15_24']
+    flight_path['climb']['CO_climb_15_24'] = CO_ei_15_24 * fuel_flow_co * flight_path['climb']['t_climb_15_24']
+    flight_path['climb']['NOx_climb_15_24'] = NOx_ei_15_24 * fuel_flow_co * flight_path['climb']['t_climb_15_24']
+    
+    flight_path['climb']['HC_climb_ceil'] = HC_ei_ceil * fuel_flow_co * flight_path['climb']['t_climb_ceil']
+    flight_path['climb']['CO_climb_ceil'] = CO_ei_ceil * fuel_flow_co * flight_path['climb']['t_climb_ceil']
+    flight_path['climb']['NOx_climb_ceil'] = NOx_ei_ceil * fuel_flow_co * flight_path['climb']['t_climb_ceil']
+
     # Cruise emissions
-    flight_path['cruise']['HC_cruise'] = HC_ei_co * fuel_flow_cruise * flight_path['cruise']['t_cruise']
-    flight_path['cruise']['CO_cruise'] = CO_ei_co * fuel_flow_cruise * flight_path['cruise']['t_cruise']
-    flight_path['cruise']['NOx_cruise'] = NOx_ei_co * fuel_flow_cruise * flight_path['cruise']['t_cruise']
-    flight_path['cruise']['SN_Cruise'] = SN_ei_co
+    flight_path['cruise']['HC_cruise'] = HC_ei_cruise * fuel_flow_cruise * flight_path['cruise']['t_cruise']
+    flight_path['cruise']['CO_cruise'] = CO_ei_cruise * fuel_flow_cruise * flight_path['cruise']['t_cruise']
+    flight_path['cruise']['NOx_cruise'] = NOx_ei_cruise * fuel_flow_cruise * flight_path['cruise']['t_cruise']
+
     # Descent emissions
-    flight_path['descent']['HC_descent_ceil'] = HC_ei_app * fuel_flow_app * flight_path['descent']['t_descent_ceil']
-    flight_path['descent']['CO_descent_ceil'] = CO_ei_app * fuel_flow_app * flight_path['descent']['t_descent_ceil']
-    flight_path['descent']['NOx_descent_ceil'] = NOx_ei_app * fuel_flow_app * flight_path['descent']['t_descent_ceil']
-    flight_path['descent']['SN_descent_ceil'] = SN_ei_app
-    flight_path['descent']['HC_descent_24_15'] = HC_ei_app * fuel_flow_app * flight_path['descent']['t_descent_24_15']
-    flight_path['descent']['CO_descent_24_15'] = CO_ei_app * fuel_flow_app * flight_path['descent']['t_descent_24_15']
-    flight_path['descent']['NOx_descent_24_15'] = NOx_ei_app * fuel_flow_app * flight_path['descent']['t_descent_24_15']
-    flight_path['descent']['SN_descent_24_15'] = SN_ei_app
-    flight_path['descent']['HC_descent_15_10'] = HC_ei_app * fuel_flow_app * flight_path['descent']['t_descent_15_10']
-    flight_path['descent']['CO_descent_15_10'] = CO_ei_app * fuel_flow_app * flight_path['descent']['t_descent_15_10']
-    flight_path['descent']['NOx_descent_15_10'] = NOx_ei_app * fuel_flow_app * flight_path['descent']['t_descent_15_10']
-    flight_path['descent']['SN_descent_15_10'] = SN_ei_app
-    flight_path['descent']['HC_descent_10_5'] = HC_ei_app * fuel_flow_app * flight_path['descent']['t_descent_10_5']
-    flight_path['descent']['CO_descent_10_5'] = CO_ei_app * fuel_flow_app * flight_path['descent']['t_descent_10_5']
-    flight_path['descent']['NOx_descent_10_5'] = NOx_ei_app * fuel_flow_app * flight_path['descent']['t_descent_10_5']
-    flight_path['descent']['SN_descent_10_5'] = SN_ei_app
-    flight_path['descent']['HC_descent_5_0'] = HC_ei_app * fuel_flow_app * flight_path['descent']['t_descent_5_0']
-    flight_path['descent']['CO_descent_5_0'] = CO_ei_app * fuel_flow_app * flight_path['descent']['t_descent_5_0']
-    flight_path['descent']['NOx_descent_5_0'] = NOx_ei_app * fuel_flow_app * flight_path['descent']['t_descent_5_0']
-    flight_path['descent']['SN_descent_5_0'] = SN_ei_app
-     
+    flight_path['descent']['HC_descent_ceil'] = HC_ei_ceild * fuel_flow_app * flight_path['descent']['t_descent_ceil']
+    flight_path['descent']['CO_descent_ceil'] = CO_ei_ceild * fuel_flow_app * flight_path['descent']['t_descent_ceil']
+    flight_path['descent']['NOx_descent_ceil'] = NOx_ei_ceild * fuel_flow_app * flight_path['descent']['t_descent_ceil']
+
+    flight_path['descent']['HC_descent_24_15'] = HC_ei_24_15 * fuel_flow_app * flight_path['descent']['t_descent_24_15']
+    flight_path['descent']['CO_descent_24_15'] = CO_ei_24_15 * fuel_flow_app * flight_path['descent']['t_descent_24_15']
+    flight_path['descent']['NOx_descent_24_15'] = NOx_ei_24_15 * fuel_flow_app * flight_path['descent']['t_descent_24_15']
+
+    flight_path['descent']['HC_descent_15_10'] = HC_ei_15_10 * fuel_flow_app * flight_path['descent']['t_descent_15_10']
+    flight_path['descent']['CO_descent_15_10'] = CO_ei_15_10 * fuel_flow_app * flight_path['descent']['t_descent_15_10']
+    flight_path['descent']['NOx_descent_15_10'] = NOx_ei_15_10 * fuel_flow_app * flight_path['descent']['t_descent_15_10']
+
+    flight_path['descent']['HC_descent_10_5'] = HC_ei_10_5 * fuel_flow_app * flight_path['descent']['t_descent_10_5']
+    flight_path['descent']['CO_descent_10_5'] = CO_ei_10_5 * fuel_flow_app * flight_path['descent']['t_descent_10_5']
+    flight_path['descent']['NOx_descent_10_5'] = NOx_ei_10_5 * fuel_flow_app * flight_path['descent']['t_descent_10_5']
+
+    flight_path['descent']['HC_descent_5_0'] = HC_ei_5_0 * fuel_flow_app * flight_path['descent']['t_descent_5_0']
+    flight_path['descent']['CO_descent_5_0'] = CO_ei_5_0 * fuel_flow_app * flight_path['descent']['t_descent_5_0']
+    flight_path['descent']['NOx_descent_5_0'] = NOx_ei_5_0 * fuel_flow_app * flight_path['descent']['t_descent_5_0']
+
     # Convert everything to a basic python float
     for key in flight_path:
         for sub_key in flight_path[key]:
             flight_path[key][sub_key] = float(flight_path[key][sub_key])
-    # return the results
     
+    # return the results
     return flight_path
-
