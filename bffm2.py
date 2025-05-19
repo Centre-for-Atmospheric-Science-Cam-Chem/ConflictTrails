@@ -17,7 +17,7 @@ def bffm2(aircraft_data, altitude, mach, W_f):
                                aircraft_data.iloc[0]['Fuel Flow C/O (kg/sec)'],
                                aircraft_data.iloc[0]['Fuel Flow App (kg/sec)'],
                                aircraft_data.iloc[0]['Fuel Flow Idle (kg/sec)']])                       
-    print(fuel_flow_icao)
+    
     HC_ei_vec = np.array([aircraft_data.iloc[0]['HC EI T/O (g/kg)'],
                           aircraft_data.iloc[0]['HC EI C/O (g/kg)'],
                           aircraft_data.iloc[0]['HC EI App (g/kg)'],
