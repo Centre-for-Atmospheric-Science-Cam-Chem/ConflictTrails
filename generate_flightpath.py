@@ -8,7 +8,8 @@ import re
 from bffm2 import bffm2
 def generate_flightpath(typecode,
                         gc_dist: float = 200, # km: converted to km in function
-                        performance_and_emissions_model: pd.DataFrame = pd.DataFrame()):
+                        performance_and_emissions_model: pd.DataFrame = pd.DataFrame(),
+                        cruise_altitude_ft: float = None):
     """
     Generates a flight path for a given aircraft type and distance.
     creates a mission profile with climb, cruise, and descent phases.
@@ -168,7 +169,10 @@ def generate_flightpath(typecode,
     m_to = aircraft_data['take-off_MTOW'] * 0.85 # FIX - make far more robust, in kg
         
     # Generate the default 10 minute cruise time flight profile at the maximum cruise altitude:
-    alt_cruise = alt_max # m, cruise altitude
+    if cruise_altitude_ft is not None:
+        alt_cruise = ft_to_m(cruise_altitude_ft) # m, cruise altitude
+    else:
+        alt_cruise = alt_max * 0.95
     t_cruise = min_cruise_duration # s, cruise time
     
     # Build climb and descent phases 
