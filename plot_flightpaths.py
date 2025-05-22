@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def plot_flightpaths(flightpath_list):
+def plot_flightpaths(flightpath_list, typecode: str = None):
     """
     Plot the flight path of an aircraft.
     Parameters:
@@ -30,9 +30,12 @@ def plot_flightpaths(flightpath_list):
     # Plot the altitude profile vs. cumulative flight distance.
     plt.xlabel('Cumulative Flight Distance (meters)')
     plt.ylabel("Altitude (meters)")
-    plt.title("Flightpaths for varying flight distances")
-    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    if typecode is not None:
+        plt.title(f'Flightpaths for varying flight distances and typecode {typecode}')
+    else:
+        plt.title('Flightpaths for varying flight distances')
+        plt.xscale('log')
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='best')
     plt.tight_layout()
     plt.grid(True)
-    plt.show()
-    
+    plt.show()  
