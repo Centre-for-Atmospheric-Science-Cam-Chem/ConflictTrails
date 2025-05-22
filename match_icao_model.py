@@ -50,40 +50,23 @@ def match_icao_model(start_time_str: str,
     
     # remove all rows where estdepartureairport or estarrivalairport are <NA>
     flight_df = flight_df[flight_df['estdepartureairport'].notna() & flight_df['estarrivalairport'].notna()]
-
+    
     # inner join the two dataframes on the icao24 column. this eliminates all rows where typecode cannot be matched to an icao24 code.
     flight_df = pd.merge(flight_df, aircraft_df, on='icao24', how='inner')
 
-    # Determine the month for each flight and save by month
-    if 'timestamp' in flight_df.columns:
-        flight_df['month'] = pd.to_datetime(flight_df['timestamp']).dt.strftime('%m')
-        flight_df['year'] = pd.to_datetime(flight_df['timestamp']).dt.strftime('%Y')
-    elif 'day' in flight_df.columns:
-        flight_df['month'] = pd.to_datetime(flight_df['day']).dt.strftime('%m')
-        flight_df['year'] = pd.to_datetime(flight_df['day']).dt.strftime('%Y')
-    else:
-        flight_df['month'] = pd.NA
-        flight_df['year'] = pd.NA
-
-    # Save each month's flights to a separate folder
+    # Convert the timestamp to a datetime object
+    start_time_dt = pd.to_datetime(start_time_str)
+    stop_time_dt  = pd.to_datetime(stop_time_str)   
+    # Convert the timestamp to a string in the format YYYY-MM-DD
+    start_time_ts = start_time_dt.strftime("%Y-%m-%d")
+    stop_time_ts  = stop_time_dt.strftime("%Y-%m-%d")
+    
+    # save the result to a pickle file
     output_dir = os.path.expanduser(output_dir)
     os.makedirs(output_dir, exist_ok=True)
-    grouped = flight_df.groupby(['year', 'month'])
-    saved_files = []
-    for (year, month), group in grouped:
-        if pd.isna(year) or pd.isna(month):
-            continue
-        month_folder = os.path.join(output_dir, f"{year}_{month}")
-        os.makedirs(month_folder, exist_ok=True)
-        start_time_dt = pd.to_datetime(start_time_str)
-        stop_time_dt  = pd.to_datetime(stop_time_str)
-        start_time_ts = start_time_dt.strftime("%Y-%m-%d")
-        stop_time_ts  = stop_time_dt.strftime("%Y-%m-%d")
-        filename = os.path.join(month_folder, f"{start_time_ts}_to_{stop_time_ts}_{int(query_limit)}_typecodes_added.pkl")
-        group = group.drop(columns=['month', 'year'])
-        group.to_pickle(filename)
-        print(f"Saved {len(group)} flights to", filename)
-        saved_files.append(filename)
-
-    # Optionally return the list of saved files
-    return saved_files
+    filename = os.path.join(output_dir, f"{start_time_ts}_to_{stop_time_ts}_{int(query_limit)}_typecodes_added.pkl")
+    flight_df.to_pickle(filename)
+    print("Saved result_df to", filename)
+    
+    #return the result dataframe
+    return flight_df
