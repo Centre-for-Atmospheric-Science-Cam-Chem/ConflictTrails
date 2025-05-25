@@ -4,7 +4,7 @@ import pandas as pd
 # User Inputs:
 start_time_str       = '2023-01-01T00:00:00Z'
 stop_time_str        = '2023-12-31T23:59:59Z'
-query_limit          = 15e4
+query_limit          = int(15e4)
 send_notification    = True
 make_plot            = False
 output_dir           = "/scratch/omg28/Data/no_track2023"

@@ -5,7 +5,7 @@ from datetime import datetime
 
 def load_saved_fd4(timestamp: str,
                    output_dir: str = "~/Data",
-                   query_limit: int = 5e4):
+                   query_limit: int = int(5e4)):
     """
     Loads data from the saved .pkl files for analysis, optionally choosing the file with a specific query limit.
     The function will look for files in the specified directory and load the one that matches the timestamp and query limit.

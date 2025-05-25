@@ -12,8 +12,8 @@ with open(KEYS_PATH, 'r') as keys_file:
             keys[key.strip()] = value.strip().strip("'").strip('"')
     TOKEN = keys.get('TOKEN')
     CHAT_ID = keys.get('CHAT_ID')
-
-def send_telegram_notification(message: str, image_path: str = None):
+    
+def send_telegram_notification(message: str, image_path: str):
     """
     Sends a Telegram notification with a text message and optionally an image.
     
