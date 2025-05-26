@@ -27,5 +27,5 @@ def process_month_emissions_wrapper(args):
     return process_month_emissions(*args)
 
 if __name__ == '__main__':
-   with Pool(128) as p:
+   with Pool(6) as p:
       r = list(tqdm.tqdm(p.imap(process_month_emissions_wrapper, month_args)))

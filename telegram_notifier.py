@@ -13,7 +13,7 @@ with open(KEYS_PATH, 'r') as keys_file:
     TOKEN = keys.get('TOKEN')
     CHAT_ID = keys.get('CHAT_ID')
     
-def send_telegram_notification(message: str, image_path: str):
+def send_telegram_notification(message: str, image_path: str = None):
     """
     Sends a Telegram notification with a text message and optionally an image.
     

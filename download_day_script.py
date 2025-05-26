@@ -14,4 +14,3 @@ start_time_simple = pd.to_datetime(start_time_str).strftime("%Y-%m-%d")
 stop_time_simple = pd.to_datetime(stop_time_str).strftime("%Y-%m-%d")
 
 download_day(start_time_str, stop_time_str, query_limit, send_notification, make_plot, output_dir)
-

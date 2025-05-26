@@ -16,7 +16,7 @@ def process_month_emissions(month_start_time_str: str,
     stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
 
     # Load flights data
-    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')
+    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')[0:1e3]
     model_dir = 'saved_models_nox_flux'
     typecodes = monthly_flights['typecode'].unique()
 
@@ -88,7 +88,7 @@ def process_month_emissions(month_start_time_str: str,
     # Multithreaded processing
     all_updates = []
     with ThreadPoolExecutor() as executor:
-        for updates in tqdm(executor.map(process_flight, [row for _, row in monthly_flights.iterrows()]), total=len(monthly_flights), desc='Flights'):
+        for updates in executor.map(process_flight, [row for _, row in monthly_flights.iterrows()]):
             all_updates.extend(updates)
 
     # Apply updates to grid
