@@ -5,7 +5,8 @@ from tqdm import tqdm
 from generate_flightpath import generate_flightpath
 import os
 from concurrent.futures import ThreadPoolExecutor
-performance_and_emissions_model = pd.read_pickle('performance_and_emissions_model.pkl')
+from geographiclib.geodesic import Geodesic
+
 def process_month_emissions(month_start_time_str: str,
                   output_dir: str = "/scratch/omg28/Data/no_track2023/emissions/",
                   performance_and_emissions_model: pd.DataFrame = pd.read_pickle('performance_and_emissions_model.pkl')):
@@ -16,7 +17,7 @@ def process_month_emissions(month_start_time_str: str,
     stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
 
     # Load flights data
-    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')[0:1e3]
+    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')[0:int(1e3)]
     model_dir = 'saved_models_nox_flux'
     typecodes = monthly_flights['typecode'].unique()
 
@@ -70,10 +71,21 @@ def process_month_emissions(month_start_time_str: str,
         cruise_time_s = cruise_distance_m / cruise_speed_ms
         total_nox_g = mean_nox_flux * cruise_time_s
         total_nox_kg = total_nox_g / 1000
+
+        # Use great circle to generate waypoints
         n_segments = int(np.ceil(cruise_distance_m / 10000))
-        lats = np.linspace(row['estdeparturelat'], row['estarrivallat'], n_segments)
-        lons = np.linspace(row['estdeparturelong'], row['estarrivallong'], n_segments)
+        geod = Geodesic.WGS84
+        line = geod.InverseLine(row['estdeparturelat'], row['estdeparturelong'],
+                                row['estarrivallat'], row['estarrivallong'])
+        ds = cruise_distance_m / n_segments
+        lats, lons = [], []
+        for i in range(n_segments):
+            s = min(ds * i, line.s13)
+            pos = line.Position(s)
+            lats.append(pos['lat2'])
+            lons.append(pos['lon2'])
         alts = np.full(n_segments, cruise_alt_ft)
+
         updates = []
         for i in range(n_segments):
             lat_idx = np.searchsorted(lat_bins, lats[i], side='right') - 1

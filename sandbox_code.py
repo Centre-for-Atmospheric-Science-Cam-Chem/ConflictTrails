@@ -3,6 +3,7 @@ from process_month_emissions import process_month_emissions
 from multiprocessing import Pool
 import pandas as pd
 import tqdm
+import os
 
 # User Inputs:
 start_time_str       = '2023-01-01T00:00:00Z'
@@ -26,6 +27,9 @@ for start_time_str_loop in pd.date_range(start=pd.to_datetime(start_time_str), e
 def process_month_emissions_wrapper(args):
     return process_month_emissions(*args)
 
+num_cores = int(round(os.cpu_count()/2))
+
 if __name__ == '__main__':
-   with Pool(6) as p:
-      r = list(tqdm.tqdm(p.imap(process_month_emissions_wrapper, month_args)))
+   with Pool(num_cores) as p:
+      r = list(p.imap(process_month_emissions_wrapper, month_args))
+
