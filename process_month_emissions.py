@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import pickle
-from tqdm import tqdm
 from generate_flightpath import generate_flightpath
 import os
 from multiprocessing import Pool, cpu_count
@@ -111,7 +110,7 @@ def process_month_emissions(
 
     # Simple for loop instead of multiprocessing
     results = []
-    for args in tqdm(pool_args, desc="Processing flights"):
+    for args in pool_args:
         updates = process_flight(args)
         results.append(updates)
 

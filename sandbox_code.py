@@ -3,6 +3,7 @@ from process_month_emissions import process_month_emissions
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # User Inputs:
 start_time_str       = '2023-01-01T00:00:00Z'

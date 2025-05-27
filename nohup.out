@@ -1,2 +1,17 @@
 Generated emissions file for month: 2023-01
 Generated emissions file for month: 2023-02
+/home/omg28/miniforge3/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
+Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
+  warnings.warn(
+Generated emissions file for month: 2023-01
+Generated emissions file for month: 2023-02
+Generated emissions file for month: 2023-03
+Generated emissions file for month: 2023-04
+Generated emissions file for month: 2023-05
+Generated emissions file for month: 2023-06
+Generated emissions file for month: 2023-07
+Generated emissions file for month: 2023-08
+Generated emissions file for month: 2023-09
+Generated emissions file for month: 2023-10
+Generated emissions file for month: 2023-11
+Generated emissions file for month: 2023-12
