@@ -6,10 +6,11 @@ from generate_flightpath import generate_flightpath
 import os
 from multiprocessing import Pool, cpu_count
 from geographiclib.geodesic import Geodesic
+import xgboost as xgb
 
 
 # Prepare cruise altitude and speed lookup from performance_and_emissions_model
-perf_df = pd.read_pickle('performance_and_emissions_model.pkl').set_index('typecode')[0:1000]
+perf_df = pd.read_pickle('performance_and_emissions_model.pkl').set_index('typecode')
 SECONDS_PER_MONTH = 31 * 24 * 3600  # January
 REMOVAL_TIMESCALE_S = 2 * 24 * 3600  # 2 days
 
@@ -80,7 +81,7 @@ def process_month_emissions(month_start_time_str: str,
     stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
 
     # Load flights data
-    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')[0:10000]
+    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')
     model_dir = 'saved_models_nox_flux'
     typecodes = monthly_flights['typecode'].unique()
 
@@ -90,7 +91,7 @@ def process_month_emissions(month_start_time_str: str,
         model_path = os.path.join(model_dir, f'xgb_{typecode}.pkl')
         if os.path.exists(model_path):
             with open(model_path, 'rb') as f:
-                xgb_models[typecode] = pickle.load(f)
+                xgb_models[typecode] = xgb.XGBRegressor().load_model(f)
    
 
     # Define grid
@@ -112,7 +113,7 @@ def process_month_emissions(month_start_time_str: str,
     ]
 
     # Multiprocessing pool
-    with Pool(processes=round(cpu_count()/2)) as pool:
+    with Pool(processes=round(cpu_count()*0.8)) as pool:
         results = list(pool.imap_unordered(process_flight, pool_args))
 
     # Aggregate results

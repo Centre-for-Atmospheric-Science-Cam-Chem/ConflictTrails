@@ -1,249 +1,0 @@
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/xgboost/core.py:377: FutureWarning: Your system has an old version of glibc (< 2.28). We will stop supporting Linux distros with glibc older than 2.28 after **May 31, 2025**. Please upgrade to a recent Linux distro (with glibc >= 2.28) to use future versions of XGBoost.
-Note: You have installed the 'manylinux2014' variant of XGBoost. Certain features such as GPU algorithms or federated learning are not available. To use these features, please upgrade to a recent Linux distro with glibc 2.28+, and install the 'manylinux_2_28' variant.
-  warnings.warn(
-multiprocessing.pool.RemoteTraceback: 
-"""
-Traceback (most recent call last):
-  File "/home/omg28/.conda/envs/traffic/lib/python3.12/multiprocessing/pool.py", line 125, in worker
-    result = (True, func(*args, **kwds))
-                    ^^^^^^^^^^^^^^^^^^^
-  File "/home/omg28/ConflictTrails/sandbox_code.py", line 28, in process_month_emissions_wrapper
-    return process_month_emissions(*args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/omg28/ConflictTrails/process_month_emissions.py", line 109, in process_month_emissions
-    with Pool(processes=round(cpu_count()/2)) as pool:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/omg28/.conda/envs/traffic/lib/python3.12/multiprocessing/context.py", line 119, in Pool
-    return Pool(processes, initializer, initargs, maxtasksperchild,
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/omg28/.conda/envs/traffic/lib/python3.12/multiprocessing/pool.py", line 215, in __init__
-    self._repopulate_pool()
-  File "/home/omg28/.conda/envs/traffic/lib/python3.12/multiprocessing/pool.py", line 306, in _repopulate_pool
-    return self._repopulate_pool_static(self._ctx, self.Process,
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/omg28/.conda/envs/traffic/lib/python3.12/multiprocessing/pool.py", line 329, in _repopulate_pool_static
-    w.start()
-  File "/home/omg28/.conda/envs/traffic/lib/python3.12/multiprocessing/process.py", line 118, in start
-    assert not _current_process._config.get('daemon'), \
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: daemonic processes are not allowed to have children
-"""
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/home/omg28/ConflictTrails/sandbox_code.py", line 34, in <module>
-    r = list(p.imap(process_month_emissions_wrapper, month_args))
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/omg28/.conda/envs/traffic/lib/python3.12/multiprocessing/pool.py", line 873, in next
-    raise value
-AssertionError: daemonic processes are not allowed to have children
-Traceback (most recent call last):
-  File "/home/omg28/ConflictTrails/process_month_emissions.py", line 5, in <module>
-    from generate_flightpath import generate_flightpath
-  File "/home/omg28/ConflictTrails/generate_flightpath.py", line 5, in <module>
-    from icet import icet
-  File "/home/omg28/ConflictTrails/icet.py", line 1, in <module>
-    from ambiance import Atmosphere
-ModuleNotFoundError: No module named 'ambiance'
-  0%|          | 0/219 [00:00<?, ?it/s]  1%|          | 2/219 [00:27<49:49, 13.78s/it]  1%|▏         | 3/219 [00:53<1:07:13, 18.67s/it]  2%|▏         | 4/219 [01:14<1:09:56, 19.52s/it]  2%|▏         | 5/219 [01:34<1:11:20, 20.00s/it]  3%|▎         | 7/219 [01:56<54:43, 15.49s/it]    4%|▎         | 8/219 [02:22<1:03:43, 18.12s/it]  4%|▍         | 9/219 [02:44<1:07:42, 19.34s/it]  5%|▍         | 10/219 [03:04<1:07:25, 19.36s/it]  5%|▌         | 11/219 [03:22<1:06:06, 19.07s/it]  5%|▌         | 12/219 [03:41<1:05:46, 19.07s/it]  6%|▌         | 13/219 [04:02<1:07:10, 19.56s/it]  6%|▋         | 14/219 [04:20<1:05:38, 19.21s/it]  7%|▋         | 15/219 [04:41<1:06:14, 19.48s/it]  7%|▋         | 16/219 [05:03<1:08:37, 20.28s/it]  8%|▊         | 17/219 [05:25<1:10:11, 20.85s/it]  8%|▊         | 18/219 [05:51<1:15:19, 22.49s/it]  9%|▊         | 19/219 [06:15<1:16:26, 22.93s/it]  9%|▉         | 20/219 [06:40<1:17:53, 23.49s/it] 10%|▉         | 21/219 [07:05<1:19:24, 24.07s/it] 10%|█         | 22/219 [07:25<1:14:43, 22.76s/it] 11%|█         | 23/219 [07:50<1:16:36, 23.45s/it] 11%|█         | 24/219 [08:15<1:17:23, 23.81s/it] 12%|█▏        | 26/219 [08:38<58:43, 18.26s/it]   12%|█▏        | 27/219 [08:54<56:06, 17.53s/it] 13%|█▎        | 28/219 [09:15<59:14, 18.61s/it] 14%|█▎        | 30/219 [09:51<57:19, 18.20s/it] 14%|█▍        | 31/219 [10:11<58:25, 18.65s/it] 16%|█▌        | 34/219 [10:31<39:03, 12.67s/it] 16%|█▌        | 35/219 [10:51<43:27, 14.17s/it] 16%|█▋        | 36/219 [11:14<48:31, 15.91s/it] 17%|█▋        | 37/219 [11:45<59:23, 19.58s/it] 17%|█▋        | 38/219 [12:05<59:03, 19.58s/it] 18%|█▊        | 39/219 [12:23<58:10, 19.39s/it] 18%|█▊        | 40/219 [12:43<58:00, 19.44s/it] 20%|█▉        | 43/219 [13:09<39:53, 13.60s/it] 20%|██        | 44/219 [13:26<41:32, 14.24s/it] 21%|██        | 46/219 [13:50<38:55, 13.50s/it] 22%|██▏       | 48/219 [14:16<37:53, 13.30s/it] 22%|██▏       | 49/219 [14:35<41:02, 14.49s/it] 23%|██▎       | 50/219 [14:53<42:54, 15.24s/it] 23%|██▎       | 51/219 [15:11<44:24, 15.86s/it] 24%|██▎       | 52/219 [15:32<48:06, 17.28s/it] 24%|██▍       | 53/219 [15:51<48:27, 17.51s/it] 25%|██▍       | 54/219 [16:10<49:34, 18.02s/it] 25%|██▌       | 55/219 [16:29<50:18, 18.41s/it] 26%|██▌       | 57/219 [16:54<42:28, 15.73s/it] 26%|██▋       | 58/219 [17:22<49:51, 18.58s/it] 27%|██▋       | 59/219 [17:45<52:51, 19.82s/it] 27%|██▋       | 60/219 [18:07<53:45, 20.29s/it] 29%|██▉       | 63/219 [19:33<1:04:30, 24.81s/it] 29%|██▉       | 64/219 [19:51<1:00:47, 23.53s/it] 30%|██▉       | 65/219 [20:11<58:14, 22.69s/it]   30%|███       | 66/219 [20:34<58:13, 22.83s/it] 31%|███       | 67/219 [20:55<56:15, 22.21s/it] 31%|███       | 68/219 [21:17<55:49, 22.19s/it] 32%|███▏      | 69/219 [21:38<54:30, 21.80s/it] 32%|███▏      | 70/219 [22:00<54:28, 21.93s/it] 32%|███▏      | 71/219 [22:29<58:44, 23.81s/it] 33%|███▎      | 72/219 [22:49<56:12, 22.94s/it] 33%|███▎      | 73/219 [23:09<53:27, 21.97s/it] 34%|███▍      | 74/219 [23:30<52:37, 21.77s/it] 34%|███▍      | 75/219 [23:52<52:00, 21.67s/it] 35%|███▌      | 77/219 [24:11<38:15, 16.17s/it] 36%|███▌      | 78/219 [24:30<39:42, 16.90s/it] 36%|███▌      | 79/219 [24:53<42:45, 18.32s/it][XGBoost CV] A124: R2=0.946±0.023, RMSE=0.490±0.148, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] A19N: R2=0.953±0.025, RMSE=0.117±0.032, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] A20N: R2=0.947±0.028, RMSE=0.312±0.087, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A21N: R2=0.951±0.029, RMSE=0.757±0.222, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A306: R2=0.983±0.022, RMSE=0.332±0.210, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] A30B: R2=0.996±0.002, RMSE=0.142±0.056, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] A310: R2=0.994±0.004, RMSE=0.213±0.072, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A318: R2=0.971±0.023, RMSE=0.094±0.037, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] A319: R2=0.969±0.017, RMSE=0.123±0.044, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] A320: R2=0.964±0.024, RMSE=0.174±0.072, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] A321: R2=0.961±0.030, RMSE=0.292±0.130, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A332: R2=0.963±0.035, RMSE=0.780±0.416, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] A333: R2=0.954±0.025, RMSE=1.100±0.306, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] A338: R2=0.957±0.027, RMSE=1.186±0.400, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A339: R2=0.948±0.034, RMSE=1.310±0.458, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A342: R2=0.955±0.017, RMSE=0.442±0.115, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A343: R2=0.960±0.025, RMSE=0.346±0.121, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A345: R2=0.955±0.030, RMSE=0.629±0.250, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A346: R2=0.952±0.028, RMSE=0.828±0.287, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A359: R2=0.966±0.025, RMSE=0.921±0.421, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] A35K: R2=0.956±0.035, RMSE=1.664±0.732, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A388: R2=0.982±0.020, RMSE=0.479±0.257, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] A4: R2=0.988±0.013, RMSE=0.056±0.035, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 50}
-[XGBoost CV] A6: R2=0.993±0.005, RMSE=0.061±0.022, N=72, Best={'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] AJET: R2=0.968±0.029, RMSE=0.013±0.006, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] AN72: R2=0.989±0.008, RMSE=0.078±0.031, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] ASTR: R2=0.954±0.031, RMSE=0.029±0.014, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 100}
-[XGBoost CV] B37M: R2=0.950±0.043, RMSE=0.569±0.188, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B38M: R2=0.957±0.032, RMSE=0.575±0.178, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B39M: R2=0.962±0.019, RMSE=0.592±0.124, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B3XM: R2=0.966±0.026, RMSE=0.573±0.307, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B461: R2=0.956±0.009, RMSE=0.033±0.006, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B462: R2=0.947±0.009, RMSE=0.036±0.005, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B463: R2=0.957±0.005, RMSE=0.033±0.006, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] B703: R2=0.983±0.012, RMSE=0.053±0.025, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B712: R2=0.988±0.008, RMSE=0.078±0.030, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B722: R2=0.967±0.016, RMSE=0.145±0.047, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B732: R2=0.965±0.013, RMSE=0.152±0.036, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B733: R2=0.977±0.013, RMSE=0.076±0.026, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B734: R2=0.970±0.024, RMSE=0.116±0.054, N=72, Best={'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B735: R2=0.979±0.008, RMSE=0.077±0.027, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B736: R2=0.985±0.008, RMSE=0.082±0.027, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B737: R2=0.977±0.016, RMSE=0.058±0.025, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B738: R2=0.960±0.030, RMSE=0.181±0.071, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] B739: R2=0.967±0.021, RMSE=0.183±0.081, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] B742: R2=0.962±0.034, RMSE=0.623±0.240, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B743: R2=0.970±0.019, RMSE=0.590±0.192, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B744: R2=0.964±0.019, RMSE=0.991±0.282, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B748: R2=0.957±0.021, RMSE=0.828±0.166, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B74S: R2=0.994±0.003, RMSE=0.108±0.039, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] B752: R2=0.982±0.012, RMSE=0.190±0.099, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] B753: R2=0.981±0.018, RMSE=0.207±0.078, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B762: R2=0.980±0.011, RMSE=0.446±0.153, N=72, Best={'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B763: R2=0.978±0.015, RMSE=0.466±0.145, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B764: R2=0.963±0.033, RMSE=0.555±0.213, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B772: R2=0.980±0.013, RMSE=0.450±0.153, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B773: R2=0.984±0.011, RMSE=0.861±0.338, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B77L: R2=0.930±0.064, RMSE=1.217±0.751, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B77W: R2=0.983±0.012, RMSE=0.948±0.431, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] B788: R2=0.953±0.037, RMSE=0.664±0.317, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] B789: R2=0.954±0.046, RMSE=1.092±0.533, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] B78X: R2=0.961±0.035, RMSE=1.051±0.450, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] BCS1: R2=0.966±0.020, RMSE=0.081±0.029, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] BCS3: R2=0.963±0.025, RMSE=0.129±0.052, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] BE40: R2=0.975±0.016, RMSE=0.010±0.004, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] C135: R2=0.966±0.026, RMSE=0.189±0.086, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200} 37%|███▋      | 81/219 [25:16<35:31, 15.44s/it] 38%|███▊      | 83/219 [25:42<32:57, 14.54s/it] 38%|███▊      | 84/219 [25:58<33:34, 14.92s/it] 39%|███▉      | 85/219 [26:17<35:23, 15.85s/it] 39%|███▉      | 86/219 [26:34<35:57, 16.22s/it] 40%|████      | 88/219 [26:53<29:06, 13.33s/it] 41%|████      | 90/219 [27:11<25:14, 11.74s/it] 42%|████▏     | 91/219 [27:29<27:55, 13.09s/it] 42%|████▏     | 92/219 [27:51<32:05, 15.16s/it] 42%|████▏     | 93/219 [28:14<35:41, 17.00s/it] 43%|████▎     | 94/219 [28:31<35:18, 16.95s/it] 43%|████▎     | 95/219 [28:57<40:15, 19.48s/it] 44%|████▍     | 96/219 [29:16<39:38, 19.33s/it] 44%|████▍     | 97/219 [29:34<38:27, 18.92s/it] 45%|████▍     | 98/219 [29:48<35:21, 17.54s/it] 46%|████▌     | 100/219 [30:09<28:29, 14.37s/it] 46%|████▌     | 101/219 [30:28<30:24, 15.46s/it] 47%|████▋     | 102/219 [30:48<32:24, 16.62s/it] 47%|████▋     | 103/219 [31:08<34:14, 17.71s/it] 47%|████▋     | 104/219 [31:30<36:12, 18.89s/it] 48%|████▊     | 105/219 [31:56<39:22, 20.73s/it] 49%|████▉     | 108/219 [32:29<28:36, 15.46s/it] 50%|████▉     | 109/219 [32:46<28:42, 15.66s/it] 51%|█████     | 111/219 [33:13<26:53, 14.94s/it] 52%|█████▏    | 114/219 [33:32<19:22, 11.08s/it] 53%|█████▎    | 115/219 [33:53<22:20, 12.89s/it] 53%|█████▎    | 116/219 [34:15<25:06, 14.62s/it] 53%|█████▎    | 117/219 [34:33<26:15, 15.45s/it] 54%|█████▍    | 118/219 [34:53<27:49, 16.53s/it] 55%|█████▍    | 120/219 [35:15<23:25, 14.19s/it] 55%|█████▌    | 121/219 [35:30<23:36, 14.45s/it] 56%|█████▌    | 122/219 [35:48<24:47, 15.34s/it] 58%|█████▊    | 126/219 [36:07<14:17,  9.22s/it]/home/omg28/ConflictTrails/generate_flightpath.py:250: RuntimeWarning: invalid value encountered in sqrt
-  gs_climb_0_5 = (v_climb_0_5**2 - w_climb_0_5**2) ** 0.5 # ground speed and thus distance covered
- 59%|█████▉    | 130/219 [36:12<08:14,  5.56s/it]/home/omg28/ConflictTrails/generate_flightpath.py:250: RuntimeWarning: invalid value encountered in sqrt
-  gs_climb_0_5 = (v_climb_0_5**2 - w_climb_0_5**2) ** 0.5 # ground speed and thus distance covered
-/home/omg28/ConflictTrails/generate_flightpath.py:346: RuntimeWarning: invalid value encountered in sqrt
-  gs_climb_5_10 = (v_climb_5_10**2 - w_climb_5_10**2) ** 0.5 # ground speed and thus distance covered
-/home/omg28/ConflictTrails/generate_flightpath.py:440: RuntimeWarning: invalid value encountered in sqrt
-  gs_climb_10_15 = (v_climb_10_15**2 - w_climb_10_15**2) ** 0.5
- 60%|█████▉    | 131/219 [36:17<07:59,  5.45s/it] 61%|██████    | 134/219 [36:40<08:58,  6.33s/it] 62%|██████▏   | 135/219 [37:00<11:36,  8.29s/it]/home/omg28/ConflictTrails/generate_flightpath.py:250: RuntimeWarning: invalid value encountered in sqrt
-  gs_climb_0_5 = (v_climb_0_5**2 - w_climb_0_5**2) ** 0.5 # ground speed and thus distance covered
- 63%|██████▎   | 138/219 [37:04<07:34,  5.61s/it] 63%|██████▎   | 139/219 [37:31<12:02,  9.03s/it] 64%|██████▍   | 140/219 [37:53<14:59, 11.39s/it] 64%|██████▍   | 141/219 [38:19<18:46, 14.45s/it] 65%|██████▍   | 142/219 [38:38<19:52, 15.49s/it] 65%|██████▌   | 143/219 [39:01<22:00, 17.38s/it] 66%|██████▌   | 144/219 [39:23<23:06, 18.49s/it] 66%|██████▌   | 145/219 [39:43<23:16, 18.87s/it] 67%|██████▋   | 146/219 [40:01<22:49, 18.76s/it] 67%|██████▋   | 147/219 [40:20<22:35, 18.83s/it] 68%|██████▊   | 148/219 [40:41<22:57, 19.40s/it] 68%|██████▊   | 149/219 [41:02<23:16, 19.95s/it] 68%|██████▊   | 150/219 [41:27<24:29, 21.29s/it] 69%|██████▉   | 151/219 [41:46<23:17, 20.55s/it] 69%|██████▉   | 152/219 [42:08<23:23, 20.95s/it] 70%|██████▉   | 153/219 [42:29<23:12, 21.09s/it] 70%|███████   | 154/219 [42:49<22:22, 20.65s/it] 71%|███████   | 155/219 [43:10<22:18, 20.92s/it] 72%|███████▏  | 157/219 [43:30<16:16, 15.75s/it] 72%|███████▏  | 158/219 [43:47<16:31, 16.25s/it] 73%|███████▎  | 159/219 [44:16<19:29, 19.48s/it] 73%|███████▎  | 160/219 [44:43<21:03, 21.41s/it] 74%|███████▍  | 162/219 [45:07<16:31, 17.39s/it] 74%|███████▍  | 163/219 [45:28<17:06, 18.33s/it] 76%|███████▌  | 166/219 [45:54<11:51, 13.43s/it] 77%|███████▋  | 168/219 [46:57<16:22, 19.27s/it] 78%|███████▊  | 170/219 [47:12<12:40, 15.52s/it] 78%|███████▊  | 171/219 [47:36<13:41, 17.10s/it] 79%|███████▊  | 172/219 [48:01<14:38, 18.70s/it]
-[XGBoost CV] C17: R2=0.939±0.039, RMSE=0.497±0.188, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] C25B: R2=0.978±0.016, RMSE=0.026±0.010, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] C25C: R2=0.990±0.005, RMSE=0.016±0.005, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] C25M: R2=0.983±0.020, RMSE=0.012±0.007, N=72, Best={'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] C525: R2=0.986±0.012, RMSE=0.007±0.003, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] C550: R2=0.956±0.025, RMSE=0.012±0.005, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] C560: R2=0.966±0.023, RMSE=0.009±0.003, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] C56X: R2=0.977±0.015, RMSE=0.029±0.013, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] C650: R2=0.958±0.023, RMSE=0.025±0.009, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] C680: R2=0.942±0.047, RMSE=0.033±0.011, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] C750: R2=0.972±0.019, RMSE=0.024±0.010, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] CL30: R2=0.975±0.016, RMSE=0.024±0.010, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] CL35: R2=0.982±0.012, RMSE=0.024±0.008, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] CL60: R2=0.987±0.010, RMSE=0.009±0.005, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 50}
-[XGBoost CV] CRJ1: R2=0.979±0.016, RMSE=0.012±0.005, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] CRJ2: R2=0.978±0.007, RMSE=0.019±0.006, N=72, Best={'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] CRJ7: R2=0.981±0.009, RMSE=0.022±0.008, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] CRJ9: R2=0.965±0.009, RMSE=0.037±0.010, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] CRJX: R2=0.988±0.012, RMSE=0.026±0.012, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 100}
-[XGBoost CV] DC10: R2=0.977±0.022, RMSE=0.310±0.183, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] DC87: R2=0.966±0.007, RMSE=0.114±0.024, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] DC91: R2=0.956±0.022, RMSE=0.313±0.082, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] DC93: R2=0.972±0.010, RMSE=0.111±0.031, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] E135: R2=0.958±0.035, RMSE=0.041±0.021, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] E145: R2=0.973±0.007, RMSE=0.046±0.009, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] E170: R2=0.970±0.008, RMSE=0.032±0.006, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] E190: R2=0.987±0.015, RMSE=0.046±0.032, N=72, Best={'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] E195: R2=0.978±0.019, RMSE=0.085±0.040, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] E3TF: R2=0.978±0.006, RMSE=0.087±0.023, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] E50P: R2=0.984±0.017, RMSE=0.007±0.004, N=72, Best={'learning_rate': 0.1, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] E55P: R2=0.975±0.014, RMSE=0.010±0.003, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 100}
-[XGBoost CV] F100: R2=0.976±0.010, RMSE=0.082±0.021, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] F15: R2=1.000±0.000, RMSE=0.000±0.000, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] F16: R2=1.000±0.000, RMSE=0.000±0.000, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 100}
-[XGBoost CV] F28: R2=0.974±0.003, RMSE=0.091±0.012, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] F2TH: R2=0.917±0.061, RMSE=0.036±0.021, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 100}
-[XGBoost CV] F5: R2=1.000±0.000, RMSE=0.000±0.000, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 50}
-[XGBoost CV] F70: R2=0.975±0.011, RMSE=0.084±0.028, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] F900: R2=0.928±0.049, RMSE=0.031±0.011, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] FA10: R2=0.986±0.007, RMSE=0.014±0.004, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] FA20: R2=0.950±0.044, RMSE=0.021±0.009, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] FA50: R2=0.954±0.021, RMSE=0.026±0.010, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] FA7X: R2=0.971±0.013, RMSE=0.026±0.011, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 100}
-[XGBoost CV] G150: R2=0.978±0.013, RMSE=0.022±0.009, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] G280: R2=0.986±0.008, RMSE=0.022±0.008, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] GALX: R2=0.973±0.015, RMSE=0.024±0.009, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] GL5T: R2=0.954±0.032, RMSE=0.074±0.029, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] GLEX: R2=0.970±0.017, RMSE=0.073±0.028, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] GLF3: R2=0.985±0.005, RMSE=0.086±0.018, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] GLF4: R2=0.979±0.009, RMSE=0.080±0.015, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] GLF5: R2=0.947±0.037, RMSE=0.064±0.025, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] H25A: R2=0.985±0.007, RMSE=0.007±0.002, N=72, Best={'learning_rate': 0.05, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] H25B: R2=0.949±0.039, RMSE=0.031±0.015, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] H25C: R2=0.971±0.016, RMSE=0.026±0.009, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] HAWK: R2=0.980±0.016, RMSE=0.030±0.014, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] HDJT: R2=0.992±0.005, RMSE=0.006±0.003, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] IL62: R2=0.992±0.003, RMSE=0.042±0.011, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] IL76: R2=0.953±0.010, RMSE=0.247±0.046, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] IL96: R2=0.976±0.016, RMSE=0.336±0.137, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] J328: R2=0.983±0.011, RMSE=0.022±0.007, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] K35R: R2=0.968±0.016, RMSE=0.104±0.039, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] L159: R2=0.998±0.002, RMSE=0.004±0.002, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] L39: R2=0.993±0.006, RMSE=0.006±0.003, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 50}
-[XGBoost CV] LJ25: R2=0.958±0.029, RMSE=0.011±0.005, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 50}
-[XGBoost CV] LJ31: R2=0.946±0.028, RMSE=0.018±0.006, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] LJ35: R2=0.988±0.007, RMSE=0.010±0.004, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100} 79%|███████▉  | 173/219 [48:17<13:50, 18.05s/it] 79%|███████▉  | 174/219 [48:40<14:33, 19.40s/it] 80%|███████▉  | 175/219 [48:59<14:02, 19.16s/it] 80%|████████  | 176/219 [49:23<14:39, 20.46s/it] 81%|████████  | 177/219 [49:44<14:25, 20.61s/it] 82%|████████▏ | 179/219 [50:06<11:01, 16.53s/it] 82%|████████▏ | 180/219 [50:27<11:18, 17.39s/it] 83%|████████▎ | 181/219 [50:48<11:42, 18.48s/it] 83%|████████▎ | 182/219 [51:13<12:21, 20.05s/it] 84%|████████▎ | 183/219 [51:30<11:34, 19.28s/it] 84%|████████▍ | 184/219 [51:50<11:28, 19.66s/it]/home/omg28/ConflictTrails/generate_flightpath.py:250: RuntimeWarning: invalid value encountered in sqrt
-  gs_climb_0_5 = (v_climb_0_5**2 - w_climb_0_5**2) ** 0.5 # ground speed and thus distance covered
- 87%|████████▋ | 191/219 [51:55<02:36,  5.61s/it] 89%|████████▊ | 194/219 [52:16<02:31,  6.06s/it] 89%|████████▉ | 195/219 [52:39<03:18,  8.26s/it] 89%|████████▉ | 196/219 [52:56<03:40,  9.59s/it] 90%|████████▉ | 197/219 [53:13<04:01, 10.99s/it] 90%|█████████ | 198/219 [53:31<04:18, 12.33s/it] 95%|█████████▌| 209/219 [53:54<00:45,  4.54s/it] 96%|█████████▋| 211/219 [54:18<00:45,  5.75s/it] 97%|█████████▋| 212/219 [54:38<00:50,  7.24s/it]/home/omg28/ConflictTrails/generate_flightpath.py:250: RuntimeWarning: invalid value encountered in sqrt
-  gs_climb_0_5 = (v_climb_0_5**2 - w_climb_0_5**2) ** 0.5 # ground speed and thus distance covered
- 98%|█████████▊| 215/219 [54:42<00:21,  5.41s/it]100%|██████████| 219/219 [55:03<00:00,  5.40s/it]100%|██████████| 219/219 [55:03<00:00, 15.09s/it]
-
-[XGBoost CV] LJ40: R2=0.941±0.049, RMSE=0.021±0.007, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] LJ45: R2=0.976±0.010, RMSE=0.019±0.005, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] LJ55: R2=0.956±0.026, RMSE=0.019±0.006, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] LJ60: R2=0.965±0.017, RMSE=0.032±0.010, N=72, Best={'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] MD11: R2=0.967±0.017, RMSE=0.414±0.124, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] MD81: R2=0.991±0.006, RMSE=0.068±0.025, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] MD82: R2=0.985±0.016, RMSE=0.083±0.046, N=72, Best={'learning_rate': 0.1, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] MD83: R2=0.995±0.003, RMSE=0.093±0.038, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] MD87: R2=0.988±0.010, RMSE=0.078±0.041, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] MD88: R2=0.992±0.005, RMSE=0.088±0.026, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] MRF1: R2=1.000±0.000, RMSE=0.000±0.000, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] PRM1: R2=0.949±0.020, RMSE=0.026±0.007, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] R135: R2=0.970±0.013, RMSE=0.076±0.025, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
-[XGBoost CV] RJ1H: R2=0.943±0.040, RMSE=0.035±0.014, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] RJ70: R2=0.952±0.035, RMSE=0.033±0.013, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
-[XGBoost CV] RJ85: R2=0.950±0.020, RMSE=0.035±0.010, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] SU95: R2=0.990±0.008, RMSE=0.048±0.024, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] T154: R2=0.981±0.007, RMSE=0.091±0.018, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] T204: R2=0.990±0.004, RMSE=0.232±0.069, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
-[XGBoost CV] T38: R2=1.000±0.000, RMSE=0.000±0.000, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 50}
-[XGBoost CV] YK42: R2=0.982±0.007, RMSE=0.076±0.025, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
