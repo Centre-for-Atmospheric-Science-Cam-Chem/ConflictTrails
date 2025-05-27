@@ -1,19 +1,10 @@
+#!/usr/bin/env python3
 
 from process_month_emissions import process_month_emissions
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 from multiprocessing import Pool, cpu_count
 import time
 import os
-
-# User Inputs:
-start_time_str       = '2023-01-01T00:00:00Z'
-stop_time_str        = '2023-12-31T23:59:59Z'
-query_limit          = 15e4
-send_notification    = True
-make_plot            = True
-output_dir           = "/scratch/omg28/Data/"
 
 def process_single_month(args):
     """Wrapper function for processing a single month"""
@@ -39,9 +30,10 @@ def process_single_month(args):
         return start_time_str_loop.strftime('%Y-%m'), None, None
 
 if __name__ == "__main__":
-    # Convert start and stop times to datetime objects
-    start_time_simple = pd.to_datetime(start_time_str).strftime("%Y-%m-%d")
-    stop_time_simple = pd.to_datetime(stop_time_str).strftime("%Y-%m-%d")
+    # Test with just 3 months
+    start_time_str = '2023-01-01T00:00:00Z'
+    stop_time_str = '2023-03-31T23:59:59Z'  # Just Jan, Feb, Mar
+    output_dir = "/scratch/omg28/Data/"
 
     # Load performance model once
     performance_and_emissions_model = pd.read_pickle('performance_and_emissions_model.pkl')
@@ -57,17 +49,17 @@ if __name__ == "__main__":
         for start_time_str_loop in month_ranges
     ]
     
-    # Use all available CPUs (one month per core)
+    # Use 3 processes for 3 months
     total_cpus = cpu_count()
     max_month_processes = min(len(month_ranges), total_cpus)
     
-    print(f"Processing {len(month_ranges)} months using {max_month_processes} parallel processes")
+    print(f"Testing with {len(month_ranges)} months using {max_month_processes} parallel processes")
     print(f"Total CPU cores: {total_cpus}")
     print("=" * 60)
     
     overall_start_time = time.time()
     
-    # Process months in parallel - this is the only level of parallelization
+    # Process months in parallel
     with Pool(processes=max_month_processes) as pool:
         results = pool.map(process_single_month, month_args)
     
@@ -76,7 +68,7 @@ if __name__ == "__main__":
     
     # Print summary
     print("=" * 60)
-    print(f"PROCESSING COMPLETE")
+    print(f"TEST COMPLETE")
     print(f"Total time: {total_time:.1f} seconds ({total_time/60:.1f} minutes)")
     
     successful_months = []
@@ -98,15 +90,10 @@ if __name__ == "__main__":
         avg_time = sum(proc_time for _, proc_time in successful_months) / len(successful_months)
         print(f"Average processing time per month: {avg_time:.1f} seconds")
         
-        # Calculate total flights processed and flights per second
-        total_flights = len(successful_months) * 1000  # Each month processes 1000 flights
-        flights_per_second = total_flights / total_time
-        print(f"Total flights processed: {total_flights}")
-        print(f"Overall processing speed: {flights_per_second:.1f} flights/second")
-        
-        # Calculate per-month flights per second
+        # Calculate flights per second per month
         avg_flights_per_second_per_month = 1000 / avg_time
         print(f"Average flights per second per month: {avg_flights_per_second_per_month:.1f}")
         
-        if len(successful_months) == 12:
-            print(f"Successfully processed full year in {total_time/60:.1f} minutes")
+        # Estimate performance for full year
+        estimated_total_time = avg_time * 12 / max_month_processes
+        print(f"Estimated time for full year: {estimated_total_time:.1f} seconds ({estimated_total_time/60:.1f} minutes)")

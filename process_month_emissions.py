@@ -91,6 +91,7 @@ def process_month_emissions(
             model.load_model(model_path)
             xgb_models[typecode] = model
 
+
     # Prepare cruise altitude and speed lookup from performance_and_emissions_model
     perf_df = performance_and_emissions_model.set_index('typecode')
 
