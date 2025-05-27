@@ -7,31 +7,14 @@ import os
 from multiprocessing import Pool, cpu_count
 from geographiclib.geodesic import Geodesic
 
-def process_month_emissions(month_start_time_str: str,
-                  output_dir: str = "/scratch/omg28/Data/no_track2023/emissions/",
-                  performance_and_emissions_model: pd.DataFrame = pd.read_pickle('performance_and_emissions_model.pkl')):
 
-    start_time_str_loop = pd.to_datetime(month_start_time_str)
-    stop_time_str_loop = (start_time_str_loop + pd.offsets.MonthEnd(1)).replace(hour=23, minute=59, second=59)
-    start_time_simple_loop = pd.to_datetime(start_time_str_loop).strftime("%Y-%m-%d")
-    stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
+# Prepare cruise altitude and speed lookup from performance_and_emissions_model
+perf_df = pd.read_pickle('performance_and_emissions_model.pkl').set_index('typecode')[0:1000]
+SECONDS_PER_MONTH = 31 * 24 * 3600  # January
+REMOVAL_TIMESCALE_S = 2 * 24 * 3600  # 2 days
 
-    # Load flights data
-    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')[0:400000]
-    model_dir = 'saved_models_nox_flux'
-    typecodes = monthly_flights['typecode'].unique()
-
-    # Load all xgboost models into memory for speed
-    xgb_models = {}
-    for typecode in typecodes:
-        model_path = os.path.join(model_dir, f'xgb_{typecode}.pkl')
-        if os.path.exists(model_path):
-            with open(model_path, 'rb') as f:
-                xgb_models[typecode] = pickle.load(f)
-
-    # Prepare cruise altitude and speed lookup from performance_and_emissions_model
-    perf_df = performance_and_emissions_model.set_index('typecode')
-    def get_cruise_params(typecode):
+# Function to get cruise parameters
+def get_cruise_params(typecode):
         try:
             cruise_alt_ft = perf_df.loc[typecode, 'cruise_Ceiling'] * 100 if not pd.isnull(perf_df.loc[typecode, 'cruise_Ceiling']) else 35000
             cruise_speed_ms = perf_df.loc[typecode, 'cruise_TAS'] * 0.514444 if not pd.isnull(perf_df.loc[typecode, 'cruise_TAS']) else 250
@@ -42,20 +25,8 @@ def process_month_emissions(month_start_time_str: str,
             return cruise_alt_ft, cruise_speed_ms
         except Exception:
             return 35000, 250
-
-    # Define grid
-    lat_bins = np.arange(-90, 90.1, 0.5)
-    lon_bins = np.arange(-180, 180.1, 0.5)
-    alt_bins_ft = np.arange(0, 55001, 1000)
-    alt_bins_m = alt_bins_ft * 0.3048
-    nlat, nlon, nalt = len(lat_bins)-1, len(lon_bins)-1, len(alt_bins_m)-1
-    nox_grid = np.zeros((nlat, nlon, nalt), dtype=np.float64)
-
-    SECONDS_PER_MONTH = 31 * 24 * 3600  # January
-    REMOVAL_TIMESCALE_S = 2 * 24 * 3600  # 2 days
-
     # Prepare arguments for each process
-    def process_flight(args):
+def process_flight(args):
         row, xgb_models, perf_df, lat_bins, lon_bins, alt_bins_ft, nlat, nlon, nalt = args
         typecode = row['typecode']
         model = xgb_models.get(typecode)
@@ -99,6 +70,41 @@ def process_month_emissions(month_start_time_str: str,
                 updates.append((lat_idx, lon_idx, alt_idx, nox_per_segment))
         return updates
 
+def process_month_emissions(month_start_time_str: str,
+                  output_dir: str = "/scratch/omg28/Data/no_track2023/emissions/",
+                  performance_and_emissions_model: pd.DataFrame = pd.read_pickle('performance_and_emissions_model.pkl')):
+
+    start_time_str_loop = pd.to_datetime(month_start_time_str)
+    stop_time_str_loop = (start_time_str_loop + pd.offsets.MonthEnd(1)).replace(hour=23, minute=59, second=59)
+    start_time_simple_loop = pd.to_datetime(start_time_str_loop).strftime("%Y-%m-%d")
+    stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
+
+    # Load flights data
+    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')[0:10000]
+    model_dir = 'saved_models_nox_flux'
+    typecodes = monthly_flights['typecode'].unique()
+
+    # Load all xgboost models into memory for speed
+    xgb_models = {}
+    for typecode in typecodes:
+        model_path = os.path.join(model_dir, f'xgb_{typecode}.pkl')
+        if os.path.exists(model_path):
+            with open(model_path, 'rb') as f:
+                xgb_models[typecode] = pickle.load(f)
+   
+
+    # Define grid
+    lat_bins = np.arange(-90, 90.1, 0.5)
+    lon_bins = np.arange(-180, 180.1, 0.5)
+    alt_bins_ft = np.arange(0, 55001, 1000)
+    alt_bins_m = alt_bins_ft * 0.3048
+    nlat, nlon, nalt = len(lat_bins)-1, len(lon_bins)-1, len(alt_bins_m)-1
+    nox_grid = np.zeros((nlat, nlon, nalt), dtype=np.float64)
+
+
+
+
+
     # Prepare arguments for pool
     pool_args = [
         (row, xgb_models, perf_df, lat_bins, lon_bins, alt_bins_ft, nlat, nlon, nalt)
@@ -107,7 +113,7 @@ def process_month_emissions(month_start_time_str: str,
 
     # Multiprocessing pool
     with Pool(processes=round(cpu_count()/2)) as pool:
-        results = list(tqdm(pool.imap_unordered(process_flight, pool_args), total=len(pool_args)))
+        results = list(pool.imap_unordered(process_flight, pool_args))
 
     # Aggregate results
     for updates in results:
