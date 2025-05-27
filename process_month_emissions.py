@@ -4,9 +4,8 @@ import pickle
 from tqdm import tqdm
 from generate_flightpath import generate_flightpath
 import os
-from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Pool, cpu_count
 from geographiclib.geodesic import Geodesic
-import threading
 
 def process_month_emissions(month_start_time_str: str,
                   output_dir: str = "/scratch/omg28/Data/no_track2023/emissions/",
@@ -18,7 +17,7 @@ def process_month_emissions(month_start_time_str: str,
     stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
 
     # Load flights data
-    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')[0:1000]
+    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')[0:400000]
     model_dir = 'saved_models_nox_flux'
     typecodes = monthly_flights['typecode'].unique()
 
@@ -55,19 +54,19 @@ def process_month_emissions(month_start_time_str: str,
     SECONDS_PER_MONTH = 31 * 24 * 3600  # January
     REMOVAL_TIMESCALE_S = 2 * 24 * 3600  # 2 days
 
-    grid_lock = threading.Lock()
-
-    def process_flight(row):
+    # Prepare arguments for each process
+    def process_flight(args):
+        row, xgb_models, perf_df, lat_bins, lon_bins, alt_bins_ft, nlat, nlon, nalt = args
         typecode = row['typecode']
         model = xgb_models.get(typecode)
         if model is None:
-            return
-        cruise_alt_ft, cruise_speed_ms = get_cruise_params(typecode)
+            return []
         try:
+            cruise_alt_ft, cruise_speed_ms = get_cruise_params(typecode)
             fp = generate_flightpath(typecode, row['gc_FEAT_km'], None)
             cruise_alt_ft = fp.get('cruise', {}).get('cruise_altitude_ft', cruise_alt_ft)
         except Exception:
-            pass
+            cruise_alt_ft, cruise_speed_ms = get_cruise_params(typecode)
         features = np.array([[row['gc_FEAT_km'], cruise_alt_ft]])
         mean_nox_flux = model.predict(features)[0]
         cruise_distance_m = row['gc_FEAT_km'] * 1000
@@ -75,7 +74,6 @@ def process_month_emissions(month_start_time_str: str,
         total_nox_g = mean_nox_flux * cruise_time_s
         total_nox_kg = total_nox_g / 1000
 
-        # Use great circle to generate waypoints
         n_segments = int(np.ceil(cruise_distance_m / 10000))
         geod = Geodesic.WGS84
         line = geod.InverseLine(row['estdeparturelat'], row['estdeparturelong'],
@@ -92,18 +90,29 @@ def process_month_emissions(month_start_time_str: str,
         box_fraction = REMOVAL_TIMESCALE_S / (SECONDS_PER_MONTH + REMOVAL_TIMESCALE_S)
         nox_per_segment = total_nox_kg / n_segments * box_fraction
 
-        # Update grid directly with a lock
+        updates = []
         for i in range(n_segments):
             lat_idx = np.searchsorted(lat_bins, lats[i], side='right') - 1
             lon_idx = np.searchsorted(lon_bins, lons[i], side='right') - 1
             alt_idx = np.searchsorted(alt_bins_ft, alts[i], side='right') - 1
             if 0 <= lat_idx < nlat and 0 <= lon_idx < nlon and 0 <= alt_idx < nalt:
-                with grid_lock:
-                    nox_grid[lat_idx, lon_idx, alt_idx] += nox_per_segment
+                updates.append((lat_idx, lon_idx, alt_idx, nox_per_segment))
+        return updates
 
-    # Multithreaded processing, but grid updates are locked
-    with ThreadPoolExecutor() as executor:
-        list(executor.map(process_flight, [row for _, row in monthly_flights.iterrows()]), total=len(monthly_flights))
+    # Prepare arguments for pool
+    pool_args = [
+        (row, xgb_models, perf_df, lat_bins, lon_bins, alt_bins_ft, nlat, nlon, nalt)
+        for _, row in monthly_flights.iterrows()
+    ]
+
+    # Multiprocessing pool
+    with Pool(processes=round(cpu_count()/2)) as pool:
+        results = list(tqdm(pool.imap_unordered(process_flight, pool_args), total=len(pool_args)))
+
+    # Aggregate results
+    for updates in results:
+        for lat_idx, lon_idx, alt_idx, nox in updates:
+            nox_grid[lat_idx, lon_idx, alt_idx] += nox
 
     # Optionally: Save as NetCDF or CSV for further analysis
     output_dir = os.path.expanduser(output_dir)
