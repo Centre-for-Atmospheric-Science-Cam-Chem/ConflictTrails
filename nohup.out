@@ -144,4 +144,106 @@ ModuleNotFoundError: No module named 'ambiance'
 [XGBoost CV] BCS1: R2=0.966±0.020, RMSE=0.081±0.029, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
 [XGBoost CV] BCS3: R2=0.963±0.025, RMSE=0.129±0.052, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
 [XGBoost CV] BE40: R2=0.975±0.016, RMSE=0.010±0.004, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
-[XGBoost CV] C135: R2=0.966±0.026, RMSE=0.189±0.086, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200} 37%|███▋      | 81/219 [25:16<35:31, 15.44s/it] 38%|███▊      | 83/219 [25:42<32:57, 14.54s/it] 38%|███▊      | 84/219 [25:58<33:34, 14.92s/it] 39%|███▉      | 85/219 [26:17<35:23, 15.85s/it] 39%|███▉      | 86/219 [26:34<35:57, 16.22s/it] 40%|████      | 88/219 [26:53<29:06, 13.33s/it] 41%|████      | 90/219 [27:11<25:14, 11.74s/it] 42%|████▏     | 91/219 [27:29<27:55, 13.09s/it] 42%|████▏     | 92/219 [27:51<32:05, 15.16s/it] 42%|████▏     | 93/219 [28:14<35:41, 17.00s/it] 43%|████▎     | 94/219 [28:31<35:18, 16.95s/it] 43%|████▎     | 95/219 [28:57<40:15, 19.48s/it] 44%|████▍     | 96/219 [29:16<39:38, 19.33s/it] 44%|████▍     | 97/219 [29:34<38:27, 18.92s/it] 45%|████▍     | 98/219 [29:48<35:21, 17.54s/it] 46%|████▌     | 100/219 [30:09<28:29, 14.37s/it]
+[XGBoost CV] C135: R2=0.966±0.026, RMSE=0.189±0.086, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200} 37%|███▋      | 81/219 [25:16<35:31, 15.44s/it] 38%|███▊      | 83/219 [25:42<32:57, 14.54s/it] 38%|███▊      | 84/219 [25:58<33:34, 14.92s/it] 39%|███▉      | 85/219 [26:17<35:23, 15.85s/it] 39%|███▉      | 86/219 [26:34<35:57, 16.22s/it] 40%|████      | 88/219 [26:53<29:06, 13.33s/it] 41%|████      | 90/219 [27:11<25:14, 11.74s/it] 42%|████▏     | 91/219 [27:29<27:55, 13.09s/it] 42%|████▏     | 92/219 [27:51<32:05, 15.16s/it] 42%|████▏     | 93/219 [28:14<35:41, 17.00s/it] 43%|████▎     | 94/219 [28:31<35:18, 16.95s/it] 43%|████▎     | 95/219 [28:57<40:15, 19.48s/it] 44%|████▍     | 96/219 [29:16<39:38, 19.33s/it] 44%|████▍     | 97/219 [29:34<38:27, 18.92s/it] 45%|████▍     | 98/219 [29:48<35:21, 17.54s/it] 46%|████▌     | 100/219 [30:09<28:29, 14.37s/it] 46%|████▌     | 101/219 [30:28<30:24, 15.46s/it] 47%|████▋     | 102/219 [30:48<32:24, 16.62s/it] 47%|████▋     | 103/219 [31:08<34:14, 17.71s/it] 47%|████▋     | 104/219 [31:30<36:12, 18.89s/it] 48%|████▊     | 105/219 [31:56<39:22, 20.73s/it] 49%|████▉     | 108/219 [32:29<28:36, 15.46s/it] 50%|████▉     | 109/219 [32:46<28:42, 15.66s/it] 51%|█████     | 111/219 [33:13<26:53, 14.94s/it] 52%|█████▏    | 114/219 [33:32<19:22, 11.08s/it] 53%|█████▎    | 115/219 [33:53<22:20, 12.89s/it] 53%|█████▎    | 116/219 [34:15<25:06, 14.62s/it] 53%|█████▎    | 117/219 [34:33<26:15, 15.45s/it] 54%|█████▍    | 118/219 [34:53<27:49, 16.53s/it] 55%|█████▍    | 120/219 [35:15<23:25, 14.19s/it] 55%|█████▌    | 121/219 [35:30<23:36, 14.45s/it] 56%|█████▌    | 122/219 [35:48<24:47, 15.34s/it] 58%|█████▊    | 126/219 [36:07<14:17,  9.22s/it]/home/omg28/ConflictTrails/generate_flightpath.py:250: RuntimeWarning: invalid value encountered in sqrt
+  gs_climb_0_5 = (v_climb_0_5**2 - w_climb_0_5**2) ** 0.5 # ground speed and thus distance covered
+ 59%|█████▉    | 130/219 [36:12<08:14,  5.56s/it]/home/omg28/ConflictTrails/generate_flightpath.py:250: RuntimeWarning: invalid value encountered in sqrt
+  gs_climb_0_5 = (v_climb_0_5**2 - w_climb_0_5**2) ** 0.5 # ground speed and thus distance covered
+/home/omg28/ConflictTrails/generate_flightpath.py:346: RuntimeWarning: invalid value encountered in sqrt
+  gs_climb_5_10 = (v_climb_5_10**2 - w_climb_5_10**2) ** 0.5 # ground speed and thus distance covered
+/home/omg28/ConflictTrails/generate_flightpath.py:440: RuntimeWarning: invalid value encountered in sqrt
+  gs_climb_10_15 = (v_climb_10_15**2 - w_climb_10_15**2) ** 0.5
+ 60%|█████▉    | 131/219 [36:17<07:59,  5.45s/it] 61%|██████    | 134/219 [36:40<08:58,  6.33s/it] 62%|██████▏   | 135/219 [37:00<11:36,  8.29s/it]/home/omg28/ConflictTrails/generate_flightpath.py:250: RuntimeWarning: invalid value encountered in sqrt
+  gs_climb_0_5 = (v_climb_0_5**2 - w_climb_0_5**2) ** 0.5 # ground speed and thus distance covered
+ 63%|██████▎   | 138/219 [37:04<07:34,  5.61s/it] 63%|██████▎   | 139/219 [37:31<12:02,  9.03s/it] 64%|██████▍   | 140/219 [37:53<14:59, 11.39s/it] 64%|██████▍   | 141/219 [38:19<18:46, 14.45s/it] 65%|██████▍   | 142/219 [38:38<19:52, 15.49s/it] 65%|██████▌   | 143/219 [39:01<22:00, 17.38s/it] 66%|██████▌   | 144/219 [39:23<23:06, 18.49s/it] 66%|██████▌   | 145/219 [39:43<23:16, 18.87s/it] 67%|██████▋   | 146/219 [40:01<22:49, 18.76s/it] 67%|██████▋   | 147/219 [40:20<22:35, 18.83s/it] 68%|██████▊   | 148/219 [40:41<22:57, 19.40s/it] 68%|██████▊   | 149/219 [41:02<23:16, 19.95s/it] 68%|██████▊   | 150/219 [41:27<24:29, 21.29s/it] 69%|██████▉   | 151/219 [41:46<23:17, 20.55s/it] 69%|██████▉   | 152/219 [42:08<23:23, 20.95s/it] 70%|██████▉   | 153/219 [42:29<23:12, 21.09s/it] 70%|███████   | 154/219 [42:49<22:22, 20.65s/it] 71%|███████   | 155/219 [43:10<22:18, 20.92s/it] 72%|███████▏  | 157/219 [43:30<16:16, 15.75s/it] 72%|███████▏  | 158/219 [43:47<16:31, 16.25s/it] 73%|███████▎  | 159/219 [44:16<19:29, 19.48s/it] 73%|███████▎  | 160/219 [44:43<21:03, 21.41s/it] 74%|███████▍  | 162/219 [45:07<16:31, 17.39s/it] 74%|███████▍  | 163/219 [45:28<17:06, 18.33s/it] 76%|███████▌  | 166/219 [45:54<11:51, 13.43s/it] 77%|███████▋  | 168/219 [46:57<16:22, 19.27s/it] 78%|███████▊  | 170/219 [47:12<12:40, 15.52s/it] 78%|███████▊  | 171/219 [47:36<13:41, 17.10s/it] 79%|███████▊  | 172/219 [48:01<14:38, 18.70s/it]
+[XGBoost CV] C17: R2=0.939±0.039, RMSE=0.497±0.188, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] C25B: R2=0.978±0.016, RMSE=0.026±0.010, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] C25C: R2=0.990±0.005, RMSE=0.016±0.005, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] C25M: R2=0.983±0.020, RMSE=0.012±0.007, N=72, Best={'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] C525: R2=0.986±0.012, RMSE=0.007±0.003, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] C550: R2=0.956±0.025, RMSE=0.012±0.005, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] C560: R2=0.966±0.023, RMSE=0.009±0.003, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] C56X: R2=0.977±0.015, RMSE=0.029±0.013, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] C650: R2=0.958±0.023, RMSE=0.025±0.009, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] C680: R2=0.942±0.047, RMSE=0.033±0.011, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
+[XGBoost CV] C750: R2=0.972±0.019, RMSE=0.024±0.010, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] CL30: R2=0.975±0.016, RMSE=0.024±0.010, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] CL35: R2=0.982±0.012, RMSE=0.024±0.008, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] CL60: R2=0.987±0.010, RMSE=0.009±0.005, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 50}
+[XGBoost CV] CRJ1: R2=0.979±0.016, RMSE=0.012±0.005, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] CRJ2: R2=0.978±0.007, RMSE=0.019±0.006, N=72, Best={'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] CRJ7: R2=0.981±0.009, RMSE=0.022±0.008, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] CRJ9: R2=0.965±0.009, RMSE=0.037±0.010, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] CRJX: R2=0.988±0.012, RMSE=0.026±0.012, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 100}
+[XGBoost CV] DC10: R2=0.977±0.022, RMSE=0.310±0.183, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] DC87: R2=0.966±0.007, RMSE=0.114±0.024, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] DC91: R2=0.956±0.022, RMSE=0.313±0.082, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
+[XGBoost CV] DC93: R2=0.972±0.010, RMSE=0.111±0.031, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] E135: R2=0.958±0.035, RMSE=0.041±0.021, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
+[XGBoost CV] E145: R2=0.973±0.007, RMSE=0.046±0.009, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] E170: R2=0.970±0.008, RMSE=0.032±0.006, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] E190: R2=0.987±0.015, RMSE=0.046±0.032, N=72, Best={'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] E195: R2=0.978±0.019, RMSE=0.085±0.040, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] E3TF: R2=0.978±0.006, RMSE=0.087±0.023, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] E50P: R2=0.984±0.017, RMSE=0.007±0.004, N=72, Best={'learning_rate': 0.1, 'max_depth': 2, 'n_estimators': 200}
+[XGBoost CV] E55P: R2=0.975±0.014, RMSE=0.010±0.003, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 100}
+[XGBoost CV] F100: R2=0.976±0.010, RMSE=0.082±0.021, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] F15: R2=1.000±0.000, RMSE=0.000±0.000, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] F16: R2=1.000±0.000, RMSE=0.000±0.000, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 100}
+[XGBoost CV] F28: R2=0.974±0.003, RMSE=0.091±0.012, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] F2TH: R2=0.917±0.061, RMSE=0.036±0.021, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 100}
+[XGBoost CV] F5: R2=1.000±0.000, RMSE=0.000±0.000, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 50}
+[XGBoost CV] F70: R2=0.975±0.011, RMSE=0.084±0.028, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] F900: R2=0.928±0.049, RMSE=0.031±0.011, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] FA10: R2=0.986±0.007, RMSE=0.014±0.004, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] FA20: R2=0.950±0.044, RMSE=0.021±0.009, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
+[XGBoost CV] FA50: R2=0.954±0.021, RMSE=0.026±0.010, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] FA7X: R2=0.971±0.013, RMSE=0.026±0.011, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 100}
+[XGBoost CV] G150: R2=0.978±0.013, RMSE=0.022±0.009, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] G280: R2=0.986±0.008, RMSE=0.022±0.008, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] GALX: R2=0.973±0.015, RMSE=0.024±0.009, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] GL5T: R2=0.954±0.032, RMSE=0.074±0.029, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] GLEX: R2=0.970±0.017, RMSE=0.073±0.028, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] GLF3: R2=0.985±0.005, RMSE=0.086±0.018, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] GLF4: R2=0.979±0.009, RMSE=0.080±0.015, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] GLF5: R2=0.947±0.037, RMSE=0.064±0.025, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] H25A: R2=0.985±0.007, RMSE=0.007±0.002, N=72, Best={'learning_rate': 0.05, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] H25B: R2=0.949±0.039, RMSE=0.031±0.015, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] H25C: R2=0.971±0.016, RMSE=0.026±0.009, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] HAWK: R2=0.980±0.016, RMSE=0.030±0.014, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] HDJT: R2=0.992±0.005, RMSE=0.006±0.003, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] IL62: R2=0.992±0.003, RMSE=0.042±0.011, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] IL76: R2=0.953±0.010, RMSE=0.247±0.046, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] IL96: R2=0.976±0.016, RMSE=0.336±0.137, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] J328: R2=0.983±0.011, RMSE=0.022±0.007, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] K35R: R2=0.968±0.016, RMSE=0.104±0.039, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] L159: R2=0.998±0.002, RMSE=0.004±0.002, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] L39: R2=0.993±0.006, RMSE=0.006±0.003, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 50}
+[XGBoost CV] LJ25: R2=0.958±0.029, RMSE=0.011±0.005, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 50}
+[XGBoost CV] LJ31: R2=0.946±0.028, RMSE=0.018±0.006, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] LJ35: R2=0.988±0.007, RMSE=0.010±0.004, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100} 79%|███████▉  | 173/219 [48:17<13:50, 18.05s/it] 79%|███████▉  | 174/219 [48:40<14:33, 19.40s/it] 80%|███████▉  | 175/219 [48:59<14:02, 19.16s/it] 80%|████████  | 176/219 [49:23<14:39, 20.46s/it] 81%|████████  | 177/219 [49:44<14:25, 20.61s/it] 82%|████████▏ | 179/219 [50:06<11:01, 16.53s/it] 82%|████████▏ | 180/219 [50:27<11:18, 17.39s/it] 83%|████████▎ | 181/219 [50:48<11:42, 18.48s/it] 83%|████████▎ | 182/219 [51:13<12:21, 20.05s/it] 84%|████████▎ | 183/219 [51:30<11:34, 19.28s/it] 84%|████████▍ | 184/219 [51:50<11:28, 19.66s/it]/home/omg28/ConflictTrails/generate_flightpath.py:250: RuntimeWarning: invalid value encountered in sqrt
+  gs_climb_0_5 = (v_climb_0_5**2 - w_climb_0_5**2) ** 0.5 # ground speed and thus distance covered
+ 87%|████████▋ | 191/219 [51:55<02:36,  5.61s/it] 89%|████████▊ | 194/219 [52:16<02:31,  6.06s/it] 89%|████████▉ | 195/219 [52:39<03:18,  8.26s/it] 89%|████████▉ | 196/219 [52:56<03:40,  9.59s/it] 90%|████████▉ | 197/219 [53:13<04:01, 10.99s/it] 90%|█████████ | 198/219 [53:31<04:18, 12.33s/it] 95%|█████████▌| 209/219 [53:54<00:45,  4.54s/it] 96%|█████████▋| 211/219 [54:18<00:45,  5.75s/it] 97%|█████████▋| 212/219 [54:38<00:50,  7.24s/it]/home/omg28/ConflictTrails/generate_flightpath.py:250: RuntimeWarning: invalid value encountered in sqrt
+  gs_climb_0_5 = (v_climb_0_5**2 - w_climb_0_5**2) ** 0.5 # ground speed and thus distance covered
+ 98%|█████████▊| 215/219 [54:42<00:21,  5.41s/it]100%|██████████| 219/219 [55:03<00:00,  5.40s/it]100%|██████████| 219/219 [55:03<00:00, 15.09s/it]
+
+[XGBoost CV] LJ40: R2=0.941±0.049, RMSE=0.021±0.007, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
+[XGBoost CV] LJ45: R2=0.976±0.010, RMSE=0.019±0.005, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] LJ55: R2=0.956±0.026, RMSE=0.019±0.006, N=72, Best={'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] LJ60: R2=0.965±0.017, RMSE=0.032±0.010, N=72, Best={'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] MD11: R2=0.967±0.017, RMSE=0.414±0.124, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] MD81: R2=0.991±0.006, RMSE=0.068±0.025, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] MD82: R2=0.985±0.016, RMSE=0.083±0.046, N=72, Best={'learning_rate': 0.1, 'max_depth': 2, 'n_estimators': 200}
+[XGBoost CV] MD83: R2=0.995±0.003, RMSE=0.093±0.038, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] MD87: R2=0.988±0.010, RMSE=0.078±0.041, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] MD88: R2=0.992±0.005, RMSE=0.088±0.026, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] MRF1: R2=1.000±0.000, RMSE=0.000±0.000, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] PRM1: R2=0.949±0.020, RMSE=0.026±0.007, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] R135: R2=0.970±0.013, RMSE=0.076±0.025, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 100}
+[XGBoost CV] RJ1H: R2=0.943±0.040, RMSE=0.035±0.014, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
+[XGBoost CV] RJ70: R2=0.952±0.035, RMSE=0.033±0.013, N=72, Best={'learning_rate': 0.2, 'max_depth': 2, 'n_estimators': 200}
+[XGBoost CV] RJ85: R2=0.950±0.020, RMSE=0.035±0.010, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] SU95: R2=0.990±0.008, RMSE=0.048±0.024, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}
+[XGBoost CV] T154: R2=0.981±0.007, RMSE=0.091±0.018, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] T204: R2=0.990±0.004, RMSE=0.232±0.069, N=72, Best={'learning_rate': 0.2, 'max_depth': 3, 'n_estimators': 200}
+[XGBoost CV] T38: R2=1.000±0.000, RMSE=0.000±0.000, N=72, Best={'learning_rate': 0.2, 'max_depth': 4, 'n_estimators': 50}
+[XGBoost CV] YK42: R2=0.982±0.007, RMSE=0.076±0.025, N=72, Best={'learning_rate': 0.1, 'max_depth': 4, 'n_estimators': 200}

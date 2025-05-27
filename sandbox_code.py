@@ -27,6 +27,11 @@ def process_month_emissions_wrapper(args):
 for start_time_str_loop in pd.date_range(start=pd.to_datetime(start_time_str), end=pd.to_datetime(stop_time_str), freq='MS', tz='UTC'):
     stop_time_str_loop = (start_time_str_loop + pd.offsets.MonthEnd(1)).replace(hour=23, minute=59, second=59)
     month_args.append((start_time_str_loop, output_dir, performance_and_emissions_model))
-
-with Pool() as pool:
-    list(tqdm(pool.imap(process_month_emissions_wrapper, month_args), total=len(month_args)))
+    process_month_emissions(
+        start_time_str_loop,
+        output_dir=output_dir,
+        performance_and_emissions_model=performance_and_emissions_model
+    )
+    
+#with Pool() as pool:
+#   list(tqdm(pool.imap(process_month_emissions_wrapper, month_args), total=len(month_args)))
