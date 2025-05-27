@@ -6,6 +6,7 @@ from generate_flightpath import generate_flightpath
 import os
 from concurrent.futures import ThreadPoolExecutor
 from geographiclib.geodesic import Geodesic
+import threading
 
 def process_month_emissions(month_start_time_str: str,
                   output_dir: str = "/scratch/omg28/Data/no_track2023/emissions/",
@@ -17,7 +18,7 @@ def process_month_emissions(month_start_time_str: str,
     stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
 
     # Load flights data
-    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')
+    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')[0:1000]
     model_dir = 'saved_models_nox_flux'
     typecodes = monthly_flights['typecode'].unique()
 
@@ -54,11 +55,13 @@ def process_month_emissions(month_start_time_str: str,
     SECONDS_PER_MONTH = 31 * 24 * 3600  # January
     REMOVAL_TIMESCALE_S = 2 * 24 * 3600  # 2 days
 
+    grid_lock = threading.Lock()
+
     def process_flight(row):
         typecode = row['typecode']
         model = xgb_models.get(typecode)
         if model is None:
-            return []
+            return
         cruise_alt_ft, cruise_speed_ms = get_cruise_params(typecode)
         try:
             fp = generate_flightpath(typecode, row['gc_FEAT_km'], None)
@@ -86,31 +89,23 @@ def process_month_emissions(month_start_time_str: str,
             lons.append(pos['lon2'])
         alts = np.full(n_segments, cruise_alt_ft)
 
-        updates = []
+        box_fraction = REMOVAL_TIMESCALE_S / (SECONDS_PER_MONTH + REMOVAL_TIMESCALE_S)
+        nox_per_segment = total_nox_kg / n_segments * box_fraction
+
+        # Update grid directly with a lock
         for i in range(n_segments):
             lat_idx = np.searchsorted(lat_bins, lats[i], side='right') - 1
             lon_idx = np.searchsorted(lon_bins, lons[i], side='right') - 1
             alt_idx = np.searchsorted(alt_bins_ft, alts[i], side='right') - 1
             if 0 <= lat_idx < nlat and 0 <= lon_idx < nlon and 0 <= alt_idx < nalt:
-                nox_per_segment = total_nox_kg / n_segments
-                box_fraction = REMOVAL_TIMESCALE_S / (SECONDS_PER_MONTH + REMOVAL_TIMESCALE_S)
-                updates.append((lat_idx, lon_idx, alt_idx, nox_per_segment * box_fraction))
-        return updates
+                with grid_lock:
+                    nox_grid[lat_idx, lon_idx, alt_idx] += nox_per_segment
 
-    # Multithreaded processing
-    all_updates = []
+    # Multithreaded processing, but grid updates are locked
     with ThreadPoolExecutor() as executor:
-        for updates in executor.map(process_flight, [row for _, row in monthly_flights.iterrows()]):
-            all_updates.extend(updates)
-
-    # Apply updates to grid
-    for lat_idx, lon_idx, alt_idx, value in all_updates:
-        nox_grid[lat_idx, lon_idx, alt_idx] += value
-
-
+        list(executor.map(process_flight, [row for _, row in monthly_flights.iterrows()]), total=len(monthly_flights))
 
     # Optionally: Save as NetCDF or CSV for further analysis
-
     output_dir = os.path.expanduser(output_dir)
     os.makedirs(f'{output_dir}/emissions', exist_ok=True)
     filename = os.path.join(output_dir, f'emissions/{start_time_simple_loop}_to_{stop_time_simple_loop}_NOx_nowar.npy')
