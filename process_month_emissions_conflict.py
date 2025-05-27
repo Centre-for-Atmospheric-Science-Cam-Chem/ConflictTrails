@@ -7,7 +7,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from geographiclib.geodesic import Geodesic
 
-def process_month_emissions(month_start_time_str: str,
+def process_month_emissions_conflict(month_start_time_str: str,
                   output_dir: str = "/scratch/omg28/Data/no_track2023/emissions/",
                   performance_and_emissions_model: pd.DataFrame = pd.read_pickle('performance_and_emissions_model.pkl')):
 
@@ -17,7 +17,7 @@ def process_month_emissions(month_start_time_str: str,
     stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
 
     # Load flights data
-    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')
+    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')[0:int(1e3)]
     model_dir = 'saved_models_nox_flux'
     typecodes = monthly_flights['typecode'].unique()
 

@@ -33,3 +33,4 @@ def get_era5_wind(year: int = 2023, output_dir: str = None):
     out_path = os.path.join(output_dir, f"winddb/era5_wind_{year}.nc")
     client = cdsapi.Client()
     client.retrieve(dataset, request).download(out_path)
+    return out_path
