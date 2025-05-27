@@ -1,10 +1,12 @@
 
 from process_month_emissions import process_month_emissions
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 # User Inputs:
 start_time_str       = '2023-01-01T00:00:00Z'
-stop_time_str        = '2023-12-31T23:59:59Z'
+stop_time_str        = '2023-03-31T23:59:59Z'
 query_limit          = 15e4
 send_notification    = True
 make_plot            = True
@@ -24,6 +26,3 @@ for start_time_str_loop in pd.date_range(start=pd.to_datetime(start_time_str), e
         performance_and_emissions_model=performance_and_emissions_model
     )
     print(f"Generated emissions file for month: {start_time_str_loop.strftime('%Y-%m')}")
-    
-#with Pool() as pool:
-#   list(tqdm(pool.imap(process_month_emissions_wrapper, month_args), total=len(month_args)))
