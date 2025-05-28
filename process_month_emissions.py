@@ -77,7 +77,7 @@ def process_month_emissions(
     stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
 
     # Load flights data
-    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')[0:1000]
+    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')
     model_dir = 'saved_models_nox_flux'
     typecodes = monthly_flights['typecode'].unique()
 

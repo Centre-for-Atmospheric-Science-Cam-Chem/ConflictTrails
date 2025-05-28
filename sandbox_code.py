@@ -3,7 +3,7 @@ from process_month_emissions import process_month_emissions
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from telegram_notifier import send_telegram_notification
 
 # User Inputs:
 start_time_str       = '2023-01-01T00:00:00Z'
@@ -27,3 +27,5 @@ for start_time_str_loop in pd.date_range(start=pd.to_datetime(start_time_str), e
         performance_and_emissions_model=performance_and_emissions_model
     )
     print(f"Generated emissions file for month: {start_time_str_loop.strftime('%Y-%m')}")
+    telegram_message = f"Emissions file for {start_time_str_loop.strftime('%Y-%m')} generated successfully."
+    send_telegram_notification(telegram_message)
