@@ -1,4 +1,3 @@
-
 from process_month_emissions import process_month_emissions
 import pandas as pd
 import numpy as np
@@ -7,7 +6,7 @@ from telegram_notifier import send_telegram_notification
 
 # User Inputs:
 start_time_str       = '2023-01-01T00:00:00Z'
-stop_time_str        = '2023-12-31T23:59:59Z'
+stop_time_str        = '2023-10-31T23:59:59Z'
 query_limit          = 15e4
 send_notification    = True
 make_plot            = True
