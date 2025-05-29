@@ -1,3 +1,6 @@
 [submodule "external/FlightTrajectories"]
 	path = external/FlightTrajectories
 	url = https://github.com/OB-IPSL/FlightTrajectories.git
+[submodule "FlightTrajectories"]
+	path = FlightTrajectories
+	url = https://github.com/OB-IPSL/FlightTrajectories
