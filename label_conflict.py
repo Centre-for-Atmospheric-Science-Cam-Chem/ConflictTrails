@@ -92,7 +92,7 @@ def process_month_conflict(start_time_str_loop):
         return None
     
     print(f"Processing conflict labeling for {start_time_simple_loop} to {stop_time_simple_loop}")
-    flights = pd.read_pickle(filepath)[0:100]
+    flights = pd.read_pickle(filepath)
     flights_labeled = label_conflict(flights)
     
     # Save the labeled flights
