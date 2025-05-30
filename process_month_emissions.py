@@ -77,7 +77,7 @@ def process_month_emissions(
     stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
 
     # Load flights data
-    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_filtered.pkl')
+    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_labeled.pkl')
     model_dir = 'saved_models_nox_flux'
     typecodes = monthly_flights['typecode'].unique()
 
@@ -108,14 +108,9 @@ def process_month_emissions(
         for _, row in monthly_flights.iterrows()
     ]
 
-    # Simple for loop instead of multiprocessing
-    results = []
+    # Process flights and aggregate results
     for args in pool_args:
         updates = process_flight(args)
-        results.append(updates)
-
-    # Aggregate results
-    for updates in results:
         for lat_idx, lon_idx, alt_idx, nox in updates:
             nox_grid[lat_idx, lon_idx, alt_idx] += nox
 
