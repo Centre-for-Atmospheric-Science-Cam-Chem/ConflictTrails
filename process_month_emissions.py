@@ -108,9 +108,14 @@ def process_month_emissions(
         for _, row in monthly_flights.iterrows()
     ]
 
-    # Process flights and aggregate results
+    # Simple for loop instead of multiprocessing
+    results = []
     for args in pool_args:
         updates = process_flight(args)
+        results.append(updates)
+
+    # Aggregate results
+    for updates in results:
         for lat_idx, lon_idx, alt_idx, nox in updates:
             nox_grid[lat_idx, lon_idx, alt_idx] += nox
 

@@ -8,7 +8,8 @@ if proj_path2 not in sys.path:
   sys.path.append(proj_path2)
 from FlightTrajectories.optimalrouting import ZermeloLonLat
 from FlightTrajectories.misc_geo import nearest
-from FlightTrajectories.minimization import cost_time, wind
+from FlightTrajectories.minimization import cost_time, wind, cost_squared
+from scipy.optimize import minimize
 import numpy as np
 import time
 import xarray as xr
@@ -60,8 +61,6 @@ print(ds_era5)
 # cruise_speed_ms = 250  # m/s, example value
 #################################################################
 
-
-
 def get_cruise_params(typecode, perf_df):
     try:
         cruise_alt_ft = perf_df.loc[typecode, 'cruise_Ceiling'] * 100 if not pd.isnull(perf_df.loc[typecode, 'cruise_Ceiling']) else 35000
@@ -79,150 +78,238 @@ def process_flight(args):
     typecode = row['typecode']
     model = xgb_models.get(typecode)
     if model is None:
-      return []
+        return []
+    
+    # Get common parameters
+    cruise_alt_ft, cruise_speed_ms = get_cruise_params(typecode, perf_df)
     
     # Check if the flight crosses conflict airspace
     if row['crosses_conflict']:
-        # Get cruise altitude and speed from performance data
-        cruise_alt_ft, cruise_speed_ms = get_cruise_params(typecode, perf_df) # skip generating flight path since distance will change and thus we cannot generate a flight path to get a plausible altitude
-      
-        #################
-        optim_level,pressure_ind_closest=nearest(levels_wind,ft_to_hPa(cruise_alt_ft))
+        # Do optimal routing for conflict flights
+        optim_level, pressure_ind_closest = nearest(levels_wind, ft_to_hPa(cruise_alt_ft))
         
         lon_p1, lat_p1 = row['estdeparturelong'], row['estdeparturelat']
         lon_p2, lat_p2 = row['estarrivallong'], row['estarrivallat']
         
-        p1 = (lon_p1, lat_p1)  # Departure point
-        p2 = (lon_p2, lat_p2)  # Destination point
-
-        airspeed = cruise_speed_ms  # m/s
-
-        dist = row['gc_km'] * 1000  # in meters
-
-        nbmeters = 50000. # Number of meters to split the route into segments
-
-
+        p1 = (lon_p1, lat_p1)
+        p2 = (lon_p2, lat_p2)
+        airspeed = cruise_speed_ms
+        dist = row['gc_km'] * 1000
+        nbmeters = 50000.
         npoints = int(dist // nbmeters)
-        n_segments = int(dist // nbmeters) + 1  # Number of segments for the route
-
-        geod = Geodesic.WGS84
-        line = geod.InverseLine(row['estdeparturelat'], row['estdeparturelong'],
+        n_segments = int(dist // nbmeters) + 1
+        
+        # Create great circle route as baseline
+        geod1 = Geodesic.WGS84
+        line = geod1.InverseLine(row['estdeparturelat'], row['estdeparturelong'],
                                 row['estarrivallat'], row['estarrivallong'])
         ds = dist / n_segments
-        lon_shortest, lat_shortest = [], []
+        
+        lon_shortest = np.zeros(n_segments)
+        lat_shortest = np.zeros(n_segments)
         for i in range(n_segments):
             s = min(ds * i, line.s13)
             pos = line.Position(s)
-            lat_shortest.append(pos['lat2'])
-            lon_shortest.append(pos['lon2'])
-        lat_quickest = lat_shortest.copy()  # Assuming lat_quickest is the same as lat_shortest for now, lat_quickest is only used for comparison
-        lat_iagos_cruising = lat_shortest.copy()  # Assuming lat_iagos_cruising is the same as lat_shortest for now, used for comparison
-        npoints = int(dist // nbmeters)
+            lat_shortest[i] = pos['lat2']
+            lon_shortest[i] = pos['lon2']
         
-        # Reduce the wind field to the relevant longitudes
-        _idx_p1 = bisect.bisect_right(lons_wind, lon_p1) - 1 
-        _idx_p2 = bisect.bisect_right(lons_wind, lon_p2) + 1
-        print(_idx_p1, _idx_p2)
-        
-        lons_wind_reduced = lons_wind
-        # lons_wind_reduced = lons_wind[_idx_p1:_idx_p2]
-        
+        # Get wind data
+        lons_wind_reduced = lons_wind  # Use full grid for now
         lons_z = xr.DataArray(lons_wind_reduced, dims="z")
         
-        # this is probably slower than just using the whole grid - this will result in loading in the wind field many times 
-        xr_u200=xr_u.sel(pressure_level=optim_level).load()
-        xr_u200_reduced=xr_u200.sel(longitude=lons_z, latitude=lats_wind).load()
-
-        xr_v200=xr_v.sel(pressure_level=optim_level).load()
-        xr_v200_reduced=xr_v200.sel(longitude=lons_z,latitude=lats_wind).load()
+        xr_u200 = xr_u.sel(pressure_level=optim_level).load()
+        xr_u200_reduced = xr_u200.sel(longitude=lons_z, latitude=lats_wind).load()
+        xr_v200 = xr_v.sel(pressure_level=optim_level).load()
+        xr_v200_reduced = xr_v200.sel(longitude=lons_z, latitude=lats_wind).load()
         
-        rmse_shortest, rmse_quickest, lat_max_shortest, lat_max_quickest, lon_ed_LD, lat_ed_LD, dt_ed_LD,                   \
-                                time_elapsed_EG, lon_ed, lat_ed, dt_ed_HD, solution =                                                 \
-                                ED_quickest_route(p1, p2, airspeed, lon_p1, lon_p2, lat_p1, lat_p2,                                   \
-                                lat_shortest, lat_quickest, lat_iagos_cruising, lons_wind_reduced, lats_wind, xr_u200_reduced, xr_v200_reduced, npoints)
-      #################
-        if solution:
-            import matplotlib.pyplot as plt
-            import cartopy.crs as ccrs
-            import cartopy.feature as cfeature
-            
-            # Create a figure with a globe projection
-            fig = plt.figure(figsize=(12, 8))
-            ax = fig.add_subplot(1, 1, 1, projection=ccrs.Orthographic(
-                central_longitude=(lon_p1 + lon_p2) / 2,
-                central_latitude=(lat_p1 + lat_p2) / 2
-            ))
-            
-            # Add map features
-            ax.add_feature(cfeature.COASTLINE)
-            ax.add_feature(cfeature.BORDERS)
-            ax.add_feature(cfeature.OCEAN, color='lightblue')
-            ax.add_feature(cfeature.LAND, color='lightgray')
-            
-            # Plot the optimal route
-            ax.plot(lon_ed, lat_ed, 'r-', linewidth=2, label='Optimal Route', 
-                    transform=ccrs.PlateCarree())
-            
-            # Plot departure and arrival points
-            ax.plot(lon_p1, lat_p1, 'go', markersize=8, label='Departure', 
-                    transform=ccrs.PlateCarree())
-            ax.plot(lon_p2, lat_p2, 'ro', markersize=8, label='Arrival', 
-                    transform=ccrs.PlateCarree())
-            
-            # Plot the great circle route for comparison
-            ax.plot(lon_shortest, lat_shortest, 'b--', linewidth=1, label='Great Circle', 
-                    transform=ccrs.PlateCarree())
-            
-            ax.legend()
-            ax.set_title(f'Flight Path Optimization\nFlight Time: {dt_ed_HD:.2f} hours')
-            plt.tight_layout()
-            plt.show()
-            plt.close()
-            return[]
-
-    else:
+        # Run optimization
         try:
-            cruise_alt_ft, cruise_speed_ms = get_cruise_params(typecode, perf_df)
-            fp = generate_flightpath(typecode, row['gc_FEAT_km'], None)
-            cruise_alt_ft = fp.get('cruise', {}).get('cruise_altitude_ft', cruise_alt_ft)
-        except Exception:
-            cruise_alt_ft, cruise_speed_ms = get_cruise_params(typecode, perf_df)
-        # Handle non-conflict case - use geodesic for cruise path
-        features = np.array([[row['gc_FEAT_km'], cruise_alt_ft]])
+            lat_quickest = lat_shortest.copy()
+            lat_iagos_cruising = lat_shortest.copy()
+            
+            method_i_am_using = 2  # 1 for quickest_route, 2 for quickest_route_fast, 3 for zermelo method
+
+            if method_i_am_using == 1: #FIXME - add condition to choose optimization method
+                method = 'SLSQP'
+                disp = True
+                maxiter = 100
+                
+                
+                lon_quickest, lat_quickest, dt_quickest = quickest_route(p1, p2, npoints, lat_iagos_cruising, lons_wind_reduced, lats_wind,
+                                                                        xr_u200_reduced, xr_v200_reduced, airspeed, method, disp, maxiter)
+                
+                lon_ed_LD = lon_quickest
+                lat_ed_LD = lat_quickest
+                solution = True
+            elif method_i_am_using == 2: #FIXME - add condition to choose optimization method
+                method = 'SLSQP'
+                disp = True
+                maxiter = 100
+
+                nbest = 12
+
+                lon_quickest, lat_quickest, dt_quickest = quickest_route_fast(p1, p2, npoints, nbest, lat_iagos_cruising, lons_wind_reduced, lats_wind,
+                                                                         xr_u200_reduced, xr_v200_reduced, airspeed, method, disp, maxiter)
+
+                lon_ed_LD = lon_quickest
+                lat_ed_LD = lat_quickest
+                
+                solution = True
+            else: # zermelo method
+                rmse_shortest, rmse_quickest, lat_max_shortest, lat_max_quickest, lon_ed_LD, lat_ed_LD, dt_ed_LD, \
+                time_elapsed_EG, lon_ed, lat_ed, dt_ed_HD, solution = \
+                ED_quickest_route(p1, p2, airspeed, lon_p1, lon_p2, lat_p1, lat_p2,
+                            lat_shortest, lat_quickest, lat_iagos_cruising, lons_wind_reduced, 
+                            lats_wind, xr_u200_reduced, xr_v200_reduced, npoints)
+        
+
+            if solution:
+                # Use optimized route
+                lats = lat_ed_LD
+                lons = lon_ed_LD
+                alts = np.full(len(lats), cruise_alt_ft)
+                n_segments = len(lats)
+                
+                # Calculate cruise distance as sum of great circle distances between successive points
+                if len(lats) > 1:
+                    # Calculate distances between successive points using a loop
+                    geod = Geodesic.WGS84
+                    total_distance = 0
+                    
+                    for i in range(len(lats) - 1):
+                        result = geod.Inverse(lats[i], lons[i], lats[i+1], lons[i+1])
+                        total_distance += result['s12']
+                    
+                    cruise_distance_m = total_distance
+                    print(cruise_distance_m)
+                else:
+                    cruise_distance_m = 0
+
+                # Create visualization showing flight paths on 2D globe representation
+                import matplotlib.pyplot as plt
+                import cartopy.crs as ccrs
+                import cartopy.feature as cfeature
+                
+                # Create figure with map projection
+                fig = plt.figure(figsize=(12, 8))
+                ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+                
+                # Add map features
+                ax.add_feature(cfeature.COASTLINE, linewidth=0.5)
+                ax.add_feature(cfeature.BORDERS, linewidth=0.5)
+                ax.add_feature(cfeature.OCEAN, color='lightblue', alpha=0.5)
+                ax.add_feature(cfeature.LAND, color='lightgray', alpha=0.5)
+                
+                # Set map extent based on flight path
+                lon_margin = max(10, abs(lon_p2 - lon_p1) * 0.2)
+                lat_margin = max(5, abs(lat_p2 - lat_p1) * 0.2)
+                ax.set_extent([min(lon_p1, lon_p2) - lon_margin, 
+                              max(lon_p1, lon_p2) + lon_margin,
+                              min(lat_p1, lat_p2) - lat_margin, 
+                              max(lat_p1, lat_p2) + lat_margin], 
+                              crs=ccrs.PlateCarree())
+                
+                # Plot great circle route
+                ax.plot([lon_p1, lon_p2], [lat_p1, lat_p2], 
+                        color='blue', linewidth=3, label='Great Circle Route', 
+                        transform=ccrs.Geodetic(), alpha=0.8)
+                
+                # Plot optimized route
+                ax.plot(lons, lats, 
+                        color='red', linewidth=3, label='Wind-Optimized Route', 
+                        transform=ccrs.Geodetic(), alpha=0.8)
+                
+                # Mark start and end points
+                ax.plot(lon_p1, lat_p1, 'go', markersize=10, label='Departure', 
+                        transform=ccrs.PlateCarree(), markeredgecolor='black', markeredgewidth=1)
+                ax.plot(lon_p2, lat_p2, 'ro', markersize=10, label='Arrival', 
+                        transform=ccrs.PlateCarree(), markeredgecolor='black', markeredgewidth=1)
+                
+                # Add gridlines
+                ax.gridlines(draw_labels=True, dms=True, x_inline=False, y_inline=False,
+                            linewidth=0.5, alpha=0.5)
+                
+                # Set title and legend
+                distance_saved = (cruise_distance_m/1000) - (row['gc_km'])
+                ax.set_title(f'Flight Path Optimization\nDistance: GC={row["gc_km"]:.0f}km, Optimized={cruise_distance_m/1000:.0f}km\nDifference: {distance_saved:.1f}km', 
+                           fontsize=12)
+                ax.legend(loc='upper right', frameon=True, fancybox=True, shadow=True)
+                
+                plt.tight_layout()
+                plt.show()
+
+
+            else:
+                # Fall back to great circle
+                lats = lat_shortest
+                lons = lon_shortest  
+                alts = np.full(len(lats), cruise_alt_ft)
+                n_segments = len(lats)
+                cruise_distance_m = row['gc_FEAT_km'] * 1000
+
+        except Exception as e:
+            print(f"Optimization failed: {e}")
+            # Fall back to great circle
+            lats = lat_shortest
+            lons = lon_shortest
+            alts = np.full(len(lats), cruise_alt_ft)
+            n_segments = len(lats)
+            cruise_distance_m = row['gc_FEAT_km'] * 1000
+            
+        # Calculate emissions for conflict case
+        features = np.array([[cruise_distance_m/1000, cruise_alt_ft]])
         mean_nox_flux = model.predict(features)[0]
-        cruise_distance_m = row['gc_FEAT_km'] * 1000
         cruise_time_s = cruise_distance_m / cruise_speed_ms
         total_nox_g = mean_nox_flux * cruise_time_s
         total_nox_kg = total_nox_g / 1000
+    else: # Non-conflict case - use great circle route
         
-        n_segments = int(np.ceil(cruise_distance_m / 10000))
+        cruise_distance_m = row['gc_FEAT_km'] * 1000
+        
+        try: # calculates cruise parameters from flight path if possible.
+            fp = generate_flightpath(typecode, row['gc_FEAT_km'], None)
+            cruise_alt_ft = fp.get('cruise', {}).get('cruise_altitude_ft', cruise_alt_ft)
+        except Exception:
+            pass
+        
+        # Non-conflict case - use geodesic for cruise path
         geod = Geodesic.WGS84
         line = geod.InverseLine(row['estdeparturelat'], row['estdeparturelong'],
                                 row['estarrivallat'], row['estarrivallong'])
+        n_segments = int(np.ceil(cruise_distance_m / 10000))
         ds = cruise_distance_m / n_segments
-        lats, lons = [], []
+        
+        lats = np.zeros(n_segments)
+        lons = np.zeros(n_segments)
         for i in range(n_segments):
             s = min(ds * i, line.s13)
             pos = line.Position(s)
-            lats.append(pos['lat2'])
-            lons.append(pos['lon2'])
+            lats[i] = pos['lat2']
+            lons[i] = pos['lon2']
         alts = np.full(n_segments, cruise_alt_ft)
 
+        # Calculate emissions
+        features = np.array([[row['gc_FEAT_km'], cruise_alt_ft]])
+        mean_nox_flux = model.predict(features)[0]
+        cruise_time_s = cruise_distance_m / cruise_speed_ms
+        total_nox_g = mean_nox_flux * cruise_time_s
+        total_nox_kg = total_nox_g / 1000
 
-    
-      
-    
-
+    # Calculate emissions distribution
     box_fraction = REMOVAL_TIMESCALE_S / (SECONDS_PER_MONTH + REMOVAL_TIMESCALE_S)
     nox_per_segment = total_nox_kg / n_segments * box_fraction
 
-    updates = []
+    updates = np.zeros((n_segments, 4), dtype=np.float64)
+    valid_count = 0
     for i in range(n_segments):
         lat_idx = np.searchsorted(lat_bins, lats[i], side='right') - 1
         lon_idx = np.searchsorted(lon_bins, lons[i], side='right') - 1
         alt_idx = np.searchsorted(alt_bins_ft, alts[i], side='right') - 1
         if 0 <= lat_idx < nlat and 0 <= lon_idx < nlon and 0 <= alt_idx < nalt:
-            updates.append((lat_idx, lon_idx, alt_idx, nox_per_segment))       
+            updates[valid_count] = [lat_idx, lon_idx, alt_idx, nox_per_segment]
+            valid_count += 1
+    updates = updates[:valid_count]  # Trim to actual valid entries
+    
     return updates
 
 
@@ -237,7 +324,7 @@ def process_month_emissions_conflict(
     stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
 
     # Load flights data
-    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_labeled.pkl').iloc[[1132522, 1052457, 783169, 907852, 783170]]
+    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_labeled.pkl').iloc[[235583, 783170]]
     model_dir = 'saved_models_nox_flux'
     typecodes = monthly_flights['typecode'].unique()
 
@@ -282,7 +369,7 @@ def process_month_emissions_conflict(
     for args in pool_args:
         updates = process_flight(args)
         for lat_idx, lon_idx, alt_idx, nox in updates:
-            nox_grid[lat_idx, lon_idx, alt_idx] += nox
+            nox_grid[int(lat_idx), int(lon_idx), int(alt_idx)] += nox
           
     # Optionally: Save as NetCDF or CSV for further analysis
     output_dir = os.path.expanduser(output_dir)
@@ -302,6 +389,7 @@ def ED_quickest_route(p1, p2, airspeed, lon_p1, lon_p2, lat_p1, lat_p2,
     #--sub_factor: number of splits for next round if solution is bounded by pairs of trajectories
     #--psi_range: +/- angle for the initial bearing
     #--psi_res: resolution within psi_range bounds, could try 0.2 instead
+
     zermelolonlat = ZermeloLonLat(cost_func=lambda x, y, z: np.ones(np.atleast_1d(x).shape),
                                   wind_func=wind, timestep=60, psi_range=60, psi_res=0.5,
                                   length_factor=1.4, max_dest_distance=75000., sub_factor=80)
@@ -359,6 +447,197 @@ def ED_quickest_route(p1, p2, airspeed, lon_p1, lon_p2, lat_p1, lat_p2,
     
     return rmse_shortest, rmse_quickest, lat_max_shortest, lat_max_quickest, lon_ed_LD, lat_ed_LD, dt_ed_LD, time_elapsed_EG, lon_ed, lat_ed, dt_ed_HD, solution
 
+def quickest_route(dep_loc, arr_loc, npoints, lat_iagos, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed, method, disp, maxiter):
+    """Compute the quickest route from dep_loc to arr_loc"""
+    
+    # Fix coordinate order - ensure consistent lon, lat format
+    if len(dep_loc) == 2 and len(arr_loc) == 2:
+        lon_dep, lat_dep = dep_loc
+        lon_arr, lat_arr = arr_loc
+    else:
+        raise ValueError("dep_loc and arr_loc must be (lon, lat) tuples")
+    
+    # Bounds for latitude optimization (more restrictive near poles)
+    lat_min = max(-89.9, min(lat_dep, lat_arr) - 20)
+    lat_max = min(89.9, max(lat_dep, lat_arr) + 20)
+    bnds = tuple((lat_min, lat_max) for i in range(npoints))
+    
+    def shortest_route(dep_loc, arr_loc, npoints):
+        """Compute great circle route using proper geodesic calculations"""
+        lon_dep, lat_dep = dep_loc
+        lon_arr, lat_arr = arr_loc
+        
+        # Use geodesic for proper great circle calculation
+        geod = Geodesic.WGS84
+        line = geod.InverseLine(lat_dep, lon_dep, lat_arr, lon_arr)  # Note: lat, lon for geod
+        
+        # Calculate points along the great circle
+        n_segments = npoints
+        lons = np.zeros(n_segments)
+        lats = np.zeros(n_segments)
+        
+        for i in range(n_segments):
+            s = line.s13 * i / (n_segments - 1)  # Distance along the line
+            pos = line.Position(s)
+            lats[i] = pos['lat2']
+            lons[i] = pos['lon2']
+        
+        return lons, lats
+
+    x0, y0 = shortest_route(dep_loc, arr_loc, npoints)
+    
+    # Initial optimization
+    res = minimize(cost_squared, y0[1:-1], 
+                   args=(x0[1:-1], lon_dep, lat_dep, lon_arr, lat_arr, 
+                         lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed),
+                   method=method, bounds=bnds[1:-1], 
+                   options={'maxiter': maxiter, 'disp': disp})
+    
+    y = np.append(np.insert(res['x'], 0, lat_dep), lat_arr)
+    quickest_time = cost_time(x0, y, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed, dtprint=False)
+    
+    # Multiple optimization attempts with latitude shifts
+    # Scale shifts based on the flight distance to avoid excessive deviations
+    flight_distance_deg = np.sqrt((lon_arr - lon_dep)**2 + (lat_arr - lat_dep)**2)
+    max_shift = min(15.0, flight_distance_deg * 0.3)  # Adaptive maximum shift
+     
+    n = len(x0)
+    shift_values = np.linspace(-max_shift, max_shift, 15)  # More reasonable shifts
+    
+    for dymax in shift_values:
+        if abs(dymax) < 1e-6:  # Skip near-zero shifts
+            continue
+            
+        for imid in [n//2, n//3, 2*n//3]:
+            if imid <= 0 or imid >= n:
+                continue
+                
+            # Create latitude shift profile
+            dy = np.zeros(n)
+            for i in range(imid):
+                dy[i] = dymax * float(i) / float(imid)
+            for i in range(imid, n):
+                dy[i] = dymax * float(n - i) / float(n - imid)
+            
+            y0p = y0 + dy
+            
+            # Ensure shifted points are within bounds
+            y0p = np.clip(y0p, lat_min, lat_max)
+            
+            try:
+                res = minimize(cost_squared, y0p[1:-1],
+                             args=(x0[1:-1], lon_dep, lat_dep, lon_arr, lat_arr,
+                                   lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed),
+                             method=method, bounds=bnds[1:-1],
+                             options={'maxiter': maxiter, 'disp': disp})
+                
+                y_2 = np.append(np.insert(res['x'], 0, lat_dep), lat_arr)
+                quickest_time_2 = cost_time(x0, y_2, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed)
+                
+                if quickest_time_2 < quickest_time:
+                    quickest_time = quickest_time_2
+                    y = y_2
+                    
+            except Exception as e:
+                print(f"Optimization failed for shift {dymax}: {e}")
+                continue
+    
+    return (x0, y, quickest_time)
+
+
+def quickest_route_fast(dep_loc, arr_loc, npoints, nbest, lat_iagos, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed, method, disp, maxiter):
+    """Compute the quickest route from dep_loc to arr_loc, faster but less accurate version"""
+    
+    # Fix coordinate order - ensure consistent lon, lat format
+    if len(dep_loc) == 2 and len(arr_loc) == 2:
+        lon_dep, lat_dep = dep_loc
+        lon_arr, lat_arr = arr_loc
+    else:
+        raise ValueError("dep_loc and arr_loc must be (lon, lat) tuples")
+    
+    # Bounds for latitude optimization (more restrictive near poles)
+    lat_min = max(-89.9, min(lat_dep, lat_arr) - 20)
+    lat_max = min(89.9, max(lat_dep, lat_arr) + 20)
+    bnds = tuple((lat_min, lat_max) for i in range(npoints))
+
+    #
+    #--List of possible solutions
+    y_list=[]
+    dtime_list=[]
+    #
+    def shortest_route(dep_loc, arr_loc, npoints):
+        """Compute great circle route using proper geodesic calculations"""
+        lon_dep, lat_dep = dep_loc
+        lon_arr, lat_arr = arr_loc
+        
+        # Use geodesic for proper great circle calculation
+        geod = Geodesic.WGS84
+        line = geod.InverseLine(lat_dep, lon_dep, lat_arr, lon_arr)  # Note: lat, lon for geod
+        
+        # Calculate points along the great circle
+        n_segments = npoints
+        lons = np.zeros(n_segments)
+        lats = np.zeros(n_segments)
+        
+        for i in range(n_segments):
+            s = line.s13 * i / (n_segments - 1)  # Distance along the line
+            pos = line.Position(s)
+            lats[i] = pos['lat2']
+            lons[i] = pos['lon2']
+        
+        return lons, lats
+    #--First compute shortest route
+    x0, y0 = shortest_route(dep_loc, arr_loc, npoints)
+    #
+    #--Length of longitude vector
+    n=len(x0)
+    #
+    #--Test how good a first guess this is
+    dtime=cost_time(x0, y0, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed)
+    y_list.append(y0) ; dtime_list.append(dtime)
+    #
+        #--More possible first guesses
+    for dymax in [-21.,-18.,-15.,-12.,-9.,-6.,-3.,3.,6.,9.,12.,15.,18.,21.]:
+      for imid in [n//2, n//3, 2*n//3]:
+         dy=[dymax*float(i)/float(imid) for i in range(imid)]+[dymax*float(n-i)/float(n-imid) for i in range(imid,n)]
+         y0p=y0+dy
+         dtime=cost_time(x0, y0p, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed)
+         y_list.append(y0p) ; dtime_list.append(dtime)
+    #
+    #--find the nbest first guesses
+    idx=np.argpartition(dtime_list,nbest)
+    y_list_to_minimize=[y_list[i] for i in idx[:nbest]]
+    #
+    #--initialise y to one of value (it does not matter which one)
+    quickest_y=y_list[0]
+    quickest_time=dtime_list[0]
+    #
+    #--loop on selected best first guesses
+    for y in y_list_to_minimize:
+       #--Minimization with y as initial conditions
+       res = minimize(cost_squared,y[1:-1],args=(x0[1:-1],*dep_loc,*arr_loc, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed ),\
+                      method=method,bounds=bnds[1:-1],options={'maxiter':maxiter,'disp':disp} )
+       y_2 = np.append(np.insert(res['x'],0,dep_loc[1]),arr_loc[1])
+       quickest_time_2=cost_time(x0, y_2, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed)
+       if quickest_time_2 < quickest_time:
+          quickest_time = quickest_time_2
+          quickest_y = y_2   #--new best minimum
+    #
+    #--Solution to optimal route
+    return (x0, quickest_y, quickest_time)
+
+
+
+def cost_squared(y, x0, lon1, lat1, lon2, lat2,lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed, dtprint=False):
+   """ return flight duration squared (this is the function to be minimized) """
+   #--y is the vector to be optimized (excl. departure and arrival)
+   #--x0 is the cordinate (vector of longitudes corresponding to the y)
+   #--lons vector including dep and arr
+   lons = np.array([lon1] + list(x0) + [lon2])
+   #--lats vector including dep and arr
+   lats = np.array([lat1] + list(y)  + [lat2])
+   #--return cost time squared
+   return cost_time(lons, lats, lons_wind, lats_wind,  xr_u200_reduced, xr_v200_reduced, airspeed, dtprint=dtprint)**2.0
 
 
 
