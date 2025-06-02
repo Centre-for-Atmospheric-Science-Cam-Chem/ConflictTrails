@@ -30,6 +30,7 @@ from xgboost import XGBRegressor
 import geopandas as gpd
 from shapely.geometry import Point
 from matplotlib.patches import Patch
+from telegram_notifier import send_telegram_notification
 # This script computes the quickest route between two points using the Zermelo method
 
 SECONDS_PER_MONTH = 31 * 24 * 3600  # January
@@ -399,23 +400,35 @@ def process_month_emissions_conflict(
     nlat, nlon, nalt = len(lat_bins)-1, len(lon_bins)-1, len(alt_bins_m)-1
     nox_grid = np.zeros((nlat, nlon, nalt), dtype=np.float64)
 
-      # Prepare arguments for loop
+    # Prepare arguments for loop
     pool_args = [
         (row, xgb_models, perf_df, lat_bins, lon_bins, alt_bins_ft, nlat, nlon, nalt, xr_u, xr_v, lons_wind, lats_wind, levels_wind)
         for _, row in monthly_flights.iterrows()
     ]
 
     # Process flights and aggregate results
-    for args in pool_args:
+    total_flights = len(pool_args)
+    for i, args in enumerate(pool_args):
         updates = process_flight(args)
         for lat_idx, lon_idx, alt_idx, nox in updates:
             nox_grid[int(lat_idx), int(lon_idx), int(alt_idx)] += nox
+        
+        # Progress update every 100,000 flights
+        if (i + 1) % 100000 == 0:
+            progress_pct = ((i + 1) / total_flights) * 100
+            print(f"Progress: {i + 1:,}/{total_flights:,} flights processed ({progress_pct:.1f}%)")
+            
+            # Send telegram notification
+            try:
+                send_telegram_notification(f"Progress update: {i + 1:,}/{total_flights:,} flights processed ({progress_pct:.1f}%)")
+            except Exception as e:
+                print(f"Failed to send telegram notification: {e}")
           
     # Optionally: Save as NetCDF or CSV for further analysis
     output_dir = os.path.expanduser(output_dir)
     os.makedirs(f'{output_dir}/emissions', exist_ok=True)
     filename = os.path.join(output_dir, f'emissions/{start_time_simple_loop}_to_{stop_time_simple_loop}_NOx_war.npy')
-    # np.save(filename, nox_grid)
+    np.save(filename, nox_grid)
     return filename
   
 
