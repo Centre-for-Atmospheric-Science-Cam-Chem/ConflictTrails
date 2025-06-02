@@ -27,6 +27,9 @@ import os
 from multiprocessing import Pool, cpu_count
 from geographiclib.geodesic import Geodesic
 from xgboost import XGBRegressor
+import geopandas as gpd
+from shapely.geometry import Point
+from matplotlib.patches import Patch
 # This script computes the quickest route between two points using the Zermelo method
 
 SECONDS_PER_MONTH = 31 * 24 * 3600  # January
@@ -95,9 +98,15 @@ def process_flight(args):
         p2 = (lon_p2, lat_p2)
         airspeed = cruise_speed_ms
         dist = row['gc_km'] * 1000
-        nbmeters = 50000.
-        npoints = int(dist // nbmeters)
-        n_segments = int(dist // nbmeters) + 1
+        
+        # boucher et at al. 2023 use 50km segments
+        # we will use 10 segments for all flights to minimize computation time 
+        # nbmeters = 5000.
+        # npoints = int(dist // nbmeters)
+        # n_segments = int(dist // nbmeters) + 1
+        
+        npoints = 12  # Number of points for optimization
+        n_segments = npoints + 1  # Number of segments for the optimized route
         
         # Create great circle route as baseline
         geod1 = Geodesic.WGS84
@@ -131,7 +140,7 @@ def process_flight(args):
 
             if method_i_am_using == 1: #FIXME - add condition to choose optimization method
                 method = 'SLSQP'
-                disp = True
+                disp = False # True displays optimization output, False suppresses it
                 maxiter = 100
                 
                 
@@ -145,8 +154,8 @@ def process_flight(args):
                 method = 'SLSQP'
                 disp = True
                 maxiter = 100
-
-                nbest = 12
+                nbest = 1 # The performance speedup is made by considering only the best initial guess for optimization.
+                # fewer initial guesses means faster optimization, but lower likelihood of finding the global minimum.
 
                 lon_quickest, lat_quickest, dt_quickest = quickest_route_fast(p1, p2, npoints, nbest, lat_iagos_cruising, lons_wind_reduced, lats_wind,
                                                                          xr_u200_reduced, xr_v200_reduced, airspeed, method, disp, maxiter)
@@ -200,6 +209,22 @@ def process_flight(args):
                 ax.add_feature(cfeature.OCEAN, color='lightblue', alpha=0.5)
                 ax.add_feature(cfeature.LAND, color='lightgray', alpha=0.5)
                 
+                # Load and highlight conflict countries
+                conflict_countries = ['Russia', 'Ukraine', 'Libya', 'Syria', 'Sudan', 'Yemen']
+                try:
+                    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+                except (AttributeError, KeyError):
+                    world = gpd.read_file('ne_110m_admin_0_countries.zip')
+                
+                name_col = 'NAME' if 'NAME' in world.columns else 'name'
+                conflict_zones = world[world[name_col].isin(conflict_countries)]
+                
+                # Add conflict zones to map
+                for idx, country in conflict_zones.iterrows():
+                    ax.add_geometries([country.geometry], ccrs.PlateCarree(), 
+                                    facecolor='red', alpha=0.3, edgecolor='darkred', 
+                                    linewidth=1.5)
+                
                 # Set map extent based on flight path
                 lon_margin = max(10, abs(lon_p2 - lon_p1) * 0.2)
                 lat_margin = max(5, abs(lat_p2 - lat_p1) * 0.2)
@@ -216,7 +241,7 @@ def process_flight(args):
                 
                 # Plot optimized route
                 ax.plot(lons, lats, 
-                        color='red', linewidth=3, label='Wind-Optimized Route', 
+                        color='green', linewidth=3, label='Wind-Optimized Route', 
                         transform=ccrs.Geodetic(), alpha=0.8)
                 
                 # Mark start and end points
@@ -229,11 +254,22 @@ def process_flight(args):
                 ax.gridlines(draw_labels=True, dms=True, x_inline=False, y_inline=False,
                             linewidth=0.5, alpha=0.5)
                 
+                # Create custom legend
+                legend_elements = [
+                    plt.Line2D([0], [0], color='blue', linewidth=3, label='Great Circle Route'),
+                    plt.Line2D([0], [0], color='green', linewidth=3, label='Wind-Optimized Route'),
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='g', 
+                              markersize=10, label='Departure', markeredgecolor='black'),
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='r', 
+                              markersize=10, label='Arrival', markeredgecolor='black'),
+                    Patch(facecolor='red', alpha=0.3, edgecolor='darkred', label='Conflict Zones')
+                ]
+                
                 # Set title and legend
                 distance_saved = (cruise_distance_m/1000) - (row['gc_km'])
                 ax.set_title(f'Flight Path Optimization\nDistance: GC={row["gc_km"]:.0f}km, Optimized={cruise_distance_m/1000:.0f}km\nDifference: {distance_saved:.1f}km', 
                            fontsize=12)
-                ax.legend(loc='upper right', frameon=True, fancybox=True, shadow=True)
+                ax.legend(handles=legend_elements, loc='upper right', frameon=True, fancybox=True, shadow=True)
                 
                 plt.tight_layout()
                 plt.show()
@@ -324,7 +360,7 @@ def process_month_emissions_conflict(
     stop_time_simple_loop = pd.to_datetime(stop_time_str_loop).strftime("%Y-%m-%d")
 
     # Load flights data
-    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_labeled.pkl').iloc[[235583, 783170]]
+    monthly_flights = pd.read_pickle(f'{output_dir}/{start_time_simple_loop}_to_{stop_time_simple_loop}_labeled.pkl').iloc[[244256, 316718, 609201, 626441, 124802,883309]]
     model_dir = 'saved_models_nox_flux'
     typecodes = monthly_flights['typecode'].unique()
 
@@ -546,7 +582,7 @@ def quickest_route(dep_loc, arr_loc, npoints, lat_iagos, lons_wind, lats_wind, x
 
 
 def quickest_route_fast(dep_loc, arr_loc, npoints, nbest, lat_iagos, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed, method, disp, maxiter):
-    """Compute the quickest route from dep_loc to arr_loc, faster but less accurate version"""
+    """Compute the quickest route from dep_loc to arr_loc, faster but less accurate version with restricted airspace avoidance"""
     
     # Fix coordinate order - ensure consistent lon, lat format
     if len(dep_loc) == 2 and len(arr_loc) == 2:
@@ -560,7 +596,28 @@ def quickest_route_fast(dep_loc, arr_loc, npoints, nbest, lat_iagos, lons_wind, 
     lat_max = min(89.9, max(lat_dep, lat_arr) + 20)
     bnds = tuple((lat_min, lat_max) for i in range(npoints))
 
-    #
+    # Load conflict zones for restricted airspace checking
+    if not hasattr(quickest_route_fast, '_conflict_zones'):
+        try:
+            world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+        except (AttributeError, KeyError):
+            world = gpd.read_file('ne_110m_admin_0_countries.zip')
+        
+        conflict_countries = ['Russia', 'Ukraine', 'Libya', 'Syria', 'Sudan', 'Yemen']
+        name_col = 'NAME' if 'NAME' in world.columns else 'name'
+        conflict_zones = world[world[name_col].isin(conflict_countries)]
+        conflict_buffered = conflict_zones.geometry.buffer(1.0)
+        quickest_route_fast._conflict_zones = conflict_buffered
+
+    def is_route_in_restricted_airspace(lons, lats):
+        """Check if route crosses restricted airspace"""
+        for i in range(len(lons)):
+            point = Point(lons[i], lats[i])
+            for conflict_zone in quickest_route_fast._conflict_zones:
+                if conflict_zone.contains(point):
+                    return True
+        return False
+
     #--List of possible solutions
     y_list=[]
     dtime_list=[]
@@ -592,16 +649,30 @@ def quickest_route_fast(dep_loc, arr_loc, npoints, nbest, lat_iagos, lons_wind, 
     #--Length of longitude vector
     n=len(x0)
     #
-    #--Test how good a first guess this is
-    dtime=cost_time(x0, y0, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed)
+    #--Test how good a first guess this is (using cost_squared which includes conflict penalty)
+    dtime=cost_squared(y0[1:-1], x0[1:-1], lon_dep, lat_dep, lon_arr, lat_arr, 
+                       lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed)
     y_list.append(y0) ; dtime_list.append(dtime)
     #
-        #--More possible first guesses
-    for dymax in [-21.,-18.,-15.,-12.,-9.,-6.,-3.,3.,6.,9.,12.,15.,18.,21.]:
+    #--More possible first guesses with enhanced avoidance of restricted zones
+    shift_values = [-21.-18.,-12.,-6.,-3.,3.,6.,12.,21.]
+
+    # Add additional shifts if great circle crosses restricted airspace
+    if is_route_in_restricted_airspace(x0, y0):
+        # Add larger shifts to avoid restricted zones
+        shift_values.extend([-90., -60., -45., -30., -25., 25., 30., 45., 60., 90.])
+    
+    for dymax in shift_values:
       for imid in [n//2, n//3, 2*n//3]:
          dy=[dymax*float(i)/float(imid) for i in range(imid)]+[dymax*float(n-i)/float(n-imid) for i in range(imid,n)]
-         y0p=y0+dy
-         dtime=cost_time(x0, y0p, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed)
+         y0p=y0+np.array(dy)
+         
+         # Ensure shifted points are within bounds
+         y0p = np.clip(y0p, lat_min, lat_max)
+         
+         # Use cost_squared which includes conflict penalty
+         dtime=cost_squared(y0p[1:-1], x0[1:-1], lon_dep, lat_dep, lon_arr, lat_arr,
+                           lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed)
          y_list.append(y0p) ; dtime_list.append(dtime)
     #
     #--find the nbest first guesses
@@ -614,11 +685,12 @@ def quickest_route_fast(dep_loc, arr_loc, npoints, nbest, lat_iagos, lons_wind, 
     #
     #--loop on selected best first guesses
     for y in y_list_to_minimize:
-       #--Minimization with y as initial conditions
+       #--Minimization with y as initial conditions (cost_squared includes conflict avoidance)
        res = minimize(cost_squared,y[1:-1],args=(x0[1:-1],*dep_loc,*arr_loc, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed ),\
                       method=method,bounds=bnds[1:-1],options={'maxiter':maxiter,'disp':disp} )
        y_2 = np.append(np.insert(res['x'],0,dep_loc[1]),arr_loc[1])
-       quickest_time_2=cost_time(x0, y_2, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed)
+       quickest_time_2=cost_squared(y_2[1:-1], x0[1:-1], lon_dep, lat_dep, lon_arr, lat_arr,
+                                   lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed)
        if quickest_time_2 < quickest_time:
           quickest_time = quickest_time_2
           quickest_y = y_2   #--new best minimum
@@ -628,63 +700,77 @@ def quickest_route_fast(dep_loc, arr_loc, npoints, nbest, lat_iagos, lons_wind, 
 
 
 
-def cost_squared(y, x0, lon1, lat1, lon2, lat2,lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed, dtprint=False):
-   """ return flight duration squared (this is the function to be minimized) """
-   #--y is the vector to be optimized (excl. departure and arrival)
-   #--x0 is the cordinate (vector of longitudes corresponding to the y)
-   #--lons vector including dep and arr
-   lons = np.array([lon1] + list(x0) + [lon2])
-   #--lats vector including dep and arr
-   lats = np.array([lat1] + list(y)  + [lat2])
-   #--return cost time squared
-   return cost_time(lons, lats, lons_wind, lats_wind,  xr_u200_reduced, xr_v200_reduced, airspeed, dtprint=dtprint)**2.0
+def cost_squared(y, x0, lon1, lat1, lon2, lat2, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed, dtprint=False):
+    """
+    Cost function for optimization.
+    Calculates the squared cost of flight time based on wind data and conflict zones.
+    
+    Parameters:
+    - y: vector of latitudes to be optimized (excluding departure and arrival)
+    - x0: vector of longitudes corresponding to y
+    - lon1, lat1: departure longitude and latitude
+    - lon2, lat2: arrival longitude and latitude
+    - lons_wind, lats_wind: wind data coordinates
+    - xr_u200_reduced, xr_v200_reduced: reduced wind data for u and v components
+    - airspeed: cruise speed in m/s
+    - dtprint: whether to print debug information
+    
+    Returns:
+    - Total cost as the sum of squared flight time and conflict penalties.
+    """
+    #--y is the vector to be optimized (excl. departure and arrival)
+    #--x0 is the coordinate (vector of longitudes corresponding to the y)
+    #--lons vector including dep and arr
+    lons = np.array([lon1] + list(x0) + [lon2])
+    #--lats vector including dep and arr
+    lats = np.array([lat1] + list(y) + [lat2])
 
+    # Define conflict countries and create penalty zones using proper country boundaries
+    conflict_countries = ['Russia', 'Ukraine', 'Libya', 'Syria', 'Sudan', 'Yemen']
 
+    # Load world boundaries (cache this globally for performance)
+    if not hasattr(cost_squared, '_conflict_buffered'):
+        try:
+            world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+        except (AttributeError, KeyError):
+            world = gpd.read_file('ne_110m_admin_0_countries.zip')
+        
+        # Create conflict zone masks
+        name_col = 'NAME' if 'NAME' in world.columns else 'name'
+        conflict_zones = world[world[name_col].isin(conflict_countries)]
+        
+        # Create 1 degree buffers for conflict countries
+        conflict_buffered = conflict_zones.geometry.buffer(1.0)
+        
+        # Cache the buffered zones for performance
+        cost_squared._conflict_buffered = conflict_buffered
 
-'''
-lon_p1, lat_p1 = row['estdeparturelon'], row['estdeparturelat']
-lon_p2, lat_p2 = row['estarrivallon'], row['estarrivallat']
+    # Calculate base flight time
+    base_cost = cost_time(lons, lats, lons_wind, lats_wind, xr_u200_reduced, xr_v200_reduced, airspeed, dtprint=dtprint)
 
-p1 = (lon_p1, lat_p1)  # Departure point
-p2 = (lon_p2, lat_p2)  # Destination point
+    # Calculate conflict penalty by counting segments that cross conflict zones
+    conflict_penalty = 0
+    
+    for i in range(len(lons) - 1):
+        # Create points for segment endpoints
+        point1 = Point(lons[i], lats[i])
+        point2 = Point(lons[i+1], lats[i+1])
+        
+        # Check if either endpoint is in conflict zones
+        segment_in_conflict = False
+        for conflict_buffered in cost_squared._conflict_buffered:
+            if (conflict_buffered.contains(point1) or 
+                conflict_buffered.contains(point2)):
+                segment_in_conflict = True
+                break
+        
+        if segment_in_conflict:
+            # Add fixed penalty per segment crossing conflict zone
+            # This avoids geodesic calculations while still penalizing conflict crossings
+            conflict_penalty += 100000  # Fixed penalty per segment
 
-airspeed = cruise_speed_ms  # m/s
-
-dist = row['gc_km'] * 1000  # in meters
-
-nbmeters = 50000. # Number of meters to split the route into segments
-
-
-npoints = int(dist // nbmeters)
-n_segments = int(dist // nbmeters) + 1  # Number of segments for the route
-
-geod = Geodesic.WGS84
-line = geod.InverseLine(row['estdeparturelat'], row['estdeparturelong'],
-                        row['estarrivallat'], row['estarrivallong'])
-ds = dist / n_segments
-lon_shortest, lat_shortest = [], []
-for i in range(n_segments):
-    s = min(ds * i, line.s13)
-    pos = line.Position(s)
-    lat_shortest.append(pos['lat2'])
-    lon_shortest.append(pos['lon2'])
-lat_quickest = lat_shortest.copy()  # Assuming lat_quickest is the same as lat_shortest for now, lat_quickest is only used for comparison
-lat_iagos_cruising = lat_shortest.copy()  # Assuming lat_iagos_cruising is the same as lat_shortest for now, used for comparison
-
-npoints = int(dist // nbmeters)
-
-
-_idx_p1 = bisect.bisect_right(lons_wind, lon_p1) - 1 
-_idx_p2 = bisect.bisect_right(lons_wind, lon_p2) + 1
-
-lons_wind_reduced = lons_wind[_idx_p1:_idx_p2]
-
-
-rmse_shortest, rmse_quickest, lat_max_shortest, lat_max_quickest, lon_ed_LD, lat_ed_LD, dt_ed_LD,                   \
-                      time_elapsed_EG, lon_ed, lat_ed, dt_ed_HD, solution =                                                 \
-                      ED_quickest_route(p1, p2, airspeed, lon_p1, lon_p2, lat_p1, lat_p2,                                   \
-                      lat_shortest, lat_quickest, lat_iagos_cruising, lons_wind_reduced, lats_wind, xr_u200_reduced, xr_v200_reduced, npoints)
-'''
-                      
-                      
-                      
+    #--return cost time squared plus conflict penalty
+    return (base_cost**2.0) + conflict_penalty
+                        
+                        
+                        
