@@ -1167,7 +1167,7 @@ def generate_flightpath(typecode,
     [HC_ei_0_5, CO_ei_0_5, NOx_ei_0_5] = bffm2(aircraft_data_df,
                                               (flight_path['climb']['h_climb_0_5_start'] + flight_path['climb']['h_climb_0_5_end']) / 2,
                                               flight_path['climb']['M_climb_0_5'],
-                                              fuel_flow_to * 7936.64)
+                                              fuel_flow_to * 7936.64) #<-- kg/s to lb/hr conversion factor
     # C/O
     [HC_ei_5_10, CO_ei_5_10, NOx_ei_5_10] = bffm2(aircraft_data_df,
                                               (flight_path['climb']['h_climb_5_10_start'] + flight_path['climb']['h_climb_5_10_end']) / 2,
@@ -1213,7 +1213,7 @@ def generate_flightpath(typecode,
                                               fuel_flow_app * 7936.64)
 
 
-    # Climb emissions
+    # Climb emissions: g = emission index (g/kg) * fuel flow (kg/s) * time (s)
     flight_path['climb']['HC_climb_0_5'] = HC_ei_0_5 * fuel_flow_to * flight_path['climb']['t_climb_0_5']
     flight_path['climb']['CO_climb_0_5'] = CO_ei_0_5 * fuel_flow_to * flight_path['climb']['t_climb_0_5']
     flight_path['climb']['NOx_climb_0_5'] = NOx_ei_0_5 * fuel_flow_to * flight_path['climb']['t_climb_0_5']

@@ -1,19 +1,8 @@
-Processing conflict labeling for 2023-02-01 to 2023-02-28
-Processing conflict labeling for 2023-12-01 to 2023-12-31
-Processing conflict labeling for 2023-01-01 to 2023-01-31
-Processing conflict labeling for 2023-10-01 to 2023-10-31
-Processing conflict labeling for 2023-03-01 to 2023-03-31
-Processing conflict labeling for 2023-04-01 to 2023-04-30
-Processing conflict labeling for 2023-11-01 to 2023-11-30
-Processing conflict labeling for 2023-06-01 to 2023-06-30
-Processing conflict labeling for 2023-07-01 to 2023-07-31
-Processing conflict labeling for 2023-05-01 to 2023-05-31
-Processing conflict labeling for 2023-09-01 to 2023-09-30
-Processing conflict labeling for 2023-08-01 to 2023-08-31
-Conflict labeling completed for all months
-/home/omg28/ConflictTrails/process_month_emissions_conflict.py:613: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:674: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
 
   conflict_buffered = conflict_zones.geometry.buffer(1.0)
-/home/omg28/ConflictTrails/process_month_emissions_conflict.py:747: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:808: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
 
   conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)

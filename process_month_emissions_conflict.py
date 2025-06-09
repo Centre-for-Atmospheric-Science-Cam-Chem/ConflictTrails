@@ -173,8 +173,7 @@ def process_flight(args):
         
 
             
-            if False:
-            #if solution:
+            if solution:
                 # Use optimized route
                 lats = lat_ed_LD
                 lons = lon_ed_LD
@@ -192,10 +191,10 @@ def process_flight(args):
                         total_distance += result['s12']
                     
                     cruise_distance_m = total_distance
-                    print(cruise_distance_m)
                 else:
-                    cruise_distance_m = 0
-
+                    cruise_distance_m = row['gc_km'] * 1000
+                
+                '''
                 # Create visualization showing flight paths on 2D globe representation
                 import matplotlib.pyplot as plt
                 import cartopy.crs as ccrs
@@ -275,7 +274,7 @@ def process_flight(args):
                 
                 plt.tight_layout()
                 plt.show()
-
+                '''
 
             else:
                 # Fall back to great circle
@@ -300,6 +299,54 @@ def process_flight(args):
         cruise_time_s = cruise_distance_m / cruise_speed_ms
         total_nox_g = mean_nox_flux * cruise_time_s
         total_nox_kg = total_nox_g / 1000
+        
+        # Redistribute emissions every 10 km along the optimized flight path
+        geod = Geodesic.WGS84
+        segment_distance_m = 10000  # 10 km
+        
+        # Create new arrays for redistributed points
+        redistributed_lats = []
+        redistributed_lons = []
+        redistributed_alts = []
+        
+        # Process each segment between consecutive optimization points
+        for i in range(len(lats) - 1):
+            # Calculate distance between consecutive points
+            result = geod.Inverse(lats[i], lons[i], lats[i+1], lons[i+1])
+            segment_length = result['s12']
+            
+            # Calculate number of 10km subsegments needed
+            n_subsegments = max(1, int(np.ceil(segment_length / segment_distance_m)))
+            
+            # Create geodesic line between the two points
+            line = geod.InverseLine(lats[i], lons[i], lats[i+1], lons[i+1])
+            
+            # Add points every 10 km along this segment
+            for j in range(n_subsegments):
+                if i == 0 and j == 0:
+                    # Always include the first point
+                    redistributed_lats.append(lats[i])
+                    redistributed_lons.append(lons[i])
+                    redistributed_alts.append(alts[i])
+                
+                if j < n_subsegments - 1:  # Don't duplicate the end point
+                    s = segment_distance_m * (j + 1)
+                    if s < segment_length:
+                        pos = line.Position(s)
+                        redistributed_lats.append(pos['lat2'])
+                        redistributed_lons.append(pos['lon2'])
+                        redistributed_alts.append(cruise_alt_ft)
+        
+        # Always include the final point
+        redistributed_lats.append(lats[-1])
+        redistributed_lons.append(lons[-1])
+        redistributed_alts.append(alts[-1])
+        
+        # Update arrays with redistributed points
+        lats = np.array(redistributed_lats)
+        lons = np.array(redistributed_lons)
+        alts = np.array(redistributed_alts)
+        n_segments = len(lats)
     else: # Non-conflict case - use great circle route
         
         cruise_distance_m = row['gc_FEAT_km'] * 1000
@@ -353,7 +400,7 @@ def process_flight(args):
 
 def process_month_emissions_conflict(
     month_start_time_str: str,
-    output_dir: str = "/scratch/omg28/Data/no_track2023/emissions/",
+    output_dir: str = "/scratch/omg28/Data/emissions/",
     performance_and_emissions_model: pd.DataFrame = pd.read_pickle('performance_and_emissions_model.pkl')
 ):
     start_time_str_loop = pd.to_datetime(month_start_time_str)
@@ -788,6 +835,3 @@ def cost_squared(y, x0, lon1, lat1, lon2, lat2, lons_wind, lats_wind, xr_u200_re
 
     #--return cost time squared plus conflict penalty
     return (base_cost**2.0) + conflict_penalty
-                        
-                        
-                        
