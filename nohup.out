@@ -6,3 +6,272 @@
   conflict_buffered = conflict_zones.geometry.buffer(1.0)
 /home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
   fx = wrapped_fun(x)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:673: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/ConflictTrails/process_month_emissions_conflict.py:807: UserWarning: Geometry is in a geographic CRS. Results from 'buffer' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  conflict_buffered = conflict_zones.geometry.buffer(1.0)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+/home/omg28/.conda/envs/traffic/lib/python3.12/site-packages/scipy/optimize/_slsqp_py.py:435: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  fx = wrapped_fun(x)
+Progress: 100,000/1,171,421 flights processed (8.5%)
+Progress: 200,000/1,171,421 flights processed (17.1%)
+Progress: 300,000/1,171,421 flights processed (25.6%)
+Progress: 400,000/1,171,421 flights processed (34.1%)
+Progress: 500,000/1,171,421 flights processed (42.7%)
+Progress: 600,000/1,171,421 flights processed (51.2%)
+Progress: 700,000/1,171,421 flights processed (59.8%)
+Progress: 800,000/1,171,421 flights processed (68.3%)
+Progress: 900,000/1,171,421 flights processed (76.8%)
+Progress: 1,000,000/1,171,421 flights processed (85.4%)
+Progress: 1,100,000/1,171,421 flights processed (93.9%)
+Generated conflict emissions file for month: 2023-02
+Progress: 100,000/1,240,925 flights processed (8.1%)
+Progress: 200,000/1,240,925 flights processed (16.1%)
+Progress: 300,000/1,240,925 flights processed (24.2%)
+Progress: 400,000/1,240,925 flights processed (32.2%)
+Progress: 500,000/1,240,925 flights processed (40.3%)
+Progress: 600,000/1,240,925 flights processed (48.4%)
+Progress: 700,000/1,240,925 flights processed (56.4%)
+Progress: 800,000/1,240,925 flights processed (64.5%)
+Progress: 900,000/1,240,925 flights processed (72.5%)
+Progress: 1,000,000/1,240,925 flights processed (80.6%)
+Progress: 1,100,000/1,240,925 flights processed (88.6%)
+Progress: 1,200,000/1,240,925 flights processed (96.7%)
+Generated conflict emissions file for month: 2023-10
+Progress: 100,000/1,132,523 flights processed (8.8%)
+Progress: 200,000/1,132,523 flights processed (17.7%)
+Progress: 300,000/1,132,523 flights processed (26.5%)
+Progress: 400,000/1,132,523 flights processed (35.3%)
+Progress: 500,000/1,132,523 flights processed (44.1%)
+Progress: 600,000/1,132,523 flights processed (53.0%)
+Progress: 700,000/1,132,523 flights processed (61.8%)
+Progress: 800,000/1,132,523 flights processed (70.6%)
+Progress: 900,000/1,132,523 flights processed (79.5%)
+Progress: 1,000,000/1,132,523 flights processed (88.3%)
+Progress: 1,100,000/1,132,523 flights processed (97.1%)
+Generated conflict emissions file for month: 2023-01
+Progress: 100,000/1,203,188 flights processed (8.3%)
+Progress: 200,000/1,203,188 flights processed (16.6%)
+Progress: 300,000/1,203,188 flights processed (24.9%)
+Progress: 400,000/1,203,188 flights processed (33.2%)
+Progress: 500,000/1,203,188 flights processed (41.6%)
+Progress: 600,000/1,203,188 flights processed (49.9%)
+Progress: 700,000/1,203,188 flights processed (58.2%)
+Progress: 800,000/1,203,188 flights processed (66.5%)
+Progress: 900,000/1,203,188 flights processed (74.8%)
+Progress: 1,000,000/1,203,188 flights processed (83.1%)
+Progress: 1,100,000/1,203,188 flights processed (91.4%)
+Progress: 1,200,000/1,203,188 flights processed (99.7%)
+Generated conflict emissions file for month: 2023-12
+Progress: 100,000/1,361,334 flights processed (7.3%)
+Progress: 200,000/1,361,334 flights processed (14.7%)
+Progress: 300,000/1,361,334 flights processed (22.0%)
+Progress: 400,000/1,361,334 flights processed (29.4%)
+Progress: 500,000/1,361,334 flights processed (36.7%)
+Progress: 600,000/1,361,334 flights processed (44.1%)
+Progress: 700,000/1,361,334 flights processed (51.4%)
+Progress: 800,000/1,361,334 flights processed (58.8%)
+Progress: 900,000/1,361,334 flights processed (66.1%)
+Progress: 1,000,000/1,361,334 flights processed (73.5%)
+Progress: 1,100,000/1,361,334 flights processed (80.8%)
+Progress: 1,200,000/1,361,334 flights processed (88.1%)
+Progress: 1,300,000/1,361,334 flights processed (95.5%)
+Generated conflict emissions file for month: 2023-11
+Progress: 100,000/1,405,934 flights processed (7.1%)
+Progress: 200,000/1,405,934 flights processed (14.2%)
+Progress: 300,000/1,405,934 flights processed (21.3%)
+Progress: 400,000/1,405,934 flights processed (28.5%)
+Progress: 500,000/1,405,934 flights processed (35.6%)
+Progress: 600,000/1,405,934 flights processed (42.7%)
+Progress: 700,000/1,405,934 flights processed (49.8%)
+Progress: 800,000/1,405,934 flights processed (56.9%)
+Progress: 900,000/1,405,934 flights processed (64.0%)
+Progress: 1,000,000/1,405,934 flights processed (71.1%)
+Progress: 1,100,000/1,405,934 flights processed (78.2%)
+Progress: 1,200,000/1,405,934 flights processed (85.4%)
+Progress: 1,300,000/1,405,934 flights processed (92.5%)
+Progress: 1,400,000/1,405,934 flights processed (99.6%)
+Generated conflict emissions file for month: 2023-04
+Progress: 100,000/1,391,306 flights processed (7.2%)
+Progress: 200,000/1,391,306 flights processed (14.4%)
+Progress: 300,000/1,391,306 flights processed (21.6%)
+Progress: 400,000/1,391,306 flights processed (28.7%)
+Progress: 500,000/1,391,306 flights processed (35.9%)
+Progress: 600,000/1,391,306 flights processed (43.1%)
+Progress: 700,000/1,391,306 flights processed (50.3%)
+Progress: 800,000/1,391,306 flights processed (57.5%)
+Progress: 900,000/1,391,306 flights processed (64.7%)
+Progress: 1,000,000/1,391,306 flights processed (71.9%)
+Progress: 1,100,000/1,391,306 flights processed (79.1%)
+Progress: 1,200,000/1,391,306 flights processed (86.2%)
+Progress: 1,300,000/1,391,306 flights processed (93.4%)
+Generated conflict emissions file for month: 2023-03
+Progress: 100,000/1,525,551 flights processed (6.6%)
+Progress: 200,000/1,525,551 flights processed (13.1%)
+Progress: 300,000/1,525,551 flights processed (19.7%)
+Progress: 400,000/1,525,551 flights processed (26.2%)
+Progress: 500,000/1,525,551 flights processed (32.8%)
+Progress: 600,000/1,525,551 flights processed (39.3%)
+Progress: 700,000/1,525,551 flights processed (45.9%)
+Progress: 800,000/1,525,551 flights processed (52.4%)
+Progress: 900,000/1,525,551 flights processed (59.0%)
+Progress: 1,000,000/1,525,551 flights processed (65.6%)
+Progress: 1,100,000/1,525,551 flights processed (72.1%)
+Progress: 1,200,000/1,525,551 flights processed (78.7%)
+Progress: 1,300,000/1,525,551 flights processed (85.2%)
+Progress: 1,400,000/1,525,551 flights processed (91.8%)
+Progress: 1,500,000/1,525,551 flights processed (98.3%)
+Generated conflict emissions file for month: 2023-05
+Progress: 100,000/1,499,402 flights processed (6.7%)
+Progress: 200,000/1,499,402 flights processed (13.3%)
+Progress: 300,000/1,499,402 flights processed (20.0%)
+Progress: 400,000/1,499,402 flights processed (26.7%)
+Progress: 500,000/1,499,402 flights processed (33.3%)
+Progress: 600,000/1,499,402 flights processed (40.0%)
+Progress: 700,000/1,499,402 flights processed (46.7%)
+Progress: 800,000/1,499,402 flights processed (53.4%)
+Progress: 900,000/1,499,402 flights processed (60.0%)
+Progress: 1,000,000/1,499,402 flights processed (66.7%)
+Progress: 1,100,000/1,499,402 flights processed (73.4%)
+Progress: 1,200,000/1,499,402 flights processed (80.0%)
+Progress: 1,300,000/1,499,402 flights processed (86.7%)
+Progress: 1,400,000/1,499,402 flights processed (93.4%)
+Generated conflict emissions file for month: 2023-06
+Progress: 100,000/1,537,268 flights processed (6.5%)
+Progress: 200,000/1,537,268 flights processed (13.0%)
+Progress: 300,000/1,537,268 flights processed (19.5%)
+Progress: 400,000/1,537,268 flights processed (26.0%)
+Progress: 500,000/1,537,268 flights processed (32.5%)
+Progress: 600,000/1,537,268 flights processed (39.0%)
+Progress: 700,000/1,537,268 flights processed (45.5%)
+Progress: 800,000/1,537,268 flights processed (52.0%)
+Progress: 900,000/1,537,268 flights processed (58.5%)
+Progress: 1,000,000/1,537,268 flights processed (65.1%)
+Progress: 1,100,000/1,537,268 flights processed (71.6%)
+Progress: 1,200,000/1,537,268 flights processed (78.1%)
+Progress: 1,300,000/1,537,268 flights processed (84.6%)
+Progress: 1,400,000/1,537,268 flights processed (91.1%)
+Progress: 1,500,000/1,537,268 flights processed (97.6%)
+Generated conflict emissions file for month: 2023-07
+Progress: 100,000/1,545,430 flights processed (6.5%)
+Progress: 200,000/1,545,430 flights processed (12.9%)
+Progress: 300,000/1,545,430 flights processed (19.4%)
+Progress: 400,000/1,545,430 flights processed (25.9%)
+Progress: 500,000/1,545,430 flights processed (32.4%)
+Progress: 600,000/1,545,430 flights processed (38.8%)
+Progress: 700,000/1,545,430 flights processed (45.3%)
+Progress: 800,000/1,545,430 flights processed (51.8%)
+Progress: 900,000/1,545,430 flights processed (58.2%)
+Progress: 1,000,000/1,545,430 flights processed (64.7%)
+Progress: 1,100,000/1,545,430 flights processed (71.2%)
+Progress: 1,200,000/1,545,430 flights processed (77.6%)
+Progress: 1,300,000/1,545,430 flights processed (84.1%)
+Progress: 1,400,000/1,545,430 flights processed (90.6%)
+Progress: 1,500,000/1,545,430 flights processed (97.1%)
+Generated conflict emissions file for month: 2023-09
+Progress: 100,000/1,619,778 flights processed (6.2%)
+Progress: 200,000/1,619,778 flights processed (12.3%)
+Progress: 300,000/1,619,778 flights processed (18.5%)
+Progress: 400,000/1,619,778 flights processed (24.7%)
+Progress: 500,000/1,619,778 flights processed (30.9%)
+Progress: 600,000/1,619,778 flights processed (37.0%)
+Progress: 700,000/1,619,778 flights processed (43.2%)
+Progress: 800,000/1,619,778 flights processed (49.4%)
+Progress: 900,000/1,619,778 flights processed (55.6%)
+Progress: 1,000,000/1,619,778 flights processed (61.7%)
+Progress: 1,100,000/1,619,778 flights processed (67.9%)
+Progress: 1,200,000/1,619,778 flights processed (74.1%)
+Progress: 1,300,000/1,619,778 flights processed (80.3%)
+Progress: 1,400,000/1,619,778 flights processed (86.4%)
+Progress: 1,500,000/1,619,778 flights processed (92.6%)
+Progress: 1,600,000/1,619,778 flights processed (98.8%)
+Generated conflict emissions file for month: 2023-08
