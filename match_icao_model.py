@@ -31,11 +31,15 @@ def match_icao_model(start_time_str: str,
     # Convert the icao24 column to a string
     aircraft_df['icao24'] = aircraft_df['icao24'].astype(str)
     # drop all rows where typecode is "
+    #########
+    num_acft_in_metadata = len(aircraft_df)
+    #######
     aircraft_df = aircraft_df[aircraft_df['typecode'] != "''"]
     
-    
-    print("There are " + str(len(aircraft_df['typecode'].unique())) + " unique typecodes in the aircraft database.")
-    
+    #########
+    num_acftmetadata_entries_after_filtering  = len(aircraft_df)
+    ###########
+
     # load the flight database
     flight_df = pd.DataFrame()
     
@@ -47,12 +51,24 @@ def match_icao_model(start_time_str: str,
         end_time_posix      = int(datetime.fromisoformat(stop_time_str).timestamp())
         
         flight_df = pd.concat([flight_df, load_saved_fd4(current_day, flight_db_path, query_limit)], axis=0, ignore_index=True)
-    
+    num_all_seen_flights = len(flight_df)
+    #########
+    num_no_arrival_airport = flight_df[flight_df['estarrivalairport'].isna() & flight_df['estdepartureairport'].notna()].shape[0]
+    num_no_departure_airport = flight_df[flight_df['estdepartureairport'].isna() & flight_df['estarrivalairport'].notna()].shape[0]
+    num_no_airport = flight_df[flight_df['estarrivalairport'].isna() & flight_df['estdepartureairport'].isna()].shape[0]
+    ############
+    num_removed_airports = num_no_arrival_airport + num_no_departure_airport + num_no_airport
     # remove all rows where estdepartureairport or estarrivalairport are <NA>
     flight_df = flight_df[flight_df['estdepartureairport'].notna() & flight_df['estarrivalairport'].notna()]
-    
+
+    num_flights_before_icao24_filtering = len(flight_df)
+    num_acft_entries_no_matched_flight = aircraft_df[~aircraft_df['icao24'].isin(flight_df['icao24'])].shape[0]
+    # count entries in the flight_df dataframe that will be removed due to missing ICAO24 code match with
     # inner join the two dataframes on the icao24 column. this eliminates all rows where typecode cannot be matched to an icao24 code.
     flight_df = pd.merge(flight_df, aircraft_df, on='icao24', how='inner')
+    num_flights_after_icao24_filtering = len(flight_df)
+    num_flights_lost_icao_filtering = num_flights_before_icao24_filtering - num_flights_after_icao24_filtering
+
 
     # Convert the timestamp to a datetime object
     start_time_dt = pd.to_datetime(start_time_str)
@@ -69,4 +85,4 @@ def match_icao_model(start_time_str: str,
     print("Saved result_df to", filename)
     
     #return the result dataframe
-    return flight_df
+    return flight_df, num_acft_in_metadata, num_acftmetadata_entries_after_filtering, num_all_seen_flights, num_no_arrival_airport, num_no_departure_airport, num_no_airport, num_removed_airports, num_flights_before_icao24_filtering, num_flights_after_icao24_filtering, num_flights_lost_icao_filtering, num_acft_entries_no_matched_flight

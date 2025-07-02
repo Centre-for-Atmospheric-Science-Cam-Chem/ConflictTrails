@@ -194,7 +194,7 @@ def process_flight(args):
                 else:
                     cruise_distance_m = row['gc_km'] * 1000
                 
-                '''
+                
                 # Create visualization showing flight paths on 2D globe representation
                 import matplotlib.pyplot as plt
                 import cartopy.crs as ccrs
@@ -274,7 +274,7 @@ def process_flight(args):
                 
                 plt.tight_layout()
                 plt.show()
-                '''
+                
 
             else:
                 # Fall back to great circle
