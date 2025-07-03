@@ -1,6 +1,6 @@
 # ConflictTrails
 
-An Emissions processing toolchain for calculating the impact of conflict on aviation emissions
+An emissions processing toolchain for calculating the impact of conflict on aviation emissions.
 
 ## Overview
 
